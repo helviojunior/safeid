@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Project Title
 
 An complete solution to make an Identity Manager and Single Sign On
@@ -97,3 +98,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 * I need to make documentation better 
 * I hope that it will help the community
 
+=======
+# safeid
+>>>>>>> 52bb8e055e49d73fb4a0c1bdc2d46fd0884e8afa
