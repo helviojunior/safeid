@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{04A9FC99-BF56-4F88-9486-B6A18712DB8C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AkerAuthAgent</RootNamespace>
+    <AssemblyName>AkerAuthAgent</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\IAMPlugins\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\bin\IAMPlugins\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PluginInterface">
+      <HintPath>..\..\bin\IAMPluginsManager\PluginInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AkerAuth.cs" />
+    <Compile Include="Aker\AkFirewall.cs" />
+    <Compile Include="Aker\AuthBase.cs" />
+    <Compile Include="Aker\AuthClient.cs" />
+    <Compile Include="Aker\AuthClient2.cs" />
+    <Compile Include="Aker\AuthIPs.cs" />
+    <Compile Include="Aker\AuthServer.cs" />
+    <Compile Include="Aker\AuthServerItem.cs" />
+    <Compile Include="Aker\AuthTestStatus.cs" />
+    <Compile Include="Aker\AuthUserResult.cs" />
+    <Compile Include="APIAccessToken.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tools\ag_greeting.cs" />
+    <Compile Include="Tools\Blowfish.cs" />
+    <Compile Include="Tools\BlowfishCBC.cs" />
+    <Compile Include="Tools\chave_aut.cs" />
+    <Compile Include="Tools\CipherUtil.cs" />
+    <Compile Include="Tools\header_aut.cs" />
+    <Compile Include="Tools\header_key.cs" />
+    <Compile Include="Tools\md5.cs" />
+    <Compile Include="Tools\packet.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\JsonBase\JsonBase.csproj">
+      <Project>{23B16B7E-4450-4738-B4FD-318D2FF528F0}</Project>
+      <Name>JsonBase</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

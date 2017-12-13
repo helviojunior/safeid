@@ -1,0 +1,25 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Login.master.cs" Inherits="IAMWebServer.autoservice.Login1" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <title>IAM</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link href="<%=Session["ApplicationVirtualPath"]%>css/iam.ui.aspx" rel="stylesheet" type="text/css" />
+    <script src="<%=Session["ApplicationVirtualPath"]%>js/iam.ui.aspx" type="text/javascript"></script>
+
+    <asp:ContentPlaceHolder ID="head" runat="server"></asp:ContentPlaceHolder>
+</head>
+<body class="login">
+    <div id="login">
+        <div class="content">
+            <h1>SafeID - Gestão de identidades e acessos</h1>
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server"></asp:ContentPlaceHolder>
+            <div class="clear-block"></div>
+        </div>
+        <div class="clear-block"></div>
+    </div>
+    <a href="http://www.safetrend.com.br/" target="_blank"><h2>SafeTrend - safetrend.com.br</h2></a>
+</body>
+</html>

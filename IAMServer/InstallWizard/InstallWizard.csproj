@@ -1,0 +1,196 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{BDD85EBD-534A-4338-9A1E-7C3B0848C5BA}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>InstallWizard</RootNamespace>
+    <AssemblyName>InstallWizard</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\IAMInstall\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\bin\IAMInstall\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>safetrend.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CreateScripts\ScriptExecutor.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0036_S01_db_ver.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0039_S01_procedures.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0038_S01_functions.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0037_S01_views.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0035_S01_resource_plugin.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0034_S01_audit_identity.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0033_S01_report_mapping.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0032_S01_confirmation_rules.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0031_S01_report.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0030_S01_login_rule.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0029_S01_filters.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0028_S01_collector_imports.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0027_S01_debug.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0026_S01_notify_imports.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0025_S01_import_profiler.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0022_S01_sys_role.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0023_S02_sys_roles.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0024_S01_license.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0021_S01_server_cert.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0020_S01_server_config.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0019_S01_service_status.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0001_S01_Struct.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0001_S02_Data.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0002_S01_context.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0004_S01_deploy_now.cs" />
+    <Compile Include="CreateScripts\SqlServer\S0003_S01_entity.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CreateScripts\SqlServer\S0005_S01_entity_auth.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CreateScripts\SqlServer\S0006_S01_languages.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CreateScripts\SqlServer\S0007_S01_enterprise.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CreateScripts\SqlServer\S0008_S01_proxy.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CreateScripts\SqlServer\S0009_S01_resource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CreateScripts\SqlServer\S0010_S01_plugin.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CreateScripts\SqlServer\S0011_S01_resource_plugin.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CreateScripts\SqlServer\S0012_S01_identity.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CreateScripts\SqlServer\S0013_S01_entity_timeline.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CreateScripts\SqlServer\S0014_S01_role.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CreateScripts\SqlServer\S0015_S01_log_seed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CreateScripts\SqlServer\S0016_S01_logs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CreateScripts\SqlServer\S0017_S01_field.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CreateScripts\SqlServer\S0018_S01_logs_import.cs" />
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CreateScripts\IAMDbInstall.cs" />
+    <Compile Include="CreateScripts\ICreateScript.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resource1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource1.resx</DependentUpon>
+    </Compile>
+    <Compile Include="CreateScripts\CreateScriptRepository.cs" />
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Resource1.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\safeid.png" />
+    <Content Include="safetrend.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\DatabaseResource\DatabaseResource.csproj">
+      <Project>{7956F6F3-7EC7-4E56-BFA6-57A778A88844}</Project>
+      <Name>DatabaseResource</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Config\Config.csproj">
+      <Project>{6474B7CE-E794-4A86-9E24-D1B9CBACAB6D}</Project>
+      <Name>Config</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\GlobalDefs\IAMGlobalDefs.csproj">
+      <Project>{46F9802A-EF9A-49F3-8AD3-0B67A4C54701}</Project>
+      <Name>IAMGlobalDefs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\IAMEnterpriseCreator\IAMEnterpriseCreator.csproj">
+      <Project>{9AC187F2-26C6-4FDA-903A-0D6D39BFCB31}</Project>
+      <Name>IAMEnterpriseCreator</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

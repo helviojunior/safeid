@@ -1,0 +1,2 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="resource_plugin.aspx.cs" Inherits="IAMWebServer._admin.action.resource_plugin" %>
+<asp:PlaceHolder ID="Retorno" runat="server"></asp:PlaceHolder>

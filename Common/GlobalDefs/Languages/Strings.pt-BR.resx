@@ -1,0 +1,693 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ambiguous_id" xml:space="preserve">
+    <value>Identificador duplicado</value>
+  </data>
+  <data name="api_error" xml:space="preserve">
+    <value>Erro na API</value>
+  </data>
+  <data name="cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="change_password" xml:space="preserve">
+    <value>Cadastrar</value>
+  </data>
+  <data name="code" xml:space="preserve">
+    <value>Código</value>
+  </data>
+  <data name="confirm_code" xml:space="preserve">
+    <value>Verificar código</value>
+  </data>
+  <data name="enter_code" xml:space="preserve">
+    <value>Digite o código recebido abaixo</value>
+  </data>
+  <data name="entity_not_found" xml:space="preserve">
+    <value>Entidade não encontrada</value>
+  </data>
+  <data name="fail" xml:space="preserve">
+    <value>Falha</value>
+  </data>
+  <data name="internal_error" xml:space="preserve">
+    <value>Erro interno</value>
+  </data>
+  <data name="invalid_code" xml:space="preserve">
+    <value>Código inválido</value>
+  </data>
+  <data name="invalid_http_method" xml:space="preserve">
+    <value>Método http inválido</value>
+  </data>
+  <data name="invalid_method" xml:space="preserve">
+    <value>Método inválido</value>
+  </data>
+  <data name="invalid_session" xml:space="preserve">
+    <value>Sessão inválida, reinicie a operação</value>
+  </data>
+  <data name="login_forgot" xml:space="preserve">
+    <value>Esqueceu sua senha?</value>
+  </data>
+  <data name="login_log" xml:space="preserve">
+    <value>Entrar</value>
+  </data>
+  <data name="login_password" xml:space="preserve">
+    <value>Senha</value>
+  </data>
+  <data name="login_recover_btn_recover" xml:space="preserve">
+    <value>Recuperar</value>
+  </data>
+  <data name="login_recover_message" xml:space="preserve">
+    <value>Entre com seu login ou e-mail para recuperar a senha</value>
+  </data>
+  <data name="login_recover_title" xml:space="preserve">
+    <value>Recuperação de senha</value>
+  </data>
+  <data name="login_user_name" xml:space="preserve">
+    <value>Login ou e-mail</value>
+  </data>
+  <data name="lowercase" xml:space="preserve">
+    <value>Letra minúscula</value>
+  </data>
+  <data name="new_password" xml:space="preserve">
+    <value>Nova senha</value>
+  </data>
+  <data name="new_password_confirm" xml:space="preserve">
+    <value>Confirmação da nova senha</value>
+  </data>
+  <data name="new_password_title" xml:space="preserve">
+    <value>Cadastre a nova senha</value>
+  </data>
+  <data name="numbers" xml:space="preserve">
+    <value>Numeros</value>
+  </data>
+  <data name="number_char" xml:space="preserve">
+    <value>Tamanho</value>
+  </data>
+  <data name="ok" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="option_not_found" xml:space="preserve">
+    <value>Opção não encontrada</value>
+  </data>
+  <data name="or" xml:space="preserve">
+    <value>ou</value>
+  </data>
+  <data name="password_complexity" xml:space="preserve">
+    <value>A senha devem cumprir a exigência complexidade</value>
+  </data>
+  <data name="password_not_equal" xml:space="preserve">
+    <value>Senhas diferentes</value>
+  </data>
+  <data name="password_strength" xml:space="preserve">
+    <value>Força da senha</value>
+  </data>
+  <data name="select_option" xml:space="preserve">
+    <value>Selecione uma opção</value>
+  </data>
+  <data name="send_code" xml:space="preserve">
+    <value>Enviar</value>
+  </data>
+  <data name="send_conf_to" xml:space="preserve">
+    <value>Enviar código de confirmação para:</value>
+  </data>
+  <data name="symbols" xml:space="preserve">
+    <value>Símbolos</value>
+  </data>
+  <data name="type_code" xml:space="preserve">
+    <value>Digite o código</value>
+  </data>
+  <data name="type_password" xml:space="preserve">
+    <value>Digite a senha</value>
+  </data>
+  <data name="type_password_confirm" xml:space="preserve">
+    <value>Digite a confirmação da senha</value>
+  </data>
+  <data name="unknow" xml:space="preserve">
+    <value>Desconhecido</value>
+  </data>
+  <data name="uppercase" xml:space="preserve">
+    <value>Letra maiúscula</value>
+  </data>
+  <data name="valid_username" xml:space="preserve">
+    <value>Usuario ou e-mail inválido</value>
+  </data>
+  <data name="valid_username_pwd" xml:space="preserve">
+    <value>Usuário ou senha inválidos</value>
+  </data>
+  <data name="logout" xml:space="preserve">
+    <value>Desconectar</value>
+  </data>
+  <data name="system_login_list" xml:space="preserve">
+    <value>Listagem dos logins</value>
+  </data>
+  <data name="password_changed_sucessfully" xml:space="preserve">
+    <value>Sua senha está sendo atualizada</value>
+  </data>
+  <data name="password_changed_text" xml:space="preserve">
+    <value>Este processo pode levar alguns minutos, por favor, seja paciente. &lt;br /&gt;&lt;br /&gt; Esta janela pode ser fechada pois a atualização ocorre em segundo plano.</value>
+  </data>
+  <data name="return_default" xml:space="preserve">
+    <value>Retornar</value>
+  </data>
+  <data name="user_locked" xml:space="preserve">
+    <value>Usuário bloqueado, contate o administrador do sistema</value>
+  </data>
+  <data name="not_implemented" xml:space="preserve">
+    <value>Operação não implementada</value>
+  </data>
+  <data name="good" xml:space="preserve">
+    <value>Média</value>
+  </data>
+  <data name="strong" xml:space="preserve">
+    <value>Forte</value>
+  </data>
+  <data name="very_strong" xml:space="preserve">
+    <value>Muito Forte</value>
+  </data>
+  <data name="very_weak" xml:space="preserve">
+    <value>Muito fraca</value>
+  </data>
+  <data name="weak" xml:space="preserve">
+    <value>Fraca</value>
+  </data>
+  <data name="expired_session" xml:space="preserve">
+    <value>Sessão expirada</value>
+  </data>
+  <data name="change_password_text" xml:space="preserve">
+    <value>Para alterar sua senha preencha os campos abaixo</value>
+  </data>
+  <data name="change_password_title" xml:space="preserve">
+    <value>Troca de senha</value>
+  </data>
+  <data name="current_password" xml:space="preserve">
+    <value>Senha atual</value>
+  </data>
+  <data name="current_password_invalid" xml:space="preserve">
+    <value>Senha atual inválida</value>
+  </data>
+  <data name="type_password_current" xml:space="preserve">
+    <value>Digite a senha atual</value>
+  </data>
+  <data name="password_expired_text" xml:space="preserve">
+    <value>Sua senha expirou e deve ser trocada</value>
+  </data>
+  <data name="close" xml:space="preserve">
+    <value>Fechar</value>
+  </data>
+  <data name="user_logged" xml:space="preserve">
+    <value>Usuário logado em</value>
+  </data>
+  <data name="new_recovery_code" xml:space="preserve">
+    <value>Novo código de recuperação gerado</value>
+  </data>
+  <data name="password_name_part" xml:space="preserve">
+    <value>A senha não deve conter o seu nome ou parte dele</value>
+  </data>
+  <data name="loading_mobile" xml:space="preserve">
+    <value>Carregando...</value>
+  </data>
+  <data name="user_not_found" xml:space="preserve">
+    <value>Usuário não encontrado</value>
+  </data>
+  <data name="invalid_module" xml:space="preserve">
+    <value>Móludo inválido</value>
+  </data>
+  <data name="log_not_found" xml:space="preserve">
+    <value>Nenhum log encontrado</value>
+  </data>
+  <data name="user_wrong_password" xml:space="preserve">
+    <value>Senha incorreta no logon</value>
+  </data>
+  <data name="entity" xml:space="preserve">
+    <value>Entidade</value>
+  </data>
+  <data name="licensing" xml:space="preserve">
+    <value>Licenciamento</value>
+  </data>
+  <data name="licensing_total" xml:space="preserve">
+    <value>Total de licenças</value>
+  </data>
+  <data name="locked" xml:space="preserve">
+    <value>Bloqueado</value>
+  </data>
+  <data name="logged" xml:space="preserve">
+    <value>Realizou login</value>
+  </data>
+  <data name="of" xml:space="preserve">
+    <value>de</value>
+  </data>
+  <data name="password_change" xml:space="preserve">
+    <value>Troca de senha</value>
+  </data>
+  <data name="total" xml:space="preserve">
+    <value>total</value>
+  </data>
+  <data name="unlimited" xml:space="preserve">
+    <value>ilimitado</value>
+  </data>
+  <data name="users" xml:space="preserve">
+    <value>Usuários</value>
+  </data>
+  <data name="login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="service_not_found" xml:space="preserve">
+    <value>Serviço não encontrado</value>
+  </data>
+  <data name="invalid_ticket" xml:space="preserve">
+    <value>Ticket inválido</value>
+  </data>
+  <data name="service_invalid_uri" xml:space="preserve">
+    <value>URL de serviço inválida</value>
+  </data>
+  <data name="role_not_found" xml:space="preserve">
+    <value>Perfil não encontrado</value>
+  </data>
+  <data name="invalid_name" xml:space="preserve">
+    <value>Nome em branco ou inválido</value>
+  </data>
+  <data name="select_username" xml:space="preserve">
+    <value>Selecione um ou mais usuários</value>
+  </data>
+  <data name="type_role_name" xml:space="preserve">
+    <value>Digite o nome do perfil</value>
+  </data>
+  <data name="context_not_found" xml:space="preserve">
+    <value>Contexto não encontrado</value>
+  </data>
+  <data name="select_context" xml:space="preserve">
+    <value>Selecione o contexto</value>
+  </data>
+  <data name="type_context_name" xml:space="preserve">
+    <value>Digite o nome do contexto</value>
+  </data>
+  <data name="pwd_len_size" xml:space="preserve">
+    <value>O tamanho da senha precisa ser um número entre 4 e 20</value>
+  </data>
+  <data name="type_pwd_rule" xml:space="preserve">
+    <value>Preencha a regra de senha</value>
+  </data>
+  <data name="config" xml:space="preserve">
+    <value>Configuração</value>
+  </data>
+  <data name="type_pwd_rule_valid" xml:space="preserve">
+    <value>Digite uma regra de senha válida</value>
+  </data>
+  <data name="enterprise_not_found" xml:space="preserve">
+    <value>Empresa não encontrada</value>
+  </data>
+  <data name="select_auth_service" xml:space="preserve">
+    <value>Selecione o serviço de autenticação</value>
+  </data>
+  <data name="plugin_not_found" xml:space="preserve">
+    <value>Plugin não encontrado</value>
+  </data>
+  <data name="identity_not_found" xml:space="preserve">
+    <value>Identidade não encontrada</value>
+  </data>
+  <data name="proxy_not_found" xml:space="preserve">
+    <value>Proxy não encontrado</value>
+  </data>
+  <data name="resource_not_found" xml:space="preserve">
+    <value>Recurso não encontrado</value>
+  </data>
+  <data name="no" xml:space="preserve">
+    <value>Não</value>
+  </data>
+  <data name="yes" xml:space="preserve">
+    <value>Sim</value>
+  </data>
+  <data name="type_proxy_name" xml:space="preserve">
+    <value>Digite o nome do proxy</value>
+  </data>
+  <data name="select_plugin" xml:space="preserve">
+    <value>Selecione o plugin</value>
+  </data>
+  <data name="type_resource_name" xml:space="preserve">
+    <value>Digite o nome do recurso</value>
+  </data>
+  <data name="select_proxy" xml:space="preserve">
+    <value>Selecione o proxy</value>
+  </data>
+  <data name="field_not_found" xml:space="preserve">
+    <value>Campo não encontrado</value>
+  </data>
+  <data name="resource_plugin_not_found" xml:space="preserve">
+    <value>Recurso x Plugin não encontrado</value>
+  </data>
+  <data name="select_resource" xml:space="preserve">
+    <value>Selecione o recurso</value>
+  </data>
+  <data name="type_mail_domain" xml:space="preserve">
+    <value>Digite o domínio de e-mail</value>
+  </data>
+  <data name="disabled" xml:space="preserve">
+    <value>Desabilitado</value>
+  </data>
+  <data name="enabled" xml:space="preserve">
+    <value>Habilitado</value>
+  </data>
+  <data name="select_login_field" xml:space="preserve">
+    <value>Selecione o campo de login</value>
+  </data>
+  <data name="select_mail_field" xml:space="preserve">
+    <value>Selecione o campo de e-mail</value>
+  </data>
+  <data name="select_name_field" xml:space="preserve">
+    <value>Selecione o campo de nome</value>
+  </data>
+  <data name="required_field" xml:space="preserve">
+    <value>Campo obrigatório não contrado:</value>
+  </data>
+  <data name="parameter_type_invalid" xml:space="preserve">
+    <value>Parâmetro {0} não é {1}</value>
+  </data>
+  <data name="select_field" xml:space="preserve">
+    <value>Selecione um campo</value>
+  </data>
+  <data name="type_data_name" xml:space="preserve">
+    <value>Digite o campo do recurso no campo {0}</value>
+  </data>
+  <data name="no_has_id_unique" xml:space="preserve">
+    <value>Ao menos um campo necessita ser ID ou único</value>
+  </data>
+  <data name="select_role" xml:space="preserve">
+    <value>Selecione um perfil</value>
+  </data>
+  <data name="incompleted_action" xml:space="preserve">
+    <value>Configuração incompleta da ação no perfil {0}</value>
+  </data>
+  <data name="duplicated_role" xml:space="preserve">
+    <value>Perfil duplicada {0}</value>
+  </data>
+  <data name="annually" xml:space="preserve">
+    <value>Anualmente</value>
+  </data>
+  <data name="dialy" xml:space="preserve">
+    <value>Diariamente</value>
+  </data>
+  <data name="monthly" xml:space="preserve">
+    <value>Mensalmente</value>
+  </data>
+  <data name="in" xml:space="preserve">
+    <value>em</value>
+  </data>
+  <data name="minute" xml:space="preserve">
+    <value>minuto</value>
+  </data>
+  <data name="after_triggered" xml:space="preserve">
+    <value>depois de iniciado repetir a cada</value>
+  </data>
+  <data name="weekly" xml:space="preserve">
+    <value>Semanalmente</value>
+  </data>
+  <data name="day" xml:space="preserve">
+    <value>dia</value>
+  </data>
+  <data name="schedule_empty" xml:space="preserve">
+    <value>Nenhum agendamento configurado</value>
+  </data>
+  <data name="invalid_date" xml:space="preserve">
+    <value>Data inválida</value>
+  </data>
+  <data name="invalid_time" xml:space="preserve">
+    <value>Hora inválida</value>
+  </data>
+  <data name="select_schedule_type" xml:space="preserve">
+    <value>Selecione o tipo do agendamento</value>
+  </data>
+  <data name="system_role_not_found" xml:space="preserve">
+    <value>Perfil de sistema não encontrada</value>
+  </data>
+  <data name="permissions_not_found" xml:space="preserve">
+    <value>Permissões não encontradas</value>
+  </data>
+  <data name="always" xml:space="preserve">
+    <value>Sempre</value>
+  </data>
+  <data name="never" xml:space="preserve">
+    <value>Nunca</value>
+  </data>
+  <data name="not_defined" xml:space="preserve">
+    <value>Não definido</value>
+  </data>
+  <data name="specific_time" xml:space="preserve">
+    <value>Horário específico</value>
+  </data>
+  <data name="select_type" xml:space="preserve">
+    <value>Selecione o tipo de controle de horário</value>
+  </data>
+  <data name="select_week_day" xml:space="preserve">
+    <value>Selecione um dia da semana</value>
+  </data>
+  <data name="type_end_time" xml:space="preserve">
+    <value>Digite o horário final</value>
+  </data>
+  <data name="type_start_time" xml:space="preserve">
+    <value>Digite o horário de início</value>
+  </data>
+  <data name="invalid_end_time" xml:space="preserve">
+    <value>Hora de fim inválida</value>
+  </data>
+  <data name="invalid_start_time" xml:space="preserve">
+    <value>Hora de início inválida</value>
+  </data>
+  <data name="invalid_week_day" xml:space="preserve">
+    <value>Dia da semana inválido</value>
+  </data>
+  <data name="select_data_type" xml:space="preserve">
+    <value>Selecione o tipo de dado</value>
+  </data>
+  <data name="datetime" xml:space="preserve">
+    <value>Data e hora</value>
+  </data>
+  <data name="numeric" xml:space="preserve">
+    <value>Número</value>
+  </data>
+  <data name="string" xml:space="preserve">
+    <value>Texto</value>
+  </data>
+  <data name="filter_not_found" xml:space="preserve">
+    <value>Filtro não encontrado</value>
+  </data>
+  <data name="and" xml:space="preserve">
+    <value>e</value>
+  </data>
+  <data name="equal" xml:space="preserve">
+    <value>Igual a</value>
+  </data>
+  <data name="greater" xml:space="preserve">
+    <value>Maior que</value>
+  </data>
+  <data name="greaterorequal" xml:space="preserve">
+    <value>Maior ou igual a</value>
+  </data>
+  <data name="less" xml:space="preserve">
+    <value>Menor que</value>
+  </data>
+  <data name="lessorequal" xml:space="preserve">
+    <value>Menor ou igual a</value>
+  </data>
+  <data name="notequal" xml:space="preserve">
+    <value>Diferente de</value>
+  </data>
+  <data name="contains" xml:space="preserve">
+    <value>Contém</value>
+  </data>
+  <data name="endwith" xml:space="preserve">
+    <value>Finaliza com</value>
+  </data>
+  <data name="startwith" xml:space="preserve">
+    <value>Inicia com</value>
+  </data>
+  <data name="notcontains" xml:space="preserve">
+    <value>Não contém</value>
+  </data>
+  <data name="conditions_is_empty" xml:space="preserve">
+    <value>Lista de condições vazia</value>
+  </data>
+  <data name="info_saved" xml:space="preserve">
+    <value>Informação salva com sucesso</value>
+  </data>
+  <data name="no_licecse" xml:space="preserve">
+    <value>Sem licença</value>
+  </data>
+  <data name="container_not_found" xml:space="preserve">
+    <value>Pasta não encontrada</value>
+  </data>
+  <data name="select_parent_container" xml:space="preserve">
+    <value>Selecione uma pasta pai</value>
+  </data>
+  <data name="container_context_not_same" xml:space="preserve">
+    <value>Pasta pai não é filha do contexto selecionado</value>
+  </data>
+  <data name="wf_approved" xml:space="preserve">
+    <value>Aprovado</value>
+  </data>
+  <data name="wf_deny" xml:space="preserve">
+    <value>Negado</value>
+  </data>
+  <data name="wf_escalated" xml:space="preserve">
+    <value>Escalado</value>
+  </data>
+  <data name="wf_expired" xml:space="preserve">
+    <value>Expirado</value>
+  </data>
+  <data name="wf_underreview" xml:space="preserve">
+    <value>Em revisão</value>
+  </data>
+  <data name="wf_waiting" xml:space="preserve">
+    <value>Aguardando aprovação</value>
+  </data>
+  <data name="workflow_request_not_found" xml:space="preserve">
+    <value>Requisição de acesso não encontrada</value>
+  </data>
+  <data name="select_workflow" xml:space="preserve">
+    <value>Selecione o acesso</value>
+  </data>
+  <data name="type_description" xml:space="preserve">
+    <value>Digite a descrição</value>
+  </data>
+  <data name="wf_usercanceled" xml:space="preserve">
+    <value>Cancelado pelo usuário</value>
+  </data>
+  <data name="access_request_none" xml:space="preserve">
+    <value>Nenhuma requisição de acesso encontrada</value>
+  </data>
+  <data name="wf_revoked" xml:space="preserve">
+    <value>Revogado</value>
+  </data>
+  <data name="workflow_not_found" xml:space="preserve">
+    <value>Workflow não encontrado</value>
+  </data>
+  <data name="wf_delegation" xml:space="preserve">
+    <value>Delegação de acesso</value>
+  </data>
+  <data name="wf_rolegrant" xml:space="preserve">
+    <value>Vínculo com perfil</value>
+  </data>
+  <data name="wf_unlock" xml:space="preserve">
+    <value>Desbloqueio</value>
+  </data>
+  <data name="invalid_auth_service" xml:space="preserve">
+    <value>Serviço de autenticação inválido</value>
+  </data>
+  <data name="invalid_field_id" xml:space="preserve">
+    <value>ID do campo inválido</value>
+  </data>
+</root>

@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginInterface", "..\Common\PluginInterface\PluginInterface.csproj", "{CE03B658-5779-48BE-8C7E-107578ABE7AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginManager", "..\Common\PluginManager\PluginManager.csproj", "{E80D5CC1-95C7-4576-AB52-0BBA80FC81BF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CE03B658-5779-48BE-8C7E-107578ABE7AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE03B658-5779-48BE-8C7E-107578ABE7AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE03B658-5779-48BE-8C7E-107578ABE7AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE03B658-5779-48BE-8C7E-107578ABE7AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E80D5CC1-95C7-4576-AB52-0BBA80FC81BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E80D5CC1-95C7-4576-AB52-0BBA80FC81BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E80D5CC1-95C7-4576-AB52-0BBA80FC81BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E80D5CC1-95C7-4576-AB52-0BBA80FC81BF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

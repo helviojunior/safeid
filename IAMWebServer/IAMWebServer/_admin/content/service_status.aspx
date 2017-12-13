@@ -1,0 +1,2 @@
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="service_status.aspx.cs" Inherits="IAMWebServer._admin.content.service_status" %>
+<asp:PlaceHolder ID="Retorno" runat="server"></asp:PlaceHolder>

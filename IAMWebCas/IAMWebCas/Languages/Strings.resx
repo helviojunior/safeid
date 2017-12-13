@@ -1,0 +1,393 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ambiguous_id" xml:space="preserve">
+    <value>Ambiguous identifier detected</value>
+  </data>
+  <data name="api_error" xml:space="preserve">
+    <value>API Error</value>
+  </data>
+  <data name="cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="change_password" xml:space="preserve">
+    <value>Change password</value>
+  </data>
+  <data name="code" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="confirm_code" xml:space="preserve">
+    <value>Confirm code</value>
+  </data>
+  <data name="enter_code" xml:space="preserve">
+    <value>Enter sent code in the field below</value>
+  </data>
+  <data name="entity_not_found" xml:space="preserve">
+    <value>Entity not found</value>
+  </data>
+  <data name="fail" xml:space="preserve">
+    <value>Fail</value>
+  </data>
+  <data name="internal_error" xml:space="preserve">
+    <value>Internal error</value>
+  </data>
+  <data name="invalid_code" xml:space="preserve">
+    <value>Inválid code</value>
+  </data>
+  <data name="invalid_http_method" xml:space="preserve">
+    <value>Invalid http method</value>
+  </data>
+  <data name="invalid_method" xml:space="preserve">
+    <value>Invalid method</value>
+  </data>
+  <data name="invalid_session" xml:space="preserve">
+    <value>Invalid session, restart the process</value>
+  </data>
+  <data name="login_forgot" xml:space="preserve">
+    <value>Forgot your password?</value>
+  </data>
+  <data name="login_log" xml:space="preserve">
+    <value>Log in</value>
+  </data>
+  <data name="login_password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="login_recover_btn_recover" xml:space="preserve">
+    <value>Recover password</value>
+  </data>
+  <data name="login_recover_message" xml:space="preserve">
+    <value>Enter your username or email to reset your password</value>
+  </data>
+  <data name="login_recover_title" xml:space="preserve">
+    <value>Recover password</value>
+  </data>
+  <data name="login_user_name" xml:space="preserve">
+    <value>Username or email</value>
+  </data>
+  <data name="lowercase" xml:space="preserve">
+    <value>Lowercase Letters</value>
+  </data>
+  <data name="new_password" xml:space="preserve">
+    <value>New password</value>
+  </data>
+  <data name="new_password_confirm" xml:space="preserve">
+    <value>New password confirmation</value>
+  </data>
+  <data name="new_password_title" xml:space="preserve">
+    <value>Enter sent code in the field below</value>
+  </data>
+  <data name="numbers" xml:space="preserve">
+    <value>Numbers</value>
+  </data>
+  <data name="number_char" xml:space="preserve">
+    <value>Number of Characters</value>
+  </data>
+  <data name="ok" xml:space="preserve">
+    <value>Ok</value>
+  </data>
+  <data name="option_not_found" xml:space="preserve">
+    <value>Selected option not found</value>
+  </data>
+  <data name="or" xml:space="preserve">
+    <value>ou</value>
+  </data>
+  <data name="password_complexity" xml:space="preserve">
+    <value>Passwords must meet complexity requirements</value>
+  </data>
+  <data name="password_not_equal" xml:space="preserve">
+    <value>Password and Password confirmation are not equal</value>
+  </data>
+  <data name="password_strength" xml:space="preserve">
+    <value>Password Strength</value>
+  </data>
+  <data name="select_option" xml:space="preserve">
+    <value>Select a option</value>
+  </data>
+  <data name="send_code" xml:space="preserve">
+    <value>Send code</value>
+  </data>
+  <data name="send_conf_to" xml:space="preserve">
+    <value>Send the confirmation code to:</value>
+  </data>
+  <data name="symbols" xml:space="preserve">
+    <value>Symbols</value>
+  </data>
+  <data name="type_code" xml:space="preserve">
+    <value>Type the received code</value>
+  </data>
+  <data name="type_password" xml:space="preserve">
+    <value>Type the password</value>
+  </data>
+  <data name="type_password_confirm" xml:space="preserve">
+    <value>Type the password confirmation</value>
+  </data>
+  <data name="unknow" xml:space="preserve">
+    <value>Unknow</value>
+  </data>
+  <data name="uppercase" xml:space="preserve">
+    <value>Uppercase Letters</value>
+  </data>
+  <data name="valid_username" xml:space="preserve">
+    <value>Please enter a valid username or e-mail</value>
+  </data>
+  <data name="valid_username_pwd" xml:space="preserve">
+    <value>Please enter a valid username and password</value>
+  </data>
+  <data name="logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="system_login_list" xml:space="preserve">
+    <value>Access to systems</value>
+  </data>
+  <data name="password_changed_sucessfully" xml:space="preserve">
+    <value>Your password has been updated</value>
+  </data>
+  <data name="password_changed_text" xml:space="preserve">
+    <value>This process can take several minutes, please be patient. &lt;br /&gt;&lt;br /&gt; This window can be closed since this update occurs in the background.</value>
+  </data>
+  <data name="return_default" xml:space="preserve">
+    <value>Return</value>
+  </data>
+  <data name="user_locked" xml:space="preserve">
+    <value>User locked, contact system administrator</value>
+  </data>
+  <data name="not_implemented" xml:space="preserve">
+    <value>Function not yet implemented</value>
+  </data>
+  <data name="good" xml:space="preserve">
+    <value>Good</value>
+  </data>
+  <data name="strong" xml:space="preserve">
+    <value>Strong</value>
+  </data>
+  <data name="very_strong" xml:space="preserve">
+    <value>Very Strong</value>
+  </data>
+  <data name="very_weak" xml:space="preserve">
+    <value>Very Weak</value>
+  </data>
+  <data name="weak" xml:space="preserve">
+    <value>Weak</value>
+  </data>
+  <data name="expired_session" xml:space="preserve">
+    <value>Session has expired</value>
+  </data>
+  <data name="change_password_text" xml:space="preserve">
+    <value>To change your password fill in the fields below</value>
+  </data>
+  <data name="change_password_title" xml:space="preserve">
+    <value>Change password</value>
+  </data>
+  <data name="current_password" xml:space="preserve">
+    <value>Current  password</value>
+  </data>
+  <data name="current_password_invalid" xml:space="preserve">
+    <value>Invalid current password</value>
+  </data>
+  <data name="type_password_current" xml:space="preserve">
+    <value>Type the current password</value>
+  </data>
+  <data name="password_expired_text" xml:space="preserve">
+    <value>Your password has expired and must be changed</value>
+  </data>
+  <data name="close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="user_logged" xml:space="preserve">
+    <value>User logged from</value>
+  </data>
+  <data name="new_recovery_code" xml:space="preserve">
+    <value>New recovery code generated</value>
+  </data>
+  <data name="password_name_part" xml:space="preserve">
+    <value>The password should not contain your name as its part</value>
+  </data>
+  <data name="user_not_found" xml:space="preserve">
+    <value>User not found</value>
+  </data>
+  <data name="loading_mobile" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="invalid_module" xml:space="preserve">
+    <value>Invalid module</value>
+  </data>
+  <data name="log_not_found" xml:space="preserve">
+    <value>Log not found</value>
+  </data>
+  <data name="user_wrong_password" xml:space="preserve">
+    <value>Wrong password in logon</value>
+  </data>
+  <data name="entity" xml:space="preserve">
+    <value>Entity</value>
+  </data>
+  <data name="licensing" xml:space="preserve">
+    <value>Licensing</value>
+  </data>
+  <data name="licensing_total" xml:space="preserve">
+    <value>Total licenses</value>
+  </data>
+  <data name="locked" xml:space="preserve">
+    <value>Locked</value>
+  </data>
+  <data name="logged" xml:space="preserve">
+    <value>Performed login</value>
+  </data>
+  <data name="of" xml:space="preserve">
+    <value>of</value>
+  </data>
+  <data name="password_change" xml:space="preserve">
+    <value>Password change</value>
+  </data>
+  <data name="total" xml:space="preserve">
+    <value>total</value>
+  </data>
+  <data name="unlimited" xml:space="preserve">
+    <value>unlimited</value>
+  </data>
+  <data name="users" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="service_not_found" xml:space="preserve">
+    <value>Service not found</value>
+  </data>
+  <data name="invalid_ticket" xml:space="preserve">
+    <value>Invalid ticket</value>
+  </data>
+  <data name="service_invalid_uri" xml:space="preserve">
+    <value>Invalid service URI</value>
+  </data>
+  <data name="logout_text" xml:space="preserve">
+    <value>You have successfully logged out!</value>
+  </data>
+  <data name="logout_text_url" xml:space="preserve">
+    <value>The application you just logged out of has provided a link it would like you to follow. Please click here to access {0}</value>
+  </data>
+  <data name="service_not_permit_change_pwd" xml:space="preserve">
+    <value>This service does not allow change password, contact the system administrator.</value>
+  </data>
+  <data name="service_not_permit_recover_pwd" xml:space="preserve">
+    <value>This service does not allow recover password, contact the system administrator.</value>
+  </data>
+  <data name="user_email_list" xml:space="preserve">
+    <value>User e-mail list not found</value>
+  </data>
+</root>

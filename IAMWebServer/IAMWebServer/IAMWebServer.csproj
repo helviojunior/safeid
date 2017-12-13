@@ -1,0 +1,1112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{CB6E66EA-026B-4F43-8FCF-D1BA03A69803}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IAMWebServer</RootNamespace>
+    <AssemblyName>IAMWebServer</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+    <UseIISExpress>false</UseIISExpress>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="IAMCodeManager">
+      <HintPath>..\..\bin\IAMCodePlugins\IAMCodeManager.dll</HintPath>
+    </Reference>
+    <Reference Include="ManagedOpenSsl, Version=0.6.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Common\OpenSSL\ManagedOpenSsl.dll</HintPath>
+    </Reference>
+    <Reference Include="PluginInterface, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bin\IAMPluginsManager\PluginInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="PluginManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bin\IAMPluginsManager\PluginManager.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel.Web">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Web.Mobile" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\fonts\loglevel.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\animated-overlay.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\nav.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\num.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\ui-bg_flat_0_aaaaaa_40x100.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\ui-bg_flat_0_eeeeee_40x100.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\ui-bg_flat_55_ffffff_40x100.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\ui-bg_flat_75_ffffff_40x100.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\ui-bg_glass_65_ffffff_1x400.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\ui-bg_highlight-soft_100_f6f6f6_1x100.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\ui-bg_highlight-soft_25_0073ea_1x100.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\ui-bg_highlight-soft_50_dddddd_1x100.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\ui-icons_0073ea_256x240.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\ui-icons_454545_256x240.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\ui-icons_666666_256x240.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\ui-icons_ff0084_256x240.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\ui-icons_ffffff_256x240.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\jquery-ui-1.10.4.autocomplete.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="images\empty.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="js\jQuery-flowchart-1.0.js" />
+    <Content Include="js\jquery-fileDragDrop-1.0.js" />
+    <Content Include="js\jquery.fileupload.js" />
+    <Content Include="js\jquery.iframe-transport.js" />
+    <Content Include="js\jquery.maskedinput.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="js\jquery.tree.js" />
+    <Content Include="proxy\methods\fetch_result.aspx" />
+    <Content Include="proxy\methods\fetch.aspx" />
+    <Content Include="proxy\sync.aspx" />
+    <Content Include="wfTest.aspx" />
+    <Content Include="_admin\action\container.aspx" />
+    <Content Include="_admin\action\access_request.aspx" />
+    <Content Include="_admin\action\license.aspx" />
+    <Content Include="_admin\action\workflow.aspx" />
+    <Content Include="_admin\action\filter.aspx" />
+    <Content Include="_admin\action\system_roles.aspx" />
+    <Content Include="_admin\action\field.aspx" />
+    <Content Include="_admin\action\resource_plugin.aspx" />
+    <Content Include="_admin\action\resource.aspx" />
+    <Content Include="_admin\action\proxy.aspx" />
+    <Content Include="_admin\action\plugin.aspx" />
+    <Content Include="_admin\action\enterprise.aspx" />
+    <Content Include="_admin\chartdata.aspx" />
+    <Content Include="_admin\chartdata\flow.aspx" />
+    <Content Include="js\Chart.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="js\chosen.jquery.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="js\jquery-1.10.2.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="js\jquery-ui.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="js\jquery.appear.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="js\jquery.metadata.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="js\jquery.tablesorter.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="js\prism.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_admin\action\context.aspx" />
+    <Content Include="_admin\action\roles.aspx" />
+    <Content Include="_admin\content\container.aspx" />
+    <Content Include="_admin\content\context.aspx" />
+    <Content Include="_admin\content\configview.aspx" />
+    <Content Include="_admin\content\access_request.aspx" />
+    <Content Include="_admin\content\workflow.aspx" />
+    <Content Include="_admin\content\license.aspx" />
+    <Content Include="_admin\content\service_status.aspx" />
+    <Content Include="_admin\content\filter.aspx" />
+    <Content Include="_admin\content\system_roles.aspx" />
+    <Content Include="_admin\content\field.aspx" />
+    <Content Include="_admin\content\resource_plugin.aspx" />
+    <Content Include="_admin\content\resource.aspx" />
+    <Content Include="_admin\content\proxy.aspx" />
+    <Content Include="_admin\content\plugin.aspx" />
+    <Content Include="_admin\content\enterprise.aspx" />
+    <Content Include="_admin\content\roles.aspx" />
+    <Content Include="_admin\direct\proxy.aspx" />
+    <Content Include="_admin\module_direct.aspx" />
+    <Content Include="_autoservice\access_request.aspx" />
+    <Content Include="_autoservice\action\access_request.aspx" />
+    <Content Include="_autoservice\module_action.aspx" />
+    <Content Include="_autoservice\module_content.aspx" />
+    <Content Include="_login2\ChangePassword.aspx" />
+    <Content Include="_login2\Login.aspx" />
+    <Content Include="_login2\PasswordChanged.aspx" />
+    <Content Include="_login2\Recover.aspx" />
+    <Content Include="_login2\recover_st1.aspx" />
+    <Content Include="_login2\recover_st2.aspx" />
+    <Content Include="_login2\recover_st3.aspx" />
+    <Content Include="_login\login.aspx" />
+    <Content Include="_admin\action\users.aspx" />
+    <Content Include="_admin\content\logs.aspx" />
+    <Content Include="_admin\content\dashboard.aspx" />
+    <Content Include="_admin\content\users.aspx" />
+    <Content Include="_admin\module_action.aspx" />
+    <Content Include="_admin\module_content.aspx" />
+    <Content Include="ping.aspx" />
+    <Content Include="_admin\template.aspx" />
+    <Content Include="api\json.aspx" />
+    <Content Include="old_consoleapi\content\admin.aspx" />
+    <Content Include="old_consoleapi\content\profile_field.aspx" />
+    <Content Include="old_consoleapi\methods\changepassword.aspx" />
+    <Content Include="old_consoleapi\content\password.aspx" />
+    <Content Include="old_consoleapi\methods\changepassword2.aspx" />
+    <Content Include="old_consoleapi\methods\logout.aspx" />
+    <Content Include="old_consoleapi\methods\passwordstrength.aspx" />
+    <Content Include="old_consoleapi\methods\recover4.aspx" />
+    <Content Include="old_consoleapi\methods\recover3.aspx" />
+    <Content Include="old_consoleapi\methods\recover2.aspx" />
+    <Content Include="old_consoleapi\methods\recover1.aspx" />
+    <Content Include="old_consoleapi\methods\login.aspx" />
+    <Content Include="old_consoleapi\content\_profile.aspx" />
+    <Content Include="old_consoleapi\api.aspx" />
+    <Content Include="css\iam.ui.fonts.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\iam.ui.admin.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\iam.ui.aspx" />
+    <Content Include="css\fonts\icomoon.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\iam.ui.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\iam.ui.login.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\admin\diagonal_lines.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\admin\logo-mobile.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\admin\mobile-icons.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\admin\safetrend-logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\images\admin\search.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="favicon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="js\iam.ui.admin.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="js\Environment.aspx" />
+    <Content Include="js\iam.ui.aspx" />
+    <Content Include="_login\logout.aspx" />
+    <Content Include="Default.aspx" />
+    <Content Include="fonts\icomoon.dev.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="fonts\icomoon.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Global.asax" />
+    <Content Include="images\arrowLeft.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="images\busy.gif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="images\icons\exclamation.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="images\icons\information.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="images\login-tab.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="images\shadow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="js\jquery-1.10.2.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="js\jquery.blockUI.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="js\jquery.easing.1.3.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="js\jquery.mousewheel.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="proxy\api.aspx" />
+    <Content Include="proxy\methods\transfer_receive_ok.aspx" />
+    <Content Include="proxy\methods\transfer_receive.aspx" />
+    <Content Include="proxy\methods\transfer_send.aspx" />
+    <Content Include="proxy\methods\plugin_download.aspx" />
+    <Content Include="proxy\methods\proxy_config.aspx" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="_autoservice\empty.aspx" />
+    <Content Include="_autoservice\user.aspx" />
+    <Content Include="js\cas.ui.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_mail\mail.aspx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Common\LicenseCheck.cs">
+      <Link>App_Code\LicenseCheck.cs</Link>
+    </Compile>
+    <Compile Include="App_Code\CASUtils.cs" />
+    <Compile Include="App_Code\HashData.cs" />
+    <Compile Include="App_Code\JsonClasses.cs" />
+    <Compile Include="proxy\methods\fetch_result.aspx.cs">
+      <DependentUpon>fetch_result.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="proxy\methods\fetch_result.aspx.designer.cs">
+      <DependentUpon>fetch_result.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="proxy\methods\fetch.aspx.cs">
+      <DependentUpon>fetch.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="proxy\methods\fetch.aspx.designer.cs">
+      <DependentUpon>fetch.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="proxy\sync.aspx.cs">
+      <DependentUpon>sync.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="proxy\sync.aspx.designer.cs">
+      <DependentUpon>sync.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="wfTest.aspx.cs">
+      <DependentUpon>wfTest.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="wfTest.aspx.designer.cs">
+      <DependentUpon>wfTest.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\action\container.aspx.cs">
+      <DependentUpon>container.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\action\container.aspx.designer.cs">
+      <DependentUpon>container.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\action\access_request.aspx.cs">
+      <DependentUpon>access_request.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\action\access_request.aspx.designer.cs">
+      <DependentUpon>access_request.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\action\license.aspx.cs">
+      <DependentUpon>license.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\action\license.aspx.designer.cs">
+      <DependentUpon>license.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\action\workflow.aspx.cs">
+      <DependentUpon>workflow.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\action\workflow.aspx.designer.cs">
+      <DependentUpon>workflow.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\action\filter.aspx.cs">
+      <DependentUpon>filter.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\action\filter.aspx.designer.cs">
+      <DependentUpon>filter.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\action\system_roles.aspx.cs">
+      <DependentUpon>system_roles.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\action\system_roles.aspx.designer.cs">
+      <DependentUpon>system_roles.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\action\field.aspx.cs">
+      <DependentUpon>field.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\action\field.aspx.designer.cs">
+      <DependentUpon>field.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\action\resource_plugin.aspx.cs">
+      <DependentUpon>resource_plugin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\action\resource_plugin.aspx.designer.cs">
+      <DependentUpon>resource_plugin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\action\resource.aspx.cs">
+      <DependentUpon>resource.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\action\resource.aspx.designer.cs">
+      <DependentUpon>resource.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\action\proxy.aspx.cs">
+      <DependentUpon>proxy.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\action\proxy.aspx.designer.cs">
+      <DependentUpon>proxy.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\action\plugin.aspx.cs">
+      <DependentUpon>plugin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\action\plugin.aspx.designer.cs">
+      <DependentUpon>plugin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\action\enterprise.aspx.cs">
+      <DependentUpon>enterprise.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\action\enterprise.aspx.designer.cs">
+      <DependentUpon>enterprise.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\chartdata.aspx.cs">
+      <DependentUpon>chartdata.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\chartdata.aspx.designer.cs">
+      <DependentUpon>chartdata.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\chartdata\flow.aspx.cs">
+      <DependentUpon>flow.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\chartdata\flow.aspx.designer.cs">
+      <DependentUpon>flow.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\action\context.aspx.cs">
+      <DependentUpon>context.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\action\context.aspx.designer.cs">
+      <DependentUpon>context.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\action\roles.aspx.cs">
+      <DependentUpon>roles.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\action\roles.aspx.designer.cs">
+      <DependentUpon>roles.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\content\container.aspx.cs">
+      <DependentUpon>container.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\content\container.aspx.designer.cs">
+      <DependentUpon>container.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\content\context.aspx.cs">
+      <DependentUpon>context.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\content\context.aspx.designer.cs">
+      <DependentUpon>context.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\content\configview.aspx.cs">
+      <DependentUpon>configview.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\content\configview.aspx.designer.cs">
+      <DependentUpon>configview.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\content\access_request.aspx.cs">
+      <DependentUpon>access_request.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\content\access_request.aspx.designer.cs">
+      <DependentUpon>access_request.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\content\workflow.aspx.cs">
+      <DependentUpon>workflow.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\content\workflow.aspx.designer.cs">
+      <DependentUpon>workflow.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\content\license.aspx.cs">
+      <DependentUpon>license.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\content\license.aspx.designer.cs">
+      <DependentUpon>license.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\content\service_status.aspx.cs">
+      <DependentUpon>service_status.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\content\service_status.aspx.designer.cs">
+      <DependentUpon>service_status.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\content\filter.aspx.cs">
+      <DependentUpon>filter.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\content\filter.aspx.designer.cs">
+      <DependentUpon>filter.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\content\system_roles.aspx.cs">
+      <DependentUpon>system_roles.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\content\system_roles.aspx.designer.cs">
+      <DependentUpon>system_roles.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\content\field.aspx.cs">
+      <DependentUpon>field.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\content\field.aspx.designer.cs">
+      <DependentUpon>field.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\content\resource_plugin.aspx.cs">
+      <DependentUpon>resource_plugin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\content\resource_plugin.aspx.designer.cs">
+      <DependentUpon>resource_plugin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\content\resource.aspx.cs">
+      <DependentUpon>resource.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\content\resource.aspx.designer.cs">
+      <DependentUpon>resource.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\content\proxy.aspx.cs">
+      <DependentUpon>proxy.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\content\proxy.aspx.designer.cs">
+      <DependentUpon>proxy.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\content\plugin.aspx.cs">
+      <DependentUpon>plugin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\content\plugin.aspx.designer.cs">
+      <DependentUpon>plugin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\content\enterprise.aspx.cs">
+      <DependentUpon>enterprise.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\content\enterprise.aspx.designer.cs">
+      <DependentUpon>enterprise.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\content\roles.aspx.cs">
+      <DependentUpon>roles.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\content\roles.aspx.designer.cs">
+      <DependentUpon>roles.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\direct\proxy.aspx.cs">
+      <DependentUpon>proxy.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\direct\proxy.aspx.designer.cs">
+      <DependentUpon>proxy.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\module_direct.aspx.cs">
+      <DependentUpon>module_direct.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\module_direct.aspx.designer.cs">
+      <DependentUpon>module_direct.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_autoservice\access_request.aspx.cs">
+      <DependentUpon>access_request.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_autoservice\access_request.aspx.designer.cs">
+      <DependentUpon>access_request.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_autoservice\action\access_request.aspx.cs">
+      <DependentUpon>access_request.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_autoservice\action\access_request.aspx.designer.cs">
+      <DependentUpon>access_request.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_autoservice\module_action.aspx.cs">
+      <DependentUpon>module_action.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_autoservice\module_action.aspx.designer.cs">
+      <DependentUpon>module_action.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_autoservice\module_content.aspx.cs">
+      <DependentUpon>module_content.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_autoservice\module_content.aspx.designer.cs">
+      <DependentUpon>module_content.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_login2\ChangePassword.aspx.cs">
+      <DependentUpon>ChangePassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_login2\ChangePassword.aspx.designer.cs">
+      <DependentUpon>ChangePassword.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_login2\Login.aspx.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_login2\Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_login2\Login.Master.cs">
+      <DependentUpon>Login.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_login2\Login.Master.designer.cs">
+      <DependentUpon>Login.Master</DependentUpon>
+    </Compile>
+    <Compile Include="_login2\PasswordChanged.aspx.cs">
+      <DependentUpon>PasswordChanged.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_login2\PasswordChanged.aspx.designer.cs">
+      <DependentUpon>PasswordChanged.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_login2\Recover.aspx.cs">
+      <DependentUpon>Recover.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_login2\Recover.aspx.designer.cs">
+      <DependentUpon>Recover.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_login2\recover_st1.aspx.cs">
+      <DependentUpon>recover_st1.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_login2\recover_st1.aspx.designer.cs">
+      <DependentUpon>recover_st1.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_login2\recover_st2.aspx.cs">
+      <DependentUpon>recover_st2.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_login2\recover_st2.aspx.designer.cs">
+      <DependentUpon>recover_st2.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_login2\recover_st3.aspx.cs">
+      <DependentUpon>recover_st3.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_login2\recover_st3.aspx.designer.cs">
+      <DependentUpon>recover_st3.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_login\login.aspx.cs">
+      <DependentUpon>login.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_login\login.aspx.designer.cs">
+      <DependentUpon>login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\action\users.aspx.cs">
+      <DependentUpon>users.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\action\users.aspx.designer.cs">
+      <DependentUpon>users.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\Admin.Master.cs">
+      <DependentUpon>Admin.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\Admin.Master.designer.cs">
+      <DependentUpon>Admin.Master</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\content\logs.aspx.cs">
+      <DependentUpon>logs.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\content\logs.aspx.designer.cs">
+      <DependentUpon>logs.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\content\dashboard.aspx.cs">
+      <DependentUpon>dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\content\dashboard.aspx.designer.cs">
+      <DependentUpon>dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\content\users.aspx.cs">
+      <DependentUpon>users.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\content\users.aspx.designer.cs">
+      <DependentUpon>users.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\module_action.aspx.cs">
+      <DependentUpon>module_action.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\module_action.aspx.designer.cs">
+      <DependentUpon>module_action.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\module_content.aspx.cs">
+      <DependentUpon>module_content.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\module_content.aspx.designer.cs">
+      <DependentUpon>module_content.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ping.aspx.cs">
+      <DependentUpon>ping.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ping.aspx.designer.cs">
+      <DependentUpon>ping.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\template.aspx.cs">
+      <DependentUpon>template.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\template.aspx.designer.cs">
+      <DependentUpon>template.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="api\json.aspx.cs">
+      <DependentUpon>json.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="api\json.aspx.designer.cs">
+      <DependentUpon>json.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="App_Code\EnterpriseIdentify.cs" />
+    <Compile Include="App_Code\Login.cs" />
+    <Compile Include="App_Code\Minify.cs" />
+    <Compile Include="App_Code\Util.cs" />
+    <Compile Include="App_Code\WebJsonResponse.cs" />
+    <Compile Include="old_consoleapi\content\admin.aspx.cs">
+      <DependentUpon>admin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="old_consoleapi\content\admin.aspx.designer.cs">
+      <DependentUpon>admin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="old_consoleapi\content\profile_field.aspx.cs">
+      <DependentUpon>profile_field.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="old_consoleapi\content\profile_field.aspx.designer.cs">
+      <DependentUpon>profile_field.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="old_consoleapi\methods\changepassword.aspx.cs">
+      <DependentUpon>changepassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="old_consoleapi\methods\changepassword.aspx.designer.cs">
+      <DependentUpon>changepassword.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="old_consoleapi\content\password.aspx.cs">
+      <DependentUpon>password.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="old_consoleapi\content\password.aspx.designer.cs">
+      <DependentUpon>password.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="old_consoleapi\methods\changepassword2.aspx.cs">
+      <DependentUpon>changepassword2.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="old_consoleapi\methods\changepassword2.aspx.designer.cs">
+      <DependentUpon>changepassword2.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="old_consoleapi\methods\logout.aspx.cs">
+      <DependentUpon>logout.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="old_consoleapi\methods\logout.aspx.designer.cs">
+      <DependentUpon>logout.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="old_consoleapi\methods\passwordstrength.aspx.cs">
+      <DependentUpon>passwordstrength.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="old_consoleapi\methods\passwordstrength.aspx.designer.cs">
+      <DependentUpon>passwordstrength.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="old_consoleapi\methods\recover4.aspx.cs">
+      <DependentUpon>recover4.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="old_consoleapi\methods\recover4.aspx.designer.cs">
+      <DependentUpon>recover4.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="old_consoleapi\methods\recover3.aspx.cs">
+      <DependentUpon>recover3.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="old_consoleapi\methods\recover3.aspx.designer.cs">
+      <DependentUpon>recover3.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="old_consoleapi\methods\recover2.aspx.cs">
+      <DependentUpon>recover2.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="old_consoleapi\methods\recover2.aspx.designer.cs">
+      <DependentUpon>recover2.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="old_consoleapi\methods\recover1.aspx.cs">
+      <DependentUpon>recover1.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="old_consoleapi\methods\recover1.aspx.designer.cs">
+      <DependentUpon>recover1.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="old_consoleapi\methods\login.aspx.cs">
+      <DependentUpon>login.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="old_consoleapi\methods\login.aspx.designer.cs">
+      <DependentUpon>login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="old_consoleapi\content\_profile.aspx.cs">
+      <DependentUpon>_profile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="old_consoleapi\content\_profile.aspx.designer.cs">
+      <DependentUpon>_profile.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="old_consoleapi\api.aspx.cs">
+      <DependentUpon>api.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="old_consoleapi\api.aspx.designer.cs">
+      <DependentUpon>api.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="css\iam.ui.aspx.cs">
+      <DependentUpon>iam.ui.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="css\iam.ui.aspx.designer.cs">
+      <DependentUpon>iam.ui.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="js\Environment.aspx.cs">
+      <DependentUpon>Environment.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="js\Environment.aspx.designer.cs">
+      <DependentUpon>Environment.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="js\iam.ui.aspx.cs">
+      <DependentUpon>iam.ui.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="js\iam.ui.aspx.designer.cs">
+      <DependentUpon>iam.ui.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_login\logout.aspx.cs">
+      <DependentUpon>logout.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_login\logout.aspx.designer.cs">
+      <DependentUpon>logout.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Default.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="proxy\api.aspx.cs">
+      <DependentUpon>api.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="proxy\api.aspx.designer.cs">
+      <DependentUpon>api.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="proxy\methods\transfer_receive_ok.aspx.cs">
+      <DependentUpon>transfer_receive_ok.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="proxy\methods\transfer_receive_ok.aspx.designer.cs">
+      <DependentUpon>transfer_receive_ok.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="proxy\methods\transfer_receive.aspx.cs">
+      <DependentUpon>transfer_receive.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="proxy\methods\transfer_receive.aspx.designer.cs">
+      <DependentUpon>transfer_receive.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="proxy\methods\transfer_send.aspx.cs">
+      <DependentUpon>transfer_send.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="proxy\methods\transfer_send.aspx.designer.cs">
+      <DependentUpon>transfer_send.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="proxy\methods\plugin_download.aspx.cs">
+      <DependentUpon>plugin_download.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="proxy\methods\plugin_download.aspx.designer.cs">
+      <DependentUpon>plugin_download.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="proxy\methods\proxy_config.aspx.cs">
+      <DependentUpon>proxy_config.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="proxy\methods\proxy_config.aspx.designer.cs">
+      <DependentUpon>proxy_config.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_autoservice\autoservice.aspx.cs">
+      <DependentUpon>autoservice.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_autoservice\autoservice.aspx.designer.cs">
+      <DependentUpon>autoservice.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_autoservice\Autoservice.Master.cs">
+      <DependentUpon>Autoservice.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_autoservice\Autoservice.Master.designer.cs">
+      <DependentUpon>Autoservice.Master</DependentUpon>
+    </Compile>
+    <Compile Include="_autoservice\empty.aspx.cs">
+      <DependentUpon>empty.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_autoservice\empty.aspx.designer.cs">
+      <DependentUpon>empty.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_autoservice\user.aspx.cs">
+      <DependentUpon>user.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_autoservice\user.aspx.designer.cs">
+      <DependentUpon>user.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="App_Code\LMenu.cs" />
+    <Compile Include="_mail\mail.aspx.cs">
+      <DependentUpon>mail.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_mail\mail.aspx.designer.cs">
+      <DependentUpon>mail.aspx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="_autoservice\content\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Config\Config.csproj">
+      <Project>{6474B7CE-E794-4A86-9E24-D1B9CBACAB6D}</Project>
+      <Name>Config</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\DatabaseResource\DatabaseResource.csproj">
+      <Project>{7956F6F3-7EC7-4E56-BFA6-57A778A88844}</Project>
+      <Name>DatabaseResource</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Filters\Filters.csproj">
+      <Project>{C83BDB17-3325-4E28-B949-50BCD340E206}</Project>
+      <Name>Filters</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\GlobalDefs\IAMGlobalDefs.csproj">
+      <Project>{46F9802A-EF9A-49F3-8AD3-0B67A4C54701}</Project>
+      <Name>IAMGlobalDefs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\JsonBase\JsonBase.csproj">
+      <Project>{23B16B7E-4450-4738-B4FD-318D2FF528F0}</Project>
+      <Name>JsonBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\IAMWorkflow\IAMWorkflow.csproj">
+      <Project>{14DE77DA-06B1-4FBC-8ABA-1AD4101A4B5B}</Project>
+      <Name>IAMWorkflow</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\OpenSSL\OpenSSL.csproj">
+      <Project>{7432DC63-265B-4989-87ED-26CD44C67D41}</Project>
+      <Name>OpenSSL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\WebAPI\WebAPI.csproj">
+      <Project>{8721A9F2-996B-4086-992E-03018C77F852}</Project>
+      <Name>WebAPI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Zip\Zip.csproj">
+      <Project>{6AA8F3F3-D777-4690-B1D4-7FA8BACF145D}</Project>
+      <Name>Zip</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AuthPlugins\AuthPlugins.csproj">
+      <Project>{28B70468-44EC-4D90-ACD2-42CE34FB330E}</Project>
+      <Name>AuthPlugins</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HttpMultipartParser\HttpMultipartParser.csproj">
+      <Project>{4691988A-CE66-40CB-AFB4-2757255E03E0}</Project>
+      <Name>HttpMultipartParser</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IAMWebAPI\IAMWebAPI.csproj">
+      <Project>{8561F07B-1FB2-4E7A-BCD7-8B2597F8190A}</Project>
+      <Name>IAMWebAPI</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="js\jquery-1.10.2.min.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="_admin\Admin.Master" />
+    <Content Include="css\fonts\icomoon.eot">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\fonts\icomoon.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\fonts\icomoon.woff">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\fonts\loglevel.eot">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\fonts\loglevel.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="css\fonts\loglevel.woff">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="fonts\icomoon.eot">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="fonts\icomoon.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="fonts\icomoon.woff">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Content Include="_autoservice\autoservice.aspx" />
+    <Content Include="_autoservice\Autoservice.Master" />
+    <Content Include="_login2\Login.Master" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>44146</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

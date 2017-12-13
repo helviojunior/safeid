@@ -1,0 +1,50 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Autoservice.master.cs" Inherits="IAMWebServer._autoservice.MAutoservice" %>
+<%@ Import Namespace="System.Web.UI" %>
+<% if (Request.HttpMethod == "GET")
+   { %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <title></title>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    
+    <link href="<%=Session["ApplicationVirtualPath"]%>css/iam.ui.fonts.css" rel="stylesheet" type="text/css" />
+    <link href="<%=Session["ApplicationVirtualPath"]%>css/iam.ui.css" rel="stylesheet" type="text/css" />
+    <link href="<%=Session["ApplicationVirtualPath"]%>css/jquery-ui-1.10.4.autocomplete.css" rel="stylesheet" type="text/css" />
+    <link href="<%=Session["ApplicationVirtualPath"]%>css/iam.ui.login.css" rel="stylesheet" type="text/css" />
+    <link href="<%=Session["ApplicationVirtualPath"]%>css/iam.ui.admin.css" rel="stylesheet" type="text/css" />
+
+    <!--link href="<%=Session["ApplicationVirtualPath"]%>css/iam.ui.aspx" rel="stylesheet" type="text/css" /-->
+    <script src="<%=Session["ApplicationVirtualPath"]%>js/iam.ui.aspx" type="text/javascript"></script>
+
+    <asp:ContentPlaceHolder ID="head" runat="server"></asp:ContentPlaceHolder>
+</head>
+<body>
+    <header>
+        <div class="wrapper">
+            <div class="mOnly">
+                <h2 id="H1"><asp:ContentPlaceHolder ID="title" runat="server"></asp:ContentPlaceHolder></h2>
+            </div>
+            <h1 id="logo">SafeID - Gestão de identidades e acessos</h1>
+        </div>
+    </header>
+    <section id="titlebar" class="mOnly">
+        <asp:ContentPlaceHolder ID="titleContent" runat="server"></asp:ContentPlaceHolder>
+    </section>
+    <div id="content">
+        <asp:ContentPlaceHolder ID="content" runat="server"></asp:ContentPlaceHolder>
+    </div>
+    <div id="footer-bg" class="mOnly"><span class="footer-bgi"></span></div>
+    <div id="footer-wrap" class="mOnly">
+        <div class="logo"></div>
+        <ul>
+            <li class="btn <%=(l1 ? " selected " : "") %>" onclick="window.location = '<%=Session["ApplicationVirtualPath"]%>autoservice/';"><span class="content icon-home"></span></li>
+            <li class="btn <%=(l3 ? " selected " : "") %>" onclick="window.location = '<%=Session["ApplicationVirtualPath"]%>logout/';"><span class="content icon-exit2"></span></li>
+        </ul>
+    </div>
+</body>
+</html>
+<% }else{ %>
+<asp:ContentPlaceHolder ID="POSTContent" runat="server"></asp:ContentPlaceHolder>
+<% } %>

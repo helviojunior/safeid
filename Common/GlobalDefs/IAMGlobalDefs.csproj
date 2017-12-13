@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{46F9802A-EF9A-49F3-8AD3-0B67A4C54701}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IAM.GlobalDefs</RootNamespace>
+    <AssemblyName>IAMGlobalDefs</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\Common\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\bin\Common\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Tools.cs" />
+    <Compile Include="IAMDatabase.cs" />
+    <Compile Include="LogEnums.cs" />
+    <Compile Include="LoginResult.cs" />
+    <Compile Include="Messages\MessageSender.cs" />
+    <Compile Include="Messages\MessageBase.cs" />
+    <Compile Include="Messages\MessageBuilder.cs" />
+    <Compile Include="TimeAccess.cs" />
+    <Compile Include="EnterpriseData.cs" />
+    <Compile Include="GlobalJason.cs" />
+    <Compile Include="Languages\Strings.pt-BR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.pt-BR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="LockChecker.cs" />
+    <Compile Include="LoginData.cs" />
+    <Compile Include="MessageResource.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RoleChecker.cs" />
+    <Compile Include="RoleRuleItem.cs" />
+    <Compile Include="Schedule.cs" />
+    <Compile Include="Update\IAMDbUpdate.cs" />
+    <Compile Include="Update\SqlServer\S0029_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0028_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0027_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0026_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0025_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0024_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0023_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0022_S01_Data.cs" />
+    <Compile Include="Update\SqlServer\S0021_S01_Data.cs" />
+    <Compile Include="Update\SqlServer\S0020_S02_Data.cs" />
+    <Compile Include="Update\SqlServer\S0020_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0019_S02_Data.cs" />
+    <Compile Include="Update\SqlServer\S0019_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0018_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0017_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0016_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0015_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0014_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0012_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0013_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0011_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0010_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0009_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0007_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0006_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0005_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0004_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0003_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0002_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0001_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0001_S02_Data.cs" />
+    <Compile Include="Update\SqlServer\S0008_S01_Struct.cs" />
+    <Compile Include="Update\UpdateScriptRepository.cs" />
+    <Compile Include="WebApi\JsonData.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Languages\Strings.pt-BR.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>Strings.pt-BR.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Languages\Strings.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DatabaseResource\DatabaseResource.csproj">
+      <Project>{7956F6F3-7EC7-4E56-BFA6-57A778A88844}</Project>
+      <Name>DatabaseResource</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JsonBase\JsonBase.csproj">
+      <Project>{23B16B7E-4450-4738-B4FD-318D2FF528F0}</Project>
+      <Name>JsonBase</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EEF62F55-E8E6-48D4-9664-697505347E7F}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Test</RootNamespace>
+    <AssemblyName>Test</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\IAMPlugins\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\bin\IAMPlugins\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PluginInterface">
+      <HintPath>..\..\bin\IAMPluginsManager\PluginInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ActiveDirectory\ActiveDirectory.csproj">
+      <Project>{F23E2FE7-3777-4E4F-9A00-28BA8E29423B}</Project>
+      <Name>ActiveDirectory</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AkerAuthAgent\AkerAuthAgent.csproj">
+      <Project>{04A9FC99-BF56-4F88-9486-B6A18712DB8C}</Project>
+      <Name>AkerAuthAgent</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Akna\Akna.csproj">
+      <Project>{9664A631-D702-4CCC-AA34-1E19DFB73220}</Project>
+      <Name>Akna</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CPannelV2\CPanelV2.csproj">
+      <Project>{291D944B-A91B-4AD1-919A-D90CB7793EFF}</Project>
+      <Name>CPanelV2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\eCentryEmailManager\eCentryEmailManager.csproj">
+      <Project>{5B356769-3090-4185-8A06-2D548490B008}</Project>
+      <Name>eCentryEmailManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Excel\Excel.csproj">
+      <Project>{5B2B5506-EE0F-4A7E-916F-43728353ACC6}</Project>
+      <Name>Excel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GoogleAppsProvisioning\GoogleAdmin.csproj">
+      <Project>{A65F16F5-EEFB-4C78-A32E-88C41067D138}</Project>
+      <Name>GoogleAdmin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JiraAPIv2\JiraAPIv2.csproj">
+      <Project>{FA685413-0196-438E-8900-C00B192D971B}</Project>
+      <Name>JiraAPIv2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Linux\Linux.csproj">
+      <Project>{C61F576D-C56F-498C-B370-317B7790CF60}</Project>
+      <Name>Linux</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MsSQLServer\MsSQLServer.csproj">
+      <Project>{C9D94A90-9988-4806-8956-339F7534EEFA}</Project>
+      <Name>MsSQLServer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NCall\NCall.csproj">
+      <Project>{0D9C84D1-0BCE-40BF-BE5C-1EB7970D157F}</Project>
+      <Name>NCall</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Windows\Windows.csproj">
+      <Project>{F38A3CD4-1077-4C61-808B-C12D451D7AEC}</Project>
+      <Name>Windows</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Zabbix\Zabbix.csproj">
+      <Project>{542E33F9-CB92-444A-9315-09A0A095C1B2}</Project>
+      <Name>Zabbix</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

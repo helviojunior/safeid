@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7EFC217C-D2DB-4851-9B92-2941ACFCC554}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IAM.Proxy</RootNamespace>
+    <AssemblyName>IAMProxy</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\IAMProxy\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\bin\IAMProxy\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ManagedOpenSsl">
+      <HintPath>..\..\Common\OpenSSL\ManagedOpenSsl.dll</HintPath>
+    </Reference>
+    <Reference Include="PluginInterface">
+      <HintPath>..\..\bin\IAMPluginsManager\PluginInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="PluginManager">
+      <HintPath>..\..\bin\IAMPluginsManager\PluginManager.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Common\ParentProcessUtilities.cs">
+      <Link>ParentProcessUtilities.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common\UnhandledException.cs">
+      <Link>UnhandledException.cs</Link>
+    </Compile>
+    <Compile Include="IAMProxy.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="IAMProxy.designer.cs">
+      <DependentUpon>IAMProxy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IAMProxyInstaller.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="IAMProxyInstaller.designer.cs">
+      <DependentUpon>IAMProxyInstaller.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LocalConfig.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Proxy.cs" />
+    <Compile Include="Resource1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource1.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\DatabaseResource\DatabaseResource.csproj">
+      <Project>{7956F6F3-7EC7-4E56-BFA6-57A778A88844}</Project>
+      <Name>DatabaseResource</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Config\Config.csproj">
+      <Project>{6474B7CE-E794-4A86-9E24-D1B9CBACAB6D}</Project>
+      <Name>Config</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\GlobalDefs\IAMGlobalDefs.csproj">
+      <Project>{46F9802A-EF9A-49F3-8AD3-0B67A4C54701}</Project>
+      <Name>IAMGlobalDefs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\IAMLog\IAMLog.csproj">
+      <Project>{7C1F449A-8BCC-4E36-953D-C0D4F8FC5FF3}</Project>
+      <Name>IAMLog</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\JsonBase\JsonBase.csproj">
+      <Project>{23B16B7E-4450-4738-B4FD-318D2FF528F0}</Project>
+      <Name>JsonBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\OpenSSL\OpenSSL.csproj">
+      <Project>{7432DC63-265B-4989-87ED-26CD44C67D41}</Project>
+      <Name>OpenSSL</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resource1.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Certificates\IAMServerCertificateRoot.cer">
+      <Link>Resources\IAMServerCertificateRoot.cer</Link>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
