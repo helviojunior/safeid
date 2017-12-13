@@ -7,6 +7,14 @@ An complete solution to make an Identity Manager and Single Sign On
 
 Before continue this Read-me, please visit the website [Single-Sign-On](http://single-sign-on.com.br/en/), there i'm explanning everything that we need to know before use this application.
 
+** Trainning Videos (only in Portuguese)**
+* [YouTube Channel](https://www.youtube.com/user/safetrendsec/videos?sort=dd&view=0&shelf_id=0)
+* [Vídeo aula 01](https://www.youtube.com/watch?v=EXeOxjccfHc)
+* [Vídeo aula 02](https://www.youtube.com/watch?v=NPqp1yyuobc)
+* [Vídeo aula 03](https://www.youtube.com/watch?v=g_OFp5t19WU)
+* [Vídeo aula 04](https://www.youtube.com/watch?v=mGSEQwt62gs)
+* [Vídeo aula 05](https://www.youtube.com/watch?v=8t4yaiwAkCw)
+
 
 ## Getting Started
 
