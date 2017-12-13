@@ -65,7 +65,7 @@ Compiling CAS Web Server
 
 ```
 Open IAMWebCas\IAMWebCas.sln make sure that your are compiling at "Release mode" and run the Rebuild Solution.
-Right-click at IAMWebServer project and click on “Build Deployment Package”
+Right-click at IAMWebCas project and click on “Build Deployment Package”
 ```
 
 Compiling Identity Manager Web Console
