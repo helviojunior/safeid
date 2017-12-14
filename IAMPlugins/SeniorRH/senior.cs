@@ -254,14 +254,14 @@ namespace SeniorRH
 
                 //Busca o e-mail nas propriedades específicas desto usuário
                 foreach (PluginConnectorBasePackageData dt in package.entiyData)
-                    if (dt.dataName.ToLower() == "" && !String.IsNullOrEmpty(dt.dataValue.ToLower()))
+                    if (dt.dataName.ToLower() == "numcpf" && !String.IsNullOrEmpty(dt.dataValue.ToLower()))
                         cpf = dt.dataValue;
 
                 //Busca o e-mail nas propriedades específicas deste plugin
                 if ((cpf == null) || (cpf == ""))
                 {
                     foreach (PluginConnectorBasePackageData dt in package.pluginData)
-                        if (dt.dataName.ToLower() == "" && !String.IsNullOrEmpty(dt.dataValue.ToLower()))
+                        if (dt.dataName.ToLower() == "numcpf" && !String.IsNullOrEmpty(dt.dataValue.ToLower()))
                             cpf = dt.dataValue;
                 }
 
@@ -269,7 +269,7 @@ namespace SeniorRH
                 if ((cpf == null) || (cpf == ""))
                 {
                     foreach (PluginConnectorBasePackageData dt in package.ids)
-                        if (dt.dataName.ToLower() == "" && !String.IsNullOrEmpty(dt.dataValue.ToLower()))
+                        if (dt.dataName.ToLower() == "numcpf" && !String.IsNullOrEmpty(dt.dataValue.ToLower()))
                             cpf = dt.dataValue;
                 }
 
@@ -277,7 +277,7 @@ namespace SeniorRH
                 if ((cpf == null) || (cpf == ""))
                 {
                     foreach (PluginConnectorBasePackageData dt in package.properties)
-                        if (dt.dataName.ToLower() == "" && !String.IsNullOrEmpty(dt.dataValue.ToLower()))
+                        if (dt.dataName.ToLower() == "numcpf" && !String.IsNullOrEmpty(dt.dataValue.ToLower()))
                             cpf = dt.dataValue;
                 }
 
