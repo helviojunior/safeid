@@ -734,7 +734,8 @@ namespace IAM.WebAPI.Classes
 
                                     newItems.Add(p2);
                                     
-                                    log.Add("Condition inserted: group = " + g.GroupId + ", condition = " + f.ToString());                                }
+                                    log.Add("Condition inserted: group = " + g.GroupId + ", condition = " + f.ToString());  
+                                }
 
                             }
                         }

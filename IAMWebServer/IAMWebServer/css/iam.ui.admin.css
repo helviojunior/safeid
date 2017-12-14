@@ -2914,7 +2914,7 @@ table.inside tbody tr td input[type=checkbox] {
 #filter_conditions .filter-groups .filter table .col2 select { width: 190px; }
 #filter_conditions .filter-groups .filter table .col3{ width: 100%; }
 #filter_conditions .filter-groups .filter table .col3 input[type=text] { width: 100%; }
-#filter_conditions .filter-groups .filter table .col3 .dt-datetime input[type=text] { width: 48%; float: left; }
+#filter_conditions .filter-groups .filter table .col3 .dt-datetime input[type=text], #filter_conditions .filter-groups .filter table .col3 .dt-datetime .filter-now { width: 33%; float: left; }
 #filter_conditions .filter-groups .filter table .col3 .dt-datetime input[type=text]:last-child{  float: right; }
 #filter_conditions .filter-groups .filter table .col4{ width: 50px; float: right; text-align: right; padding-right: 0; }
 #filter_conditions .filter-groups .filter table .col4 .ico{ line-height: 30px; min-height: 30px;  }

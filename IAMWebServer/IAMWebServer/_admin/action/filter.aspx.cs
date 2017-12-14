@@ -373,10 +373,20 @@ namespace IAMWebServer._admin.action
                             break;
                         }
 
-                        DateTime dtValue = new DateTime(1970, 1, 1);
+                        String dtValue = "";
                         try
                         {
-                            dtValue = DateTime.Parse(Request.Form["filter_" + fid + "_text_date"].Split(",".ToCharArray())[0] + " " + Request.Form["filter_" + fid + "_text_time"].Split(",".ToCharArray())[0]);
+
+                            if (Request.Form["filter_" + fid + "_text_date"].Split(",".ToCharArray())[0].ToLower() == "now")
+                            {
+                                dtValue = "now";
+                            }
+                            else
+                            {
+
+                                DateTime tmp = DateTime.Parse(Request.Form["filter_" + fid + "_text_date"].Split(",".ToCharArray())[0] + " " + Request.Form["filter_" + fid + "_text_time"].Split(",".ToCharArray())[0]);
+                                dtValue = tmp.ToString("o");
+                            }
                         }
                         catch
                         {
@@ -389,7 +399,7 @@ namespace IAMWebServer._admin.action
                             if (c2 == ft.ToString().ToLower())
                                 condition = ft;
 
-                        newItem.AddCondition(fGroup, FilterSelector.AND, fieldData.field_id, "", DataType.DateTime, dtValue.ToString("o"), condition, filterSelector);
+                        newItem.AddCondition(fGroup, FilterSelector.AND, fieldData.field_id, "", DataType.DateTime, dtValue, condition, filterSelector);
 
                         break;
 

@@ -81,7 +81,7 @@ namespace IAMWebServer._admin.content
             if ((filterId > 0) && (area.ToLower() != "search"))
             {
 
-                
+
                 try
                 {
 
@@ -133,7 +133,7 @@ namespace IAMWebServer._admin.content
                     //ret = new WebJsonResponse("", MessageResource.GetMessage("api_error"), 3000, true);
                 }
 
-                
+
             }
 
             String infoTemplate = "<tr><td class=\"col1\">{0}</td><td class=\"col2\"><span class=\"no-edit\">{1}</span></td></tr>";
@@ -150,7 +150,7 @@ namespace IAMWebServer._admin.content
                 case "content":
                     if (newItem)
                     {
-                        
+
                         rData = SafeTrend.Json.JSON.Serialize2(new
                         {
                             jsonrpc = "1.0",
@@ -187,7 +187,7 @@ namespace IAMWebServer._admin.content
 
                         String filters = String.Format(filterTemplate, "F0", "0", "");
                         html += String.Format(groupTemplate, "0", filters, "");
-                        
+
                         html += "</div>";
 
                         html += "</div><div class=\"clear-block\"></div></div>";
@@ -307,8 +307,8 @@ namespace IAMWebServer._admin.content
                                 {
                                     foreach (FilterData f in ret2.result)
                                     {
-                                        
-                                        String text = "<span>"+ f.conditions_description +"</span>";
+
+                                        String text = "<span>" + f.conditions_description + "</span>";
 
                                         String links = "";
                                         links += "<a href=\"" + ApplicationVirtualPath + "admin/filter/" + f.filter_id + "/" + (Request.Form["hashtag"] != null ? "#" + Request.Form["hashtag"].ToString() : "") + "\"><div class=\"ico icon-change\">Editar</div></a>";
@@ -355,11 +355,11 @@ namespace IAMWebServer._admin.content
                             }
                             else
                             {
-                                
+
                                 switch (filter)
                                 {
                                     case "":
-                                        
+
                                         rData = SafeTrend.Json.JSON.Serialize2(new
                                         {
                                             jsonrpc = "1.0",
@@ -371,8 +371,8 @@ namespace IAMWebServer._admin.content
                                             id = 1
                                         });
                                         jData = "";
-                    using (IAMDatabase database = new IAMDatabase(IAMDatabase.GetWebConnectionString()))
-                        jData = WebPageAPI.ExecuteLocal(database, this, rData);
+                                        using (IAMDatabase database = new IAMDatabase(IAMDatabase.GetWebConnectionString()))
+                                            jData = WebPageAPI.ExecuteLocal(database, this, rData);
 
                                         List<FieldData> fieldList = new List<FieldData>();
                                         FieldListResult flR = JSON.Deserialize<FieldListResult>(jData);
@@ -383,7 +383,7 @@ namespace IAMWebServer._admin.content
 
 
                                         String filterTemplate = GetFilterTemplate(fieldList, 0, "", "");
-                                        
+
                                         html = "<h3>Edição do filtro</h3>";
                                         html += "<form id=\"form_add_role\" method=\"post\" action=\"" + ApplicationVirtualPath + "admin/filter/" + retFilter.result.info.filter_id + "/action/change/\">";
                                         html += "<div class=\"no-tabs fields\"><table><tbody>";
@@ -398,7 +398,7 @@ namespace IAMWebServer._admin.content
                                         foreach (IAM.GlobalDefs.WebApi.FilterCondition cond in retFilter.result.info.conditions)
                                             fr.AddCondition(cond.group_id.ToString(), cond.group_selector, cond.field_id, cond.field_name, cond.data_type, cond.text, cond.condition, cond.selector);
 
-                                        for(Int32 g = 0; g<fr.FilterGroups.Count;g++)
+                                        for (Int32 g = 0; g < fr.FilterGroups.Count; g++)
                                         {
                                             String filters = "";
 
@@ -585,7 +585,7 @@ namespace IAMWebServer._admin.content
                 case "buttonbox":
                     break;
 
-                
+
             }
 
             if (contentRet != null)
@@ -631,6 +631,28 @@ namespace IAMWebServer._admin.content
             js += "         addGroup();";
             js += "     });";
 
+            js += "     $('#filter_conditions .filter-now input[type=checkbox]').unbind('click');";
+            js += "     $('#filter_conditions .filter-now input[type=checkbox]').click(function(){";
+            js += "         var filter = $(this).closest('.filter');";
+            js += "         var fid = filter.attr('filter-id'); ";
+            js += "         if($(this).is(':checked')){";
+            js += "             var dateField = $('.date-mask', filter); ";
+            js += "             $(this).attr('default_val',dateField.val());";
+            js += "             $('.time-mask', filter).addClass('dt-off');";
+            js += "             dateField.addClass('dt-off');";
+            js += "             dateField.addClass('date-mask-off');";
+            js += "             dateField.removeClass('date-mask');";
+            js += "             dateField.val('now');";
+            js += "         }else{";
+            js += "             var dateField = $('.date-mask-off', filter); ";
+            js += "             $('.time-mask', filter).removeClass('dt-off');";
+            js += "             dateField.addClass('date-mask');";
+            js += "             dateField.removeClass('dt-off');";
+            js += "             dateField.removeClass('date-mask-off');";
+            js += "             dateField.val($(this).attr('default_val'));";
+            js += "             dateField.mask('99/99/9999'); ";
+            js += "         }";
+            js += "     });";
 
             js += "     $('#filter_conditions .filter-field').unbind('change');";
             js += "     $('#filter_conditions .filter-field').change(function(){";
@@ -641,7 +663,6 @@ namespace IAMWebServer._admin.content
             js += "             $('.dt-'+ dataType, filter).removeClass('dt-off');";
             js += "         });";
             js += "     });";
-
 
             js += "     $('#filter_conditions .filter .icon-plus').unbind('click');";
             js += "     $('#filter_conditions .filter .icon-plus').click(function(){";
@@ -702,7 +723,7 @@ namespace IAMWebServer._admin.content
             FilterConditionType txtCondition = FilterConditionType.Equal;
             FilterConditionType numCondition = FilterConditionType.Equal;
 
-            String filterTemplate = "<div id=\"{0}\"><input type=\"hidden\" name=\"filter_id\" value=\"{0}\" /><input type=\"hidden\" name=\"filter_{0}_group\" value=\"{1}\" /><div class=\"filter\"><table><tbody><tr><td class=\"col1\">";
+            String filterTemplate = "<div id=\"{0}\"><input type=\"hidden\" name=\"filter_id\" value=\"{0}\" /><input type=\"hidden\" name=\"filter_{0}_group\" value=\"{1}\" /><div class=\"filter\" filter-id=\"{0}\"><table><tbody><tr><td class=\"col1\">";
             filterTemplate += "<select class=\"filter-field\" id=\"filter_{0}_field_id\" name=\"filter_{0}_field_id\">";
             foreach (FieldData fd in fieldList)
             {
@@ -715,9 +736,16 @@ namespace IAMWebServer._admin.content
                         case "datetime":
                             try
                             {
-                                DateTime tmp = DateTime.Parse(fieldValue);
-                                dtValue = MessageResource.FormatDate(tmp, true);
-                                timeValue = MessageResource.FormatTime(tmp);
+                                if (fieldValue == "now")
+                                {
+                                    dtValue = "now";
+                                }
+                                else
+                                {
+                                    DateTime tmp = DateTime.Parse(fieldValue);
+                                    dtValue = MessageResource.FormatDate(tmp, true);
+                                    timeValue = MessageResource.FormatTime(tmp);
+                                }
                             }
                             catch { }
 
@@ -751,7 +779,7 @@ namespace IAMWebServer._admin.content
 
             filterTemplate += "<div class=\"dt-check dt-datetime " + (defaultDataType == "datetime" ? "" : "dt-off") + "\"><select name=\"filter_{0}_condition_datetime\">";
             foreach (FilterConditionType ft in IAM.Filters.FilterCondition.ConditionByDataType(DataType.DateTime))
-                filterTemplate += "<option value=\"" + ft.ToString().ToLower() + "\" "+ (dtCondition == ft ? "selected" : "") +">" + MessageResource.GetMessage(ft.ToString().ToLower(), ft.ToString()) + "</option>";
+                filterTemplate += "<option value=\"" + ft.ToString().ToLower() + "\" " + (dtCondition == ft ? "selected" : "") + ">" + MessageResource.GetMessage(ft.ToString().ToLower(), ft.ToString()) + "</option>";
             filterTemplate += "</select></div>";
             filterTemplate += "<div class=\"dt-check dt-numeric " + (defaultDataType == "numeric" ? "" : "dt-off") + "\"><select name=\"filter_{0}_condition_numeric\">";
             foreach (FilterConditionType ft in IAM.Filters.FilterCondition.ConditionByDataType(DataType.Numeric))
@@ -764,13 +792,13 @@ namespace IAMWebServer._admin.content
 
             filterTemplate += "</td><td class=\"col3\">";
 
-            filterTemplate += "<div class=\"dt-check dt-datetime " + (defaultDataType == "datetime" ? "" : "dt-off") + "\"><input class=\"date-mask\" name=\"filter_{0}_text_date\" type=\"text\" placeholder=\"Digite a data. Ex. dd/mm/yyyy\" value=\"" + dtValue + "\" /><input class=\"time-mask\" name=\"filter_{0}_text_time\" type=\"text\" placeholder=\"Digite a hora. Ex. hh:mm:ss\" value=\"" + timeValue + "\" /></div>";
+            filterTemplate += "<div class=\"dt-check dt-datetime " + (defaultDataType == "datetime" ? "" : "dt-off") + "\"><div display=\"block\" class=\"filter-now\"><input name=\"filter_{0}_now\" type=\"checkbox\" " + (dtValue == "now" ? "checked" : "") + " state=\"false\" />" + MessageResource.GetMessage("use_now", "Use Now() function") + "</div><input class=\"  " + (dtValue == "now" ? "dt-off date-mask-off" : "date-mask") + "\" name=\"filter_{0}_text_date\" type=\"text\" placeholder=\"Digite a data. Ex. dd/mm/yyyy\" value=\"" + dtValue + "\" /><input class=\"time-mask " + (dtValue == "now" ? "dt-off" : "") + "\" name=\"filter_{0}_text_time\" type=\"text\" placeholder=\"Digite a hora. Ex. hh:mm:ss\" value=\"" + timeValue + "\" /></div>";
             filterTemplate += "<div class=\"dt-check dt-numeric " + (defaultDataType == "numeric" ? "" : "dt-off") + "\"><input name=\"filter_{0}_text_numeric\" type=\"text\" placeholder=\"Digite o valor numérico\" value=\"" + numValue + "\" /></div>";
             filterTemplate += "<div class=\"dt-check dt-string " + (defaultDataType == "string" ? "" : "dt-off") + "\"><input name=\"filter_{0}_text_string\" type=\"text\" placeholder=\"Digite o texto\" value=\"" + txtValue + "\" /></div>";
 
             filterTemplate += "</td><td class=\"col4\"><div class=\"ico icon-close floatright\"></div><div class=\"ico icon-plus floatright\"></div></td></tr></tbody></table><div class=\"clear-block\"></div></div><div class=\"filter-selector-wrapper\">{2}</div></div>";
 
-            return filterTemplate;         
+            return filterTemplate;
         }
 
     }
