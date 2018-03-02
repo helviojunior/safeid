@@ -106,6 +106,7 @@ namespace IAM.PluginStarter
         private Boolean executing = false;
         private LogProxy logProxy;
         private Timer pluginsTimer;
+        private Int64 executionCount = 0;
 
         public Boolean Executing { get { return executing; } }
 
@@ -303,6 +304,14 @@ namespace IAM.PluginStarter
                             {
                                 TextLog.Log("PluginStarter", "{" + plugin.GetPluginId().AbsoluteUri + "} Error on import: " + ex.Message);
                             }
+                        }
+
+                        executionCount++;
+                        if (executionCount > 50)
+                        {
+                            executionCount = 0;
+                            TextLog.Log("PluginStarter", "{" + plugin.GetPluginId().AbsoluteUri + "} Cleaning up proccess");
+                            System.Diagnostics.Process.GetCurrentProcess().Kill();
                         }
 
                     }
