@@ -140,7 +140,6 @@
     <Content Include="proxy\methods\fetch_result.aspx" />
     <Content Include="proxy\methods\fetch.aspx" />
     <Content Include="proxy\sync.aspx" />
-    <Content Include="wfTest.aspx" />
     <Content Include="_admin\action\container.aspx" />
     <Content Include="_admin\action\access_request.aspx" />
     <Content Include="_admin\action\license.aspx" />
@@ -361,13 +360,6 @@
     </Compile>
     <Compile Include="proxy\sync.aspx.designer.cs">
       <DependentUpon>sync.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="wfTest.aspx.cs">
-      <DependentUpon>wfTest.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="wfTest.aspx.designer.cs">
-      <DependentUpon>wfTest.aspx</DependentUpon>
     </Compile>
     <Compile Include="_admin\action\container.aspx.cs">
       <DependentUpon>container.aspx</DependentUpon>

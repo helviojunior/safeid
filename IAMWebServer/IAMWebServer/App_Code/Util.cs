@@ -31,7 +31,7 @@ namespace Tools
     /// </summary>
     public class Tool
     {
-
+        
         public static void UpdateUri(Page page)
         {
             if (page.Session["Uri"] == null)
@@ -89,7 +89,7 @@ namespace Tools
         {
             System.Web.HttpContext context = System.Web.HttpContext.Current;
 
-            List<String> lIPAddress = new List<String>();
+            /*List<String> lIPAddress = new List<String>();
 
             if (!string.IsNullOrEmpty(context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"]))
             {
@@ -101,7 +101,24 @@ namespace Tools
                 lIPAddress.Add(context.Request.ServerVariables["REMOTE_ADDR"].Split(',')[0]);
             }
 
-            return String.Join(", ", lIPAddress);
+            return String.Join(", ", lIPAddress);*/
+
+
+            String ipAddress = context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+
+            if (!string.IsNullOrEmpty(ipAddress))
+            {
+                ipAddress += ",";
+
+                string[] addresses = ipAddress.Split(',');
+                if (addresses.Length != 0)
+                {
+                    return addresses[0];
+                }
+            }
+
+            return context.Request.ServerVariables["REMOTE_ADDR"];
+
         }
 
         public static Boolean IsMobile(MasterPage page)

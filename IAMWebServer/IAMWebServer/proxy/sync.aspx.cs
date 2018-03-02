@@ -85,7 +85,9 @@ namespace IAMWebServer.proxy
                             }
                             catch { }
 
-                            db.ExecuteNonQuery("update proxy set last_sync = getdate(), address = '" + Request.ServerVariables["REMOTE_ADDR"] + "', config = 0, version = '" + version + "' where id = " + config.proxyID, System.Data.CommandType.Text, null);
+                            
+
+                            db.ExecuteNonQuery("update proxy set last_sync = getdate(), address = '" + Tools.Tool.GetIPAddress() + "', config = 0, version = '" + version + "' where id = " + config.proxyID, System.Data.CommandType.Text, null);
                         }
                         else
                         {

@@ -36,7 +36,7 @@ namespace IAMWebServer.proxy.methods
                         config.server_pkcs12_cert = "";
                         config.client_cert = "";
 
-                        db.ExecuteNonQuery("update proxy set last_sync = getdate(), address = '" + Request.ServerVariables["REMOTE_ADDR"] + "', config = 0 where id = " + config.proxyID, System.Data.CommandType.Text, null);
+                        db.ExecuteNonQuery("update proxy set last_sync = getdate(), address = '" + Tools.Tool.GetIPAddress() + "', config = 0 where id = " + config.proxyID, System.Data.CommandType.Text, null);
                         ReturnHolder.Controls.Add(new LiteralControl(config.ToJsonString()));
                     }
                     else
