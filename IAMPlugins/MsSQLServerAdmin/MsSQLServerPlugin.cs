@@ -39,7 +39,7 @@ namespace MsSQLServerAdmin
 
             List<PluginConnectorConfigActions> conf = new List<PluginConnectorConfigActions>();
             //conf.Add(new PluginConnectorConfigActions("Executa Stored Procedure", "procedure", "Executa uma 'Stored procedure'", "Procedure", "procedure_name", "Procedure a ser executada", macro));
-            //conf.Add(new PluginConnectorConfigActions("Executa SQL", "sql", "Executa uma sql (não pode ser procedure)", "SQL", "sql", "Comando SQL a ser executado", macro));
+            conf.Add(new PluginConnectorConfigActions("Executa SQL", "sql", "Executa uma sql (não pode ser procedure)", "SQL", "sql", "Comando SQL a ser executado", macro));
 
             return conf.ToArray();
         }
@@ -349,8 +349,8 @@ namespace MsSQLServerAdmin
 
                 db.OnLog -= dbExecLog;
 
+
                 //Executa as ações do RBAC
-                /*
                 if ((package.pluginAction != null) && (package.pluginAction.Count > 0))
                 {
                     processLog.AppendLine("");
@@ -359,11 +359,6 @@ namespace MsSQLServerAdmin
                         {
                             switch (act.actionKey.ToLower())
                             {
-                                case "procedure":
-                                    String sql1 = act.actionValue.Replace("{login}", package.login).Replace("{full_name}", package.fullName.fullName);
-                                    db.ExecuteNonQuery(sql1, CommandType.StoredProcedure, null);
-                                    break;
-
                                 case "sql":
                                     String sql2 = act.actionValue.Replace("{login}", package.login).Replace("{full_name}", package.fullName.fullName);
                                     db.ExecuteNonQuery(sql2, CommandType.Text, null);
@@ -380,7 +375,7 @@ namespace MsSQLServerAdmin
                             processLog.AppendLine("Error on execute action (" + act.actionKey + "): " + ex.Message);
                             Log2(this, PluginLogType.Error, package.entityId, package.identityId, "Error on execute action (" + act.actionKey + "): " + ex.Message, "");
                         }
-                }*/
+                }
 
 
                 if (package.password != "")
