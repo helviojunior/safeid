@@ -604,6 +604,7 @@ namespace IAM.UserProcess
                 }
                 catch (Exception ex)
                 {
+
                     if (trans != null)
                         trans.Rollback();
 
@@ -630,11 +631,6 @@ namespace IAM.UserProcess
             catch (Exception ex)
             {
 
-                if (trans != null)
-                    trans.Rollback();
-
-                trans = null;
-
                 if (tmp != null)
                     tmp.Stop(dbAux.Connection, null);
 
@@ -654,31 +650,37 @@ namespace IAM.UserProcess
 
                     if (ex is SqlException)
                     {
-                        AddUserLog(db.Connection, LogKey.User_ImportError, null, "Engine", UserLogLevel.Error, 0, 0, 0, this.resourceId, this.pluginId, (userData != null ? userData.EntityId : 0), (userData != null ? userData.IdentityId : 0), ex.Message, SafeTrend.Json.JSON.Serialize2(new { import_id = importId, package_id = packageId, db_laet_error = LastDBError }));
+                        AddUserLog(dbAux.Connection, LogKey.User_ImportError, null, "Engine", UserLogLevel.Error, 0, 0, 0, this.resourceId, this.pluginId, (userData != null ? userData.EntityId : 0), (userData != null ? userData.IdentityId : 0), ex.Message, SafeTrend.Json.JSON.Serialize2(new { import_id = importId, package_id = packageId, db_laet_error = LastDBError }));
                     }
                     else
                     {
-                        AddUserLog(db.Connection, LogKey.User_ImportError, null, "Engine", UserLogLevel.Error, 0, 0, 0, this.resourceId, this.pluginId, (userData != null ? userData.EntityId : 0), (userData != null ? userData.IdentityId : 0), ex.Message, SafeTrend.Json.JSON.Serialize2(new { import_id = importId, package_id = packageId, trace_error = traceError }));
+                        AddUserLog(dbAux.Connection, LogKey.User_ImportError, null, "Engine", UserLogLevel.Error, 0, 0, 0, this.resourceId, this.pluginId, (userData != null ? userData.EntityId : 0), (userData != null ? userData.IdentityId : 0), ex.Message, SafeTrend.Json.JSON.Serialize2(new { import_id = importId, package_id = packageId, trace_error = traceError }));
                     }
                 }
 
-                ExecuteNonQuery(db.Connection, "update collector_imports set status = 'E' where status = 'F' and resource_plugin_id = '" + this.resourcePluginId + "' and  import_id = '" + this.importId + "' and package_id = '" + this.packageId + "'", CommandType.Text, null);
-                ExecuteNonQuery(db.Connection, "delete from collector_imports where status = 'E' and resource_plugin_id = '" + this.resourcePluginId + "' and  import_id = '" + this.importId + "' and package_id = '" + this.packageId + "'", CommandType.Text, null);
+                //Se o erro for de deadlock, mantem o registro na base para ser reprocessado
+                if ((ex is SqlException) && (ex.Message.IndexOf("deadlock") == -1))
+                {
+                    ExecuteNonQuery(dbAux.Connection, "update collector_imports set status = 'E' where status = 'F' and resource_plugin_id = '" + this.resourcePluginId + "' and  import_id = '" + this.importId + "' and package_id = '" + this.packageId + "'", CommandType.Text, null);
+                    ExecuteNonQuery(dbAux.Connection, "delete from collector_imports where status = 'E' and resource_plugin_id = '" + this.resourcePluginId + "' and  import_id = '" + this.importId + "' and package_id = '" + this.packageId + "'", CommandType.Text, null);
+                }
 
                 //Console.ReadLine();
 
                 //System.Diagnostics.Process.GetCurrentProcess().Kill();
                 //throw ex;
 
+
+                if (trans != null)
+                    trans.Rollback();
+
+                trans = null;
+
                 return RegistryProcessStatus.Error;
             }
             finally
             {
                 Log("End of registry processor");
-
-
-                if (filter != null) filter.Clear();
-                filter = null;
 
                 if (fieldsData != null) fieldsData.Clear();
                 fieldsData = null;

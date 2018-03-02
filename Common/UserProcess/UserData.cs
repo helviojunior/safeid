@@ -673,6 +673,15 @@ namespace IAM.UserProcess
             }
             catch(Exception ex) {
                 AddUserLog(conn, LogKey.User_Update, null, "Engine", UserLogLevel.Error, 0, 0, 0, this.resource, this.pluginId, this.EntityId, this.IdentityId, "Error update entity index", ex.Message, trans);
+                Log("Error update entity index: " + ex.Message);
+
+                //Se o erro for de deadlock, causa exception, pois este erro automaticamente causa o Rollback da transação
+                if ((ex is SqlException) && (ex.Message.IndexOf("deadlock") > -1))
+                {
+                    trans = null;
+                    throw ex;
+                }
+                
             }
 
             AddUserLog(conn,LogKey.User_Update, null, "Engine", UserLogLevel.Info, 0, 0, 0, this.resource, this.pluginId, this.EntityId, this.IdentityId, "Updating user in IAM Database", "", trans);
