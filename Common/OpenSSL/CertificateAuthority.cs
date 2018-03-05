@@ -284,7 +284,7 @@ namespace IAM.CA
 
                     RootCA = new X509CertificateAuthority(cert, cert.PrivateKey, new SimpleSerialNumber(1), cfg);
                 }
-                catch
+                catch(Exception ex)
                 {
                     RootCA = null;
                 }

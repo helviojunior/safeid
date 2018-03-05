@@ -50,6 +50,9 @@ namespace InstallConfig
             }
 
             //Verifica se existe um certificado de servidor para usar
+            //Desabilitado em 2018-03-05 (por erro de checagem de certificado por parte do proxy)
+            //O Instalador precisa sempre usar o mesmo certificado disponível em Certificates e vinculado a este executável
+            /*
             DataTable dt = db.ExecuteDataTable("select server_cert, server_pkcs12_cert from server_cert with(nolock)");
 
             if ((dt != null) && (dt.Rows.Count > 0)) //Existe certificado, então lê
@@ -80,7 +83,7 @@ namespace InstallConfig
                 }
                 catch { }
 
-            }
+            }*/
 
             //Creator creator = new Creator(db, "SafeID - Start enterprise", "demo.safeid.com.br", "pt-BR", "//login.safeid.com.br/cas/");
             Creator creator = new Creator(db, args[0], args[1], "pt-BR");

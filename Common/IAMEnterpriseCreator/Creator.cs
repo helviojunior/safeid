@@ -21,6 +21,7 @@ namespace IAM.EnterpriseCreator
         private String ServerPKCS12Cert;
         private String ServerCert;
         private String ClientPKCS12Cert;
+        private Boolean firstEnterprise = true;
 
         public Creator(IAMDatabase db, String name, String fqdn, String language)
         {
@@ -58,7 +59,12 @@ namespace IAM.EnterpriseCreator
         {
             //Cria os certificados digitais
 
-            EnterpriseKey ent = new EnterpriseKey(new Uri("//" + this.fqdn), this.name);
+            //firstEnterprise
+            Int64 enterpriseCount = db.ExecuteScalar<Int64>("select count(*) from [enterprise]", CommandType.Text, null, null);
+            if (enterpriseCount > 0)
+                firstEnterprise = false;
+
+            EnterpriseKey ent = new EnterpriseKey(new Uri("//" + this.fqdn), this.name, firstEnterprise);
             ent.BuildCerts(); //Cria os certificados
 
             this.ServerPKCS12Cert = ent.ServerPKCS12Cert;

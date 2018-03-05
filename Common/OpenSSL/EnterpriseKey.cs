@@ -18,7 +18,7 @@ namespace IAM.CA
         public String ServerPKCS12Cert { get; private set; }
         public String ServerCert { get; private set; }
 
-        public EnterpriseKey(Uri Uri, String Name)
+        public EnterpriseKey(Uri Uri, String Name, Boolean allowCreateNewServerCert = true)
         {
             this.dnsName = Uri.Host;
             this.name = Name;
@@ -29,7 +29,13 @@ namespace IAM.CA
             key = BitConverter.ToString(hash).Replace("-", "");
 
             ca = new CertificateAuthority(key);
-            ca.LoadOrCreateCA("IAMServerCertificateRoot.pfx", "IAM Server Certificate Root");
+            if (allowCreateNewServerCert)
+                ca.LoadOrCreateCA("IAMServerCertificateRoot.pfx", "IAM Server Certificate Root");
+            else
+                ca.LoadCA("IAMServerCertificateRoot.pfx");
+
+            if (ca.RootCA == null)
+                throw new Exception("Error loading/creating CA Cert");
 
         }
 
