@@ -656,6 +656,14 @@ namespace ActiveDirectory
 #if DEBUG
                 Log2(this, PluginLogType.Debug, package.entityId, package.identityId, "Container = " + ct.Path, "");
                 Log2(this, PluginLogType.Debug, package.entityId, package.identityId, "Find user? " + (res.Count > 0), "");
+
+                StringBuilder users = new StringBuilder();
+                users.AppendLine("User collection:");
+                foreach (SearchResult sr in res)
+                {
+                    users.AppendLine("\t" + sr.Path);
+                }
+
 #endif
 
                 if (res.Count == 0)
@@ -674,6 +682,8 @@ namespace ActiveDirectory
                 }
                 
                 user = res[0].GetDirectoryEntry();
+
+                processLog.AppendLine("User CN: " + user.Path);
 
                 try
                 {
