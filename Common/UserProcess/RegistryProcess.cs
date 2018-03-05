@@ -185,6 +185,10 @@ namespace IAM.UserProcess
                 Log("Starting registry processor");
                 Log("");
 
+                Log("Plugin Config");
+                Log(pluginConfig.ToString());
+                Log("");
+
                 Log("Registry data:");
                 Log("\tContext id: " + this.contextId);
                 Log("\tResource plugin id: " + this.resourcePluginId);
@@ -282,7 +286,6 @@ namespace IAM.UserProcess
                     Log("\t[" + f.Mapping.data_name.ToLower() + "] Flags (" + (f.Mapping.is_login ? "is_login " : "") + (f.Mapping.is_name ? "is_name " : "") + (f.Mapping.is_password ? "is_password " : "") + ") " + (f.Mapping.is_id ? "is ID" : (f.Mapping.is_unique_property ? "is Unique field" : "")) + " = " + (f.Mapping.is_password ? "*****" : f.Value));
                 Log("");
 
-
                 tmp.Stop(dbAux.Connection, null);
 
 
@@ -301,7 +304,7 @@ namespace IAM.UserProcess
                 userData.CheckUser();
 
                 tmp.Stop(dbAux.Connection, null);
-
+                
                 tmp = new TestTimer("Process->Check exists and import enabled", dLog);
 
                 //Não existe e não é possível adicionar
@@ -430,6 +433,11 @@ namespace IAM.UserProcess
 
                     //Cria o login
                     tmp = new TestTimer("Process->Add entity (MakeLogin)", dLog);
+
+                    //Define o campo de login com base nas informações recebidas
+                    foreach (UserDataFields f in fieldsData)
+                        if (f.Mapping.is_login && !String.IsNullOrEmpty(f.Value.ToString()) && !String.IsNullOrWhiteSpace(f.Value.ToString()))
+                            userData.Login = f.Value.ToString();
 
                     Log("Build login...");
                     userData.MakeLogin(pluginConfig.build_login, null);

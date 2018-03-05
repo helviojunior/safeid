@@ -240,6 +240,40 @@ namespace IAM.Config
             }
         }
 
+        public override string ToString()
+        {
+            String data = "";
+
+            data += "General: " + Environment.NewLine;
+            data += "\tURI: " + this.uri.ToString() + Environment.NewLine;
+            data += "\tAssembly: " + this.assembly.ToString() + Environment.NewLine;
+            data += "\tResource: " + this.resource.ToString() + Environment.NewLine;
+            data += "\tResource Plugin: " + this.resource_plugin.ToString() + Environment.NewLine;
+            data += "\tPlugin id: " + this.plugin_id.ToString() + Environment.NewLine;
+            data += "\tmail_domain: " + this.mail_domain.ToString() + Environment.NewLine;
+
+            data += "Import: " + Environment.NewLine;
+            data += "\tEnable import: " + this.enable_import.ToString() + Environment.NewLine;
+            data += "\tPermit add entity: " + this.permit_add_entity.ToString() + Environment.NewLine;
+            data += "\tBuild login: " + this.build_login.ToString() + Environment.NewLine;
+            data += "\tBuild mail: " + this.build_mail.ToString() + Environment.NewLine;
+            data += "\tImport groups: " + this.import_groups.ToString() + Environment.NewLine;
+            data += "\tImport containers: " + this.import_containers.ToString() + Environment.NewLine;
+
+
+            data += "Deploy: " + Environment.NewLine;
+            data += "\tEnable Deploy: " + this.enable_deploy.ToString() + Environment.NewLine;
+
+            data += "Fields: " + Environment.NewLine;
+            data += "\tName field id: " + this.name_field_id.ToString() + Environment.NewLine;
+            data += "\tMail field id: " + this.mail_field_id.ToString() + Environment.NewLine;
+            data += "\tLogin field id: " + this.login_field_id.ToString() + Environment.NewLine;
+
+            return data;
+        }
+
+
+
         public void Dispose()
         {
             this.uri = null;
