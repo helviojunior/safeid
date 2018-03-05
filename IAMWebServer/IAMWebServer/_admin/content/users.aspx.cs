@@ -188,7 +188,8 @@ namespace IAMWebServer._admin.content
                                 {
                                     html += "<div class=\"app-selector-containet\">";
                                     foreach (ResourcePluginFullData resourcePlugin in rpList.result)
-                                        html += String.Format(rpTemplate, resourcePlugin.info.resource_plugin_id, resourcePlugin.info.context_name + " - " + resourcePlugin.info.name);
+                                        if (resourcePlugin.info.permit_add_entity && resourcePlugin.info.enable_import)
+                                            html += String.Format(rpTemplate, resourcePlugin.info.resource_plugin_id, resourcePlugin.info.context_name + " - " + resourcePlugin.info.name);
 
                                     html += "</div>";
                                 }
