@@ -68,7 +68,7 @@ namespace IAMWebServer.proxy
                             DirectoryInfo outDir = null;
 
                             using (ServerDBConfig c = new ServerDBConfig(IAMDatabase.GetWebConnection()))
-                                outDir = new DirectoryInfo(Path.Combine(c.GetItem("outboundFiles"), config.proxy_name));
+                                outDir = new DirectoryInfo(Path.Combine(c.GetItem("outboundFiles"), config.proxyID + "_" + config.proxy_name));
 
                             if (!outDir.Exists)
                                 outDir.Create();

@@ -129,7 +129,7 @@ namespace IAM.Deploy
                     ProxyConfig config = new ProxyConfig(true);
                     config.GetDBCertConfig(db.Connection, Int64.Parse(dr["enterprise_id"].ToString()), dr["proxy_name"].ToString());
 
-                    DirectoryInfo proxyDir = new DirectoryInfo(Path.Combine(outDirBase.FullName, dr["proxy_name"].ToString() + "\\" + Path.GetFileNameWithoutExtension(dr["assembly"].ToString()) + "\\rp" + dr["resource_plugin_id"].ToString()));
+                    DirectoryInfo proxyDir = new DirectoryInfo(Path.Combine(outDirBase.FullName, dr["proxy_id"].ToString() + "_" + dr["proxy_name"].ToString() + "\\" + Path.GetFileNameWithoutExtension(dr["assembly"].ToString()) + "\\rp" + dr["resource_plugin_id"].ToString()));
 
                     List<PluginConnectorBaseDeployPackage> packageList = new List<PluginConnectorBaseDeployPackage>();
                     List<Int64> roles = new List<Int64>();
