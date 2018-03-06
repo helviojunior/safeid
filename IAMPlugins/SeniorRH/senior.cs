@@ -173,6 +173,9 @@ namespace SeniorRH
                 lastStep = "Resgata os colaboradores contratados nos ultimos 365 dias";
 
                 List<Dictionary<String, String>> users = api.GetUsers(dbgC);
+                
+                if (users == null)
+                    throw new Exception("User data is empty");
 
                 foreach (Dictionary<String, String> u in users)
                 {
@@ -315,6 +318,9 @@ namespace SeniorRH
 
                 List<Dictionary<String, String>> users = api.GetUserData(cpf);
 
+                if (users == null)
+                    throw new Exception("User data is empty");
+
                 foreach (Dictionary<String, String> u in users)
                 {
 
@@ -340,15 +346,18 @@ namespace SeniorRH
                 logType = PluginLogType.Error;
                 processLog.AppendLine("Error on process import (" + lastStep + "): " + ex.Message);
 
-                Log2(this, PluginLogType.Error, 0, 0, "Error on process import: " + ex.Message, "Last step: " + lastStep);
+                try
+                {
+                    Log2(this, PluginLogType.Error, package.entityId, package.identityId, "Error on process import after deploy: " + ex.Message, debugLog.ToString());
+                }
+                catch
+                {
+                    Log2(this, PluginLogType.Error, 0, 0, "Error on process import after deploy: " + ex.Message, debugLog.ToString());
+                }
             }
             finally
             {
 
-                if (logType != PluginLogType.Information)
-                    processLog.AppendLine(debugLog.ToString());
-
-                Log2(this, logType, 0, 0, "Import executed", processLog.ToString());
                 processLog.Clear();
                 processLog = null;
 
