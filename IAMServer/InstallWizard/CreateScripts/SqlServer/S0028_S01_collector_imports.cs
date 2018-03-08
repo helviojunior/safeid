@@ -19,7 +19,7 @@ namespace InstallWizard
 		                    [file_name] [varchar](500) NOT NULL,
 		                    [resource_plugin_id] [bigint] NOT NULL,
 		                    [import_id] [varchar](50) NOT NULL,
-		                    [package_id] [varchar](50) NOT NULL,
+		                    [package_id] [varchar](200) NOT NULL,
 		                    [package] [varchar](max) NOT NULL,
 		                    [status] [varchar](2) NOT NULL
 	                    ) ON [PRIMARY]
@@ -35,7 +35,7 @@ namespace InstallWizard
 		                    [file_name] [varchar](500) NOT NULL,
 		                    [resource_plugin_id] [bigint] NOT NULL,
 		                    [import_id] [varchar](50) NOT NULL,
-		                    [package_id] [varchar](50) NOT NULL,
+		                    [package_id] [varchar](200) NOT NULL,
 		                    [package] [varchar](max) NOT NULL,
 		                    [status] [varchar](2) NOT NULL
 	                    ) ON [PRIMARY]
