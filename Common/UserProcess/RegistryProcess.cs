@@ -667,7 +667,7 @@ namespace IAM.UserProcess
                 }
 
                 //Se o erro for de deadlock, mantem o registro na base para ser reprocessado
-                if ((ex is SqlException) && (ex.Message.IndexOf("deadlock") == -1))
+                if (!(ex is SqlException) || ((ex is SqlException) && (ex.Message.IndexOf("deadlock") == -1)))
                 {
                     ExecuteNonQuery(dbAux.Connection, "update collector_imports set status = 'E' where status = 'F' and resource_plugin_id = '" + this.resourcePluginId + "' and  import_id = '" + this.importId + "' and package_id = '" + this.packageId + "'", CommandType.Text, null);
                     ExecuteNonQuery(dbAux.Connection, "delete from collector_imports where status = 'E' and resource_plugin_id = '" + this.resourcePluginId + "' and  import_id = '" + this.importId + "' and package_id = '" + this.packageId + "'", CommandType.Text, null);

@@ -208,7 +208,8 @@ namespace IAM.UserProcess
 
                     if ((dtEntity.Rows[0]["password"] != DBNull.Value) && (!String.IsNullOrWhiteSpace(dtEntity.Rows[0]["password"].ToString())))
                     {
-                        using (CryptApi cApi = CryptApi.ParsePackage(this.enterpriseKey.ServerPKCS12Cert, Convert.FromBase64String(dtEntity.Rows[0]["password"].ToString().Trim())))
+                        using (EnterpriseKeyConfig sk = new EnterpriseKeyConfig(conn, this.enterpriseId))
+                        using (CryptApi cApi = CryptApi.ParsePackage(sk.ServerPKCS12Cert, Convert.FromBase64String(dtEntity.Rows[0]["password"].ToString().Trim())))
                             this.AtualPassword = Encoding.UTF8.GetString(cApi.clearData);
                     }
 
