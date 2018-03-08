@@ -5,6 +5,8 @@ using System.Data.SqlClient;
 using System.Text;
 using System.ComponentModel;
 using SafeTrend.Data;
+using System.Text.RegularExpressions;
+using System.Reflection;
 
 namespace SafeTrend.Data.SqlClient
 {
@@ -157,22 +159,78 @@ namespace SafeTrend.Data.SqlClient
             if ((transaction != null) && (!(transaction is SqlTransaction)))
                 throw new Exception("Transaction is not a SqlTransaction");
 
+
+
             if (transaction == null)
             {
                 using (SqlBulkCopy bulk = new SqlBulkCopy(connection))
                 {
-                    bulk.DestinationTableName = table;
-                    bulk.WriteToServer(source);
+                    try
+                    {
+                        bulk.DestinationTableName = table;
+                        bulk.WriteToServer(source);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex.Message.Contains("Received an invalid column length from the bcp client for colid"))
+                        {
+                            string pattern = @"\d+";
+                            Match match = Regex.Match(ex.Message.ToString(), pattern);
+                            var index = Convert.ToInt32(match.Value) - 1;
+
+                            FieldInfo fi = typeof(SqlBulkCopy).GetField("_sortedColumnMappings", BindingFlags.NonPublic | BindingFlags.Instance);
+                            var sortedColumns = fi.GetValue(bulk);
+                            var items = (Object[])sortedColumns.GetType().GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(sortedColumns);
+
+                            FieldInfo itemdata = items[index].GetType().GetField("_metadata", BindingFlags.NonPublic | BindingFlags.Instance);
+                            var metadata = itemdata.GetValue(items[index]);
+
+                            var column = metadata.GetType().GetField("column", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(metadata);
+                            var length = metadata.GetType().GetField("length", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(metadata);
+                            throw new Exception(String.Format("Column: {0} contains data with a length greater than: {1}", column, length));
+                        }
+
+                        throw;
+                    }
                 }
             }
             else
             {
                 using (SqlBulkCopy bulk = new SqlBulkCopy(connection, SqlBulkCopyOptions.Default, (SqlTransaction)transaction))
                 {
-                    bulk.DestinationTableName = table;
-                    bulk.WriteToServer(source);
+                    try
+                    {
+                        bulk.DestinationTableName = table;
+                        bulk.WriteToServer(source);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex.Message.Contains("Received an invalid column length from the bcp client for colid"))
+                        {
+                            string pattern = @"\d+";
+                            Match match = Regex.Match(ex.Message.ToString(), pattern);
+                            var index = Convert.ToInt32(match.Value) - 1;
+
+                            FieldInfo fi = typeof(SqlBulkCopy).GetField("_sortedColumnMappings", BindingFlags.NonPublic | BindingFlags.Instance);
+                            var sortedColumns = fi.GetValue(bulk);
+                            var items = (Object[])sortedColumns.GetType().GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(sortedColumns);
+
+                            FieldInfo itemdata = items[index].GetType().GetField("_metadata", BindingFlags.NonPublic | BindingFlags.Instance);
+                            var metadata = itemdata.GetValue(items[index]);
+
+                            var column = metadata.GetType().GetField("column", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(metadata);
+                            var length = metadata.GetType().GetField("length", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(metadata);
+                            throw new Exception(String.Format("Column: {0} contains data with a length greater than: {1}", column, length));
+                        }
+
+                        throw;
+                    }
                 }
             }
+
+
         }
 
 
