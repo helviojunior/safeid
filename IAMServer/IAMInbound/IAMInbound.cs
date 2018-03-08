@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics;
 using System.ServiceProcess;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Data.SqlClient;
 using System.IO;
@@ -20,7 +21,7 @@ using IAM.CA;
 using IAM.LocalConfig;
 using IAM.GlobalDefs;
 using SafeTrend.Json;
-
+using IAM.Queue;
 
 namespace IAM.Inbound
 {
@@ -35,6 +36,10 @@ namespace IAM.Inbound
         Boolean executing = false;
         private String last_status = "";
         private DateTime startTime = new DateTime(1970, 1, 1);
+        private Int32 filesToProcess = 0;
+        private Int32 filesProcessed = 0;
+
+        private QueueManager<FileInfo> fileQueue = null;
 
         public IAMInbound()
         {
@@ -114,11 +119,17 @@ namespace IAM.Inbound
              * Inicia timer que processa os arquivos
              */
 
+            Int32 maxThreads = 1;
+            if (maxThreads > 0)
+                maxThreads = localConfig.EngineMaxThreads;
+
+            this.fileQueue = new QueueManager<FileInfo>(maxThreads, ProcQueue);
+            this.fileQueue.Start();
+
             inboundTimer = new Timer(new TimerCallback(InboundTimer), null, 1000, 60000);
             statusTimer = new Timer(new TimerCallback(TmrServiceStatusCallback), null, 100, 10000);
 
         }
-
 
         private void TmrServiceStatusCallback(Object o)
         {
@@ -129,7 +140,14 @@ namespace IAM.Inbound
                 db.openDB();
                 db.Timeout = 600;
 
-                db.ServiceStatus("Inbound", JSON.Serialize2(new { host = Environment.MachineName, executing = executing, start_time = startTime.ToString("o"), last_status = last_status }), null);
+                Double percent = 0;
+
+                percent = ((Double)(filesProcessed) / (Double)filesToProcess) * 100F;
+
+                if (Double.IsNaN(percent) || Double.IsInfinity(percent))
+                    percent = 0;
+
+                db.ServiceStatus("Inbound", JSON.Serialize2(new { host = Environment.MachineName, executing = executing, start_time = startTime.ToString("o"), last_status = last_status, total_files = filesToProcess, processed_files = filesProcessed, percent = percent }), null);
 
                 db.closeDB();
             }
@@ -154,6 +172,9 @@ namespace IAM.Inbound
 
             startTime = DateTime.Now;
 
+            filesToProcess = 0;
+            filesProcessed = 0;
+
             try
             {
                 DirectoryInfo inDir = new DirectoryInfo(Path.Combine(basePath, "In"));
@@ -169,156 +190,23 @@ namespace IAM.Inbound
                 if (files.Length == 0)
                     return;
 
-                TextLog.Log("Inbound", "Starting inbound timer");
+                filesToProcess = files.Length;
 
+                TextLog.Log("Inbound", "Starting inbound timer");
                 try
                 {
-
-                    IAMDatabase db = new IAMDatabase(localConfig.SqlServer, localConfig.SqlDb, localConfig.SqlUsername, localConfig.SqlPassword);
-                    db.openDB();
-                    db.Timeout = 900;
-                    Boolean rebuildIndex = false;
-
-                    String type = "";
                     foreach (FileInfo f in files)
                     {
-                        type = "";
-                        JSONRequest req = null;
-                        try
-                        {
-                            using (FileStream fs = f.OpenRead())
-                                req = JSON.GetRequest(fs);
-
-                            if ((req.host == null) || (req.host == ""))
-                            {
-                                db.AddUserLog(LogKey.Inbound, null, "Inbound", UserLogLevel.Error, 0, 0, 0, 0, 0, 0, 0, "Paramter 'host' is empty on  " + f.Name);
-                                continue;
-                            }
-
-                            if ((req.enterpriseid == null) || (req.enterpriseid == ""))
-                            {
-                                db.AddUserLog(LogKey.Inbound, null, "Inbound", UserLogLevel.Error, 0, 0, 0, 0, 0, 0, 0, "Paramter 'enterpriseid' is empty on  " + f.Name);
-                                continue;
-                            }
-
-                            try
-                            {
-                                Int64 tst = Int64.Parse(req.enterpriseid);
-                            }
-                            catch
-                            {
-                                if ((req.enterpriseid == null) || (req.enterpriseid == ""))
-                                {
-                                    db.AddUserLog(LogKey.Inbound, null, "Inbound", UserLogLevel.Error, 0, 0, 0, 0, 0, 0, 0, "Paramter 'enterpriseid' is not Int64  " + f.Name);
-                                    continue;
-                                }
-                            }
-
-                            ProxyConfig config = new ProxyConfig(true);
-                            config.GetDBCertConfig(db.Connection, Int64.Parse(req.enterpriseid), req.host);
-
-                            if (config.fqdn != null) //Encontrou o proxy
-                            {
-                                JsonGeneric jData = new JsonGeneric();
-                                try
-                                {
-
-                                    String certPass = CATools.SHA1Checksum(Encoding.UTF8.GetBytes(config.fqdn));
-                                    using (CryptApi cApi = CryptApi.ParsePackage(CATools.LoadCert(Convert.FromBase64String(config.server_pkcs12_cert), certPass), Convert.FromBase64String(req.data)))
-                                        jData.FromJsonBytes(cApi.clearData);
-                                }
-                                catch (Exception ex)
-                                {
-                                    jData = null;
-                                    db.AddUserLog(LogKey.Inbound, null, "Inbound", UserLogLevel.Error, config.proxyID, 0, 0, 0, 0, 0, 0, "Error on decrypt package data " + f.Name + " for enterprise " + req.enterpriseid + " and proxy " + req.host + ", " + ex.Message);
-                                }
-
-                                if (jData == null)
-                                    continue;
-
-                                type = jData.function.ToLower();
-
-                                switch (jData.function.ToLower())
-                                {
-                                    case "processimport-disabled":
-                                        rebuildIndex = true;
-                                        ImportRegisters(config, jData, f, req, db);
-                                        f.Delete();
-                                        break;
-
-                                    case "processimportv2":
-                                        rebuildIndex = true;
-                                        last_status = "Executando importação de registros";
-                                        ImportRegistersV2(config, jData, f, req, db);
-                                        f.Delete();
-                                        break;
-
-                                    case "processstructimport":
-                                        last_status = "Executando importação de registros de estrutura";
-                                        ImportRegistersStruct(config, jData, f, req, db);
-                                        f.Delete();
-                                        break;
-
-                                    case "notify":
-                                        last_status = "Executando importação de notificações";
-                                        ImportNotify(config, jData, f, req, db);
-                                        
-                                        f.Delete();
-                                        break;
-
-                                    case "deleted":
-                                        last_status = "Executando importação de exclusões";
-                                        ImportDelete(config, jData, f, req, db);
-                                        f.Delete();
-                                        break;
-
-                                    case "logrecords":
-                                        last_status = "Executando importação de logs";
-                                        ImportLogs(config, jData, f, req, db);
-                                        f.Delete();
-                                        //f.MoveTo(f.FullName + ".imported");
-                                        break;
-
-                                    default:
-                                        db.AddUserLog(LogKey.Inbound, null, "Inbound", UserLogLevel.Error, config.proxyID, 0, 0, 0, 0, 0, 0, "Invalid jData function '" + jData.function + "'");
-                                        break;
-                                }
-
-                            }
-                            else
-                            {
-                                db.AddUserLog(LogKey.Inbound, null, "Inbound", UserLogLevel.Error, 0, 0, 0, 0, 0, 0, 0, "Proxy config not found for enterprise " + req.enterpriseid + " and proxy " + req.host);
-                            }
-                            config = null;
-
-                        }
-                        catch (Exception ex)
-                        {
-                            TextLog.Log("Inbound", "Erro on process file '" + f.Name + "' (" + type + "): " + ex.Message);
-                            db.AddUserLog(LogKey.Import, null, "Inbound", UserLogLevel.Info, 0, 0, 0, 0, 0, 0, 0, "Erro on process file '" + f.Name + "' (" + type + "): " + ex.Message);
-                        }
-                        finally
-                        {
-                            last_status = "";
-                            req = null;
-                        }
+                        this.fileQueue.AddItem(f);
                     }
 
-                    if (rebuildIndex)
-                    {
-                        db.Timeout = 900;
-                        last_status = "Reindexando registros";
-                        db.ExecuteNonQuery("sp_reindex_imports", CommandType.StoredProcedure, null);
-                    }
-
-                    db.closeDB();
+                    this.fileQueue.Wait();
 
                 }
                 finally
                 {
                     TextLog.Log("Inbound", "Finishing inbound timer");
                 }
-
             }
             catch (Exception ex)
             {
@@ -329,9 +217,176 @@ namespace IAM.Inbound
                 executing = false;
                 last_status = "";
                 startTime = new DateTime(1970, 1, 1);
+
+                filesToProcess = 0;
+                filesProcessed = 0;
+
             }
             
         }
+
+
+        private void ProcQueue(FileInfo f, Object oStarter)
+        {
+
+            IAMDatabase db = null;
+            try
+            {
+
+                db = new IAMDatabase(localConfig.SqlServer, localConfig.SqlDb, localConfig.SqlUsername, localConfig.SqlPassword);
+                db.openDB();
+                db.Timeout = 900;
+                Boolean rebuildIndex = false;
+
+                String type = "";
+
+                type = "";
+                JSONRequest req = null;
+                try
+                {
+                    using (FileStream fs = f.OpenRead())
+                        req = JSON.GetRequest(fs);
+
+                    if ((req.host == null) || (req.host == ""))
+                    {
+                        db.AddUserLog(LogKey.Inbound, null, "Inbound", UserLogLevel.Error, 0, 0, 0, 0, 0, 0, 0, "Paramter 'host' is empty on  " + f.Name);
+                        return;
+                    }
+
+                    if ((req.enterpriseid == null) || (req.enterpriseid == ""))
+                    {
+                        db.AddUserLog(LogKey.Inbound, null, "Inbound", UserLogLevel.Error, 0, 0, 0, 0, 0, 0, 0, "Paramter 'enterpriseid' is empty on  " + f.Name);
+                        return;
+                    }
+
+                    try
+                    {
+                        Int64 tst = Int64.Parse(req.enterpriseid);
+                    }
+                    catch
+                    {
+                        if ((req.enterpriseid == null) || (req.enterpriseid == ""))
+                        {
+                            db.AddUserLog(LogKey.Inbound, null, "Inbound", UserLogLevel.Error, 0, 0, 0, 0, 0, 0, 0, "Paramter 'enterpriseid' is not Int64  " + f.Name);
+                            return;
+                        }
+                    }
+
+                    ProxyConfig config = new ProxyConfig(true);
+                    config.GetDBCertConfig(db.Connection, Int64.Parse(req.enterpriseid), req.host);
+
+                    if (config.fqdn != null) //Encontrou o proxy
+                    {
+                        JsonGeneric jData = new JsonGeneric();
+                        try
+                        {
+
+                            String certPass = CATools.SHA1Checksum(Encoding.UTF8.GetBytes(config.fqdn));
+                            using (CryptApi cApi = CryptApi.ParsePackage(CATools.LoadCert(Convert.FromBase64String(config.server_pkcs12_cert), certPass), Convert.FromBase64String(req.data)))
+                                jData.FromJsonBytes(cApi.clearData);
+                        }
+                        catch (Exception ex)
+                        {
+                            jData = null;
+                            db.AddUserLog(LogKey.Inbound, null, "Inbound", UserLogLevel.Error, config.proxyID, 0, 0, 0, 0, 0, 0, "Error on decrypt package data " + f.Name + " for enterprise " + req.enterpriseid + " and proxy " + req.host + ", " + ex.Message);
+                        }
+
+                        if (jData == null)
+                            return;
+
+                        type = jData.function.ToLower();
+
+                        switch (jData.function.ToLower())
+                        {
+                            case "processimport-disabled":
+                                rebuildIndex = true;
+                                ImportRegisters(config, jData, f, req, db);
+                                f.Delete();
+                                break;
+
+                            case "processimportv2":
+                                rebuildIndex = true;
+                                last_status = "Executando importação de registros";
+                                ImportRegistersV2(config, jData, f, req, db);
+                                f.Delete();
+                                break;
+
+                            case "processstructimport":
+                                last_status = "Executando importação de registros de estrutura";
+                                ImportRegistersStruct(config, jData, f, req, db);
+                                f.Delete();
+                                break;
+
+                            case "notify":
+                                last_status = "Executando importação de notificações";
+                                ImportNotify(config, jData, f, req, db);
+
+                                f.Delete();
+                                break;
+
+                            case "deleted":
+                                last_status = "Executando importação de exclusões";
+                                ImportDelete(config, jData, f, req, db);
+                                f.Delete();
+                                break;
+
+                            case "logrecords":
+                                last_status = "Executando importação de logs";
+                                ImportLogs(config, jData, f, req, db);
+                                f.Delete();
+                                //f.MoveTo(f.FullName + ".imported");
+                                break;
+
+                            default:
+                                db.AddUserLog(LogKey.Inbound, null, "Inbound", UserLogLevel.Error, config.proxyID, 0, 0, 0, 0, 0, 0, "Invalid jData function '" + jData.function + "'");
+                                break;
+                        }
+
+                    }
+                    else
+                    {
+                        db.AddUserLog(LogKey.Inbound, null, "Inbound", UserLogLevel.Error, 0, 0, 0, 0, 0, 0, 0, "Proxy config not found for enterprise " + req.enterpriseid + " and proxy " + req.host);
+                    }
+                    config = null;
+
+                }
+                catch (Exception ex)
+                {
+                    TextLog.Log("Inbound", "Erro on process file '" + f.Name + "' (" + type + "): " + ex.Message);
+                    db.AddUserLog(LogKey.Import, null, "Inbound", UserLogLevel.Info, 0, 0, 0, 0, 0, 0, 0, "Erro on process file '" + f.Name + "' (" + type + "): " + ex.Message);
+                }
+                finally
+                {
+                    last_status = "";
+                    req = null;
+
+                    filesProcessed++;
+                }
+
+                /*
+                if (rebuildIndex)
+                {
+                    db.Timeout = 900;
+                    last_status = "Reindexando registros";
+                    db.ExecuteNonQuery("sp_reindex_imports", CommandType.StoredProcedure, null);
+                }*/
+
+
+
+            }
+            catch (Exception ex)
+            {
+                
+
+                TextLog.Log("Inbound", "Error importing file (" + f.Name + ")" + ex.Message);
+            }
+            finally
+            {
+                if (db != null)
+                    db.closeDB();
+            }
+        }
+
 
         private void ImportLogs(ProxyConfig config, JsonGeneric jData, FileInfo f, JSONRequest req, IAMDatabase db)
         {
@@ -415,9 +470,9 @@ namespace IAM.Inbound
             foreach (String[] dr in jData.data)
                 try
                 {
-                    Console.WriteLine(f.Name + " - " + dr[entityIdCol] + " ==> " + dr[textCol]);
-                    Console.WriteLine(dr[additionaldataCol]);
-                    Console.WriteLine("");
+                    //Console.WriteLine(f.Name + " - " + dr[entityIdCol] + " ==> " + dr[textCol]);
+                    //Console.WriteLine(dr[additionaldataCol]);
+                    //Console.WriteLine("");
                     dtBulk.Rows.Add(new Object[] { (dateCol >= 0 ? DateTime.Parse(dr[dateCol]) : date), dr[sourceCol], dr[keyCol], req.enterpriseid, req.host, 0, dr[uriCol], 0, Int64.Parse(dr[resourceCol]), Int64.Parse(dr[entityIdCol]), Int64.Parse(dr[identityIdCol]), dr[typeCol], dr[textCol], (additionaldataCol >= 0 ? dr[additionaldataCol] : "") });
                 }
                 catch (Exception ex)
@@ -432,9 +487,10 @@ namespace IAM.Inbound
 
 #if debug
             db.AddUserLog(LogKey.Import, null, "Inbound", UserLogLevel.Info, 0, 0, 0, 0, 0, 0, 0, "Imported " + dtBulk.Rows.Count + " logs for enterprise " + req.enterpriseid + " and proxy " + req.host + " from file " + f.Name);
+            TextLog.Log("Inbound", "\t[ImportLogs] Imported " + dtBulk.Rows.Count + " logs for enterprise " + req.enterpriseid + " and proxy " + req.host);
 #endif
 
-            TextLog.Log("Inbound", "\t[ImportLogs] Imported " + dtBulk.Rows.Count + " logs for enterprise " + req.enterpriseid + " and proxy " + req.host);
+
 
             dtBulk.Dispose();
             dtBulk = null;
@@ -495,7 +551,9 @@ namespace IAM.Inbound
 
             db.BulkCopy(dtBulk, "notify_imports");
 
+#if DEBUG
             TextLog.Log("Inbound", "\t[ImportNotify] Imported " + dtBulk.Rows.Count + " notify for enterprise " + req.enterpriseid + " and proxy " + req.host);
+#endif
 
             dtBulk.Dispose();
             dtBulk = null;
@@ -558,7 +616,9 @@ namespace IAM.Inbound
                 catch { }
             }
 
+#if DEBUG
             TextLog.Log("Inbound", "\t[ImportDelete] Changed " + jData.data.Count + " identities for deleted status in enterprise " + req.enterpriseid + " and proxy " + req.host);
+#endif
 
             jData = null;
 
@@ -653,8 +713,9 @@ namespace IAM.Inbound
             //Este processo será executado somente uma vez pelo objeto pai
             //db.ExecuteNonQuery("sp_reindex_imports", CommandType.StoredProcedure, null);
             
-
+#if DEBUG
             TextLog.Log("Inbound", "\t[ImportRegisters] Imported " + dtBulk.Rows.Count + " registers for enterprise " + req.enterpriseid + " and proxy " + req.host);
+#endif
 
             dtBulk.Dispose();
             dtBulk = null;
@@ -703,7 +764,9 @@ namespace IAM.Inbound
             //Isso avisa o sistema que estes registros estão livres para processamento
             db.ExecuteNonQuery("update collector_imports_struct set status = 'F' where [file_name] = '" + f.Name + "'", CommandType.Text, null);
 
+#if DEBUG
             TextLog.Log("Inbound", "\t[ImportStruct] Imported " + dtBulk.Rows.Count + " registers for enterprise " + req.enterpriseid + " and proxy " + req.host);
+#endif
 
             dtBulk.Dispose();
             dtBulk = null;
@@ -739,24 +802,28 @@ namespace IAM.Inbound
             dtBulk.Columns.Add(new DataColumn("import_id", typeof(String)));
             dtBulk.Columns.Add(new DataColumn("package_id", typeof(String)));
             dtBulk.Columns.Add(new DataColumn("package", typeof(String)));
+            dtBulk.Columns.Add(new DataColumn("status", typeof(String)));
 
             foreach (String[] dr in jData.data)
             {
                 PluginConnectorBaseImportPackageUser pkg = JSON.DeserializeFromBase64<PluginConnectorBaseImportPackageUser>(dr[pkgCol]);
-                dtBulk.Rows.Add(new Object[] { DateTime.Now, f.Name, dr[resourcePluginCol], pkg.importId, pkg.pkgId, JSON.Serialize2(pkg) });
+                dtBulk.Rows.Add(new Object[] { DateTime.Now, f.Name, dr[resourcePluginCol], pkg.importId, pkg.pkgId, JSON.Serialize2(pkg), 'F' });
             }
 
             db.BulkCopy(dtBulk, "collector_imports");
 
             //Atualiza os registros importados deste arquivo para liberar o processamento
             //Isso avisa o sistema que estes registros estão livres para processamento
-            db.ExecuteNonQuery("update collector_imports set status = 'F' where [file_name] = '" + f.Name + "'", CommandType.Text, null);
+            //*** Desabilitado essa funç~~ao em 2018-03-08, e colocado o registro para ser importado diretamente com o Status 'F'
+            //db.ExecuteNonQuery("update collector_imports set status = 'F' where [file_name] = '" + f.Name + "'", CommandType.Text, null);
 
             //Realiza o rebuild do indice desta tabela para agilizar no engine
             //Este processo será executado somente uma vez pelo objeto pai
             //db.ExecuteNonQuery("sp_reindex_imports", CommandType.StoredProcedure, null);
 
+#if DEBUG
             TextLog.Log("Inbound", "\t[ImportRegistersV2] Imported " + dtBulk.Rows.Count + " registers for enterprise " + req.enterpriseid + " and proxy " + req.host);
+#endif
 
             dtBulk.Dispose();
             dtBulk = null;
@@ -776,6 +843,10 @@ namespace IAM.Inbound
                 Console.WriteLine(text);
                 TextLog.Log("Inbound", text);
             }
+
+            if (this.fileQueue != null)
+                this.fileQueue.StopAndWait();
+
 
             Process.GetCurrentProcess().Kill();
         }
