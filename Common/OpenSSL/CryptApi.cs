@@ -7,6 +7,8 @@ using OpenSSL.Crypto;
 using OpenSSL.SSL;
 using OpenSSL.X509;
 using System.IO;
+using System.Runtime.ExceptionServices;
+using System.Security;
 
 namespace IAM.CA
 {
@@ -67,6 +69,8 @@ namespace IAM.CA
             encryptedKey = clearkey = null;
         }
 
+        [HandleProcessCorruptedStateExceptions]
+        [SecurityCritical]
         public static CryptApi ParsePackage(X509Certificate cert, Byte[] package)
         {
             using (MemoryStream ms = new MemoryStream(package))
