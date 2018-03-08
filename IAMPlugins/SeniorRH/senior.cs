@@ -242,7 +242,7 @@ namespace SeniorRH
                 debugLog.AppendLine(debug);
 
 #if DEBUG
-                Log2(this, PluginLogType.Debug, 0, 0, "JSON Debug message: " + data, debug);
+                Log2(this, PluginLogType.Debug, package.entityId, package.identityId, "JSON Debug message: " + data, debug);
 #endif
             });
 
@@ -316,7 +316,7 @@ namespace SeniorRH
 
                 lastStep = "Resgata informações do colaborador";
 
-                List<Dictionary<String, String>> users = api.GetUserData(cpf);
+                List<Dictionary<String, String>> users = api.GetUserData(cpf, dbgC);
 
                 if (users == null)
                     throw new Exception("User data is empty");
@@ -336,6 +336,12 @@ namespace SeniorRH
                             packageImp.AddProperty(key, u[key], "string");
                         }
                     }
+
+                    processLog.AppendLine("Import package generated:");
+                    processLog.AppendLine("\tImport ID: " + importID);
+                    processLog.AppendLine("\tPackage ID: " + packageImp.pkgId);
+                    processLog.AppendLine("");
+                    processLog.AppendLine(packageImp.ToString());
 
                     ImportPackageUser(packageImp);
                 }
@@ -357,6 +363,15 @@ namespace SeniorRH
             }
             finally
             {
+                
+#if DEBUG
+                processLog.AppendLine(debugLog.ToString());
+#else
+                if (logType != PluginLogType.Information)
+                    processLog.AppendLine(debugLog.ToString());
+#endif
+
+                Log2(this, logType, package.entityId, package.identityId, "Import executed", processLog.ToString());
 
                 processLog.Clear();
                 processLog = null;
