@@ -190,6 +190,7 @@ namespace IAM.UserProcess
                 Log("");
 
                 Log("Registry data:");
+                Log("\tGenerated Date: " + package.build_data);
                 Log("\tContext id: " + this.contextId);
                 Log("\tResource plugin id: " + this.resourcePluginId);
                 Log("\tResource id: " + this.resourceId);
