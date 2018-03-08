@@ -47,7 +47,7 @@ namespace IAM.Queue
                 {
                     for (Int32 i = 0; i < _queue.Length; i++)
                         if (_queue[i] != null)
-                            count ++;
+                            count++;
                 }
                 catch { }
                 return count;
@@ -63,7 +63,7 @@ namespace IAM.Queue
                 {
                     for (Int32 i = 0; i < _tList.Length; i++)
                         if (_tList[i] != null)
-                            count ++;
+                            count++;
                 }
                 catch { }
                 return count;
@@ -147,7 +147,8 @@ namespace IAM.Queue
         {
             Int32 cnt = 0;
             Int32 iQueue = _index;
-            lock(_queue){
+            lock (_queue)
+            {
                 do
                 {
                     _index++;
@@ -161,7 +162,7 @@ namespace IAM.Queue
                 throw new Exception("All queue objects is null");
 
             _queue[iQueue].Add(item);
-            
+
         }
 
         private void ProcQueue(Object oIndex)
