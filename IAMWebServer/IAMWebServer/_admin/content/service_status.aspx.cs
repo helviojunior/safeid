@@ -65,6 +65,21 @@ namespace IAMWebServer._admin.content
         }
 
         [Serializable()]
+        class ServiceStatusInbound : ServiceStatusBase
+        {
+
+            [OptionalField]
+            public Int64 total_files;
+
+            [OptionalField]
+            public Double percent;
+
+            [OptionalField]
+            public Int64 processed_files;
+
+        }
+
+        [Serializable()]
         class ServiceStatusDispatcher : ServiceStatusBase
         {
 
@@ -205,7 +220,7 @@ namespace IAMWebServer._admin.content
                                                 break;
 
                                             case "inbound":
-                                                ServiceStatusBase stI = JSON.Deserialize<ServiceStatusBase>(drS["additional_data"].ToString());
+                                                ServiceStatusInbound stI = JSON.Deserialize<ServiceStatusInbound>(drS["additional_data"].ToString());
                                                 if (stI.executing)
                                                 {
                                                     eStatus = "Processando importação";
@@ -214,10 +229,24 @@ namespace IAMWebServer._admin.content
                                                         eStatus = stI.last_status;
 
 
+                                                    //ePercent = stE.percent + "%";
+
+                                                    ePercent += "<div class=\"center\"><canvas id=\"inboundLockChart\" width=\"40\" height=\"40\"></canvas></div>";
+                                                    js += "iamadmin.buildPercentChart('#inboundLockChart'," + stI.percent + ",{strokeColor:'#e5e5e5',textColor:'#333',color:'#76c558',showText:true});";
+
+                                                    eInfo = "Total de arquivos: " + stI.total_files;
+                                                    eInfo += "<br />Processado: " + stI.processed_files;
+
                                                     try
                                                     {
                                                         DateTime dt1 = DateTime.Parse(stI.start_time);
                                                         eDate = MessageResource.FormatDate(dt1, false);
+
+                                                        //Tempo estimado para conclusão
+                                                        TimeSpan ts2 = DateTime.Now - dt1;
+                                                        Double calc = (ts2.TotalSeconds / (Double)stI.processed_files) * (Double)(stI.total_files - stI.processed_files);
+
+                                                        eInfo += "<br />Conclusão estimada: " + MessageResource.FormatTime(DateTime.Now.AddSeconds(calc));
                                                     }
                                                     catch { }
 
