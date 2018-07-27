@@ -90,6 +90,10 @@
       <Project>{0D9C84D1-0BCE-40BF-BE5C-1EB7970D157F}</Project>
       <Name>NCall</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SeniorRH\SeniorRH.csproj">
+      <Project>{D506BECB-4F8C-4AC6-8381-26ED9436A7C3}</Project>
+      <Name>SeniorRH</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Windows\Windows.csproj">
       <Project>{F38A3CD4-1077-4C61-808B-C12D451D7AEC}</Project>
       <Name>Windows</Name>

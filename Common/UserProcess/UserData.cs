@@ -134,8 +134,12 @@ namespace IAM.UserProcess
 
             String query = "select e.id, e.login, e.full_name, e.[password], e.locked, e.deleted, identity_id = isnull(i.id,0), ei.resource_plugin_id, block_inheritance = case when bi.identity_id is null then cast(0 as bit) else cast(1 as bit) end from entity e with(nolock) inner join [entity_keys] ei  with(nolock) on ei.entity_id = e.id left join [identity] i with(nolock) on e.id = i.entity_id and ei.identity_id = i.id left join identity_block_inheritance bi with(nolock) on bi.identity_id = i.id  where e.context_id = " + contextId + " and (" + String.Join(" or ", sql) + ")";
 
-            DataTable dtEntity = Select(this.conn, query);
+#if DEBUG
+            Log("Filtering user by: " + query);
+#endif
 
+            DataTable dtEntity = Select(this.conn, query);
+       
             if (dtEntity == null)
             {
                 Log("Erro on select user data: " + LastDBError);
@@ -143,6 +147,63 @@ namespace IAM.UserProcess
             }
 
             StringBuilder txtEntities = new StringBuilder();
+
+
+            Log("LastDBError: " + this.LastDBError);
+            txtEntities.AppendLine("LastDBError: " + this.LastDBError);
+            txtEntities.AppendLine("Filtering user by: " + query);
+     
+            //Checagem de integridade
+            if (dtEntity.Rows.Count == 0)
+            {
+                String check = "select distinct i.entity_id from identity_field ei with(nolock)  inner join [identity] i with(nolock)  on i.id = ei.identity_id where (" + String.Join(" or ", sql) + ")";
+                DataTable dtCheck = Select(this.conn, check);
+                if ((dtCheck != null) && (dtCheck.Rows.Count > 0))
+                {
+                    txtEntities.AppendLine("Integrity check found entity key error, trying to fix");
+
+                    foreach (DataRow drC in dtCheck.Rows)
+                    {
+
+                        txtEntities.AppendLine("Executing entity keys index update of entity " + drC["entity_id"]);
+                        try
+                        {
+                            DbParameterCollection par2 = new DbParameterCollection();
+                            par2.Add("@entity_id", typeof(Int64)).Value = drC["entity_id"];
+
+                            ExecuteNonQuery(conn, "sp_rebuild_entity_keys2", CommandType.StoredProcedure, par2, null);
+
+                            txtEntities.AppendLine("Reindex executed with sucess of entity " + drC["entity_id"]);
+                        }
+                        catch (Exception ex)
+                        {
+                            AddUserLog(conn, LogKey.User_Update, null, "Engine", UserLogLevel.Error, 0, 0, 0, this.resource, this.pluginId, this.EntityId, this.IdentityId, "Error update entity index", ex.Message, null);
+                            txtEntities.AppendLine("Error update entity index: " + ex.Message);
+
+                            //Se o erro for de deadlock, causa exception, pois este erro automaticamente causa o Rollback da transação
+                            if ((ex is SqlException) && (ex.Message.IndexOf("deadlock") > -1))
+                            {
+                                throw ex;
+                            }
+
+                        }
+
+                    }
+
+                    //Requering
+                    dtEntity = Select(this.conn, query);
+
+                    if (dtEntity == null)
+                    {
+                        Log("Erro on select user data: " + LastDBError);
+                        throw new Exception("Erro on select user data", new Exception(LastDBError));
+                    }
+
+
+                }
+            }
+
+
             Log("");
             Log("Found " + dtEntity.Rows.Count + " entity/identy:");
             txtEntities.AppendLine("Found " + dtEntity.Rows.Count + " entity/identy:");
@@ -179,6 +240,8 @@ namespace IAM.UserProcess
 
                 Log("");
                 Log(errorLog);
+
+                AddUserLog(conn, LogKey.Dencrypt_Error, null, "Engine", UserLogLevel.Warning, 0, 0, 0, 0, 0, 0, 0, errorLog, txtEntities.ToString());
 
                 throw new Exception(errorLog);
             }

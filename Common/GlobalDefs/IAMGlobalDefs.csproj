@@ -67,6 +67,8 @@
     <Compile Include="RoleRuleItem.cs" />
     <Compile Include="Schedule.cs" />
     <Compile Include="Update\IAMDbUpdate.cs" />
+    <Compile Include="Update\SqlServer\S0031_S01_Struct.cs" />
+    <Compile Include="Update\SqlServer\S0030_S01_Struct.cs" />
     <Compile Include="Update\SqlServer\S0029_S01_Struct.cs" />
     <Compile Include="Update\SqlServer\S0028_S01_Struct.cs" />
     <Compile Include="Update\SqlServer\S0027_S01_Struct.cs" />

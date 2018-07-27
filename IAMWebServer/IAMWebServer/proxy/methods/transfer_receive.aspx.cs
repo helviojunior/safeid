@@ -12,6 +12,7 @@ using System.Text;
 using System.IO;
 using System.Data.SqlClient;
 using IAM.GlobalDefs;
+using SafeTrend.Data;
 
 namespace IAMWebServer.proxy.methods
 {
@@ -62,6 +63,26 @@ namespace IAMWebServer.proxy.methods
                                     Byte[] fData = File.ReadAllBytes(fName.FullName);
 
                                     ReturnHolder.Controls.Add(new LiteralControl(JSON.GetResponse(true, "", Convert.ToBase64String(fData))));
+
+
+                                    try
+                                    {
+
+                                        DbParameterCollection par = new DbParameterCollection();
+                                        par.Add("@filename", typeof(String)).Value = fName.FullName;
+
+                                        Int64 packageTrackId = database.ExecuteScalar<Int64>("select id from st_package_track where flow = 'deploy' filename = @filename", System.Data.CommandType.Text, par, null);
+
+                                        par = new DbParameterCollection();
+                                        par.Add("@package_id", typeof(Int64)).Value = packageTrackId;
+                                        par.Add("@source", typeof(String)).Value = "proxy";
+                                        par.Add("@text", typeof(String)).Value = "Proxy Downloaded file from IP " + Tools.Tool.GetIPAddress();
+
+                                        database.ExecuteNonQuery("insert into st_package_track_history ([package_id] ,[source] ,[text]) values (@package_id ,@source ,@text)", System.Data.CommandType.Text, par, null);
+
+                                    }
+                                    catch { }
+
                                 }
                                 catch (Exception ex)
                                 {

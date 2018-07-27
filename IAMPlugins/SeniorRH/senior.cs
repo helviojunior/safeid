@@ -12,15 +12,15 @@ using SafeTrend.Xml;
 namespace SeniorRH
 {
 
-    public class AknaPlugin : PluginConnectorBase
+    public class SeniorPlugin : PluginConnectorBase
     {
 
-        public override String GetPluginName() { return "Senior RH V1.0 Plugin"; }
-        public override String GetPluginDescription() { return "Plugin para integragir Senior API Beta"; }
+        public override String GetPluginName() { return "Senior RH V1.0 Plugin (Debug)"; }
+        public override String GetPluginDescription() { return "Plugin para integragir Senior API Beta (Em debug, nao usar)"; }
 
         public override Uri GetPluginId()
         {
-            return new Uri("connector://iam/plugins/seniorrh");
+            return new Uri("connector://iam/plugins/seniorrhdebug");
         }
 
         public override PluginConfigFields[] GetConfigFields()
@@ -325,25 +325,39 @@ namespace SeniorRH
                 {
 
                     PluginConnectorBaseImportPackageUser packageImp = new PluginConnectorBaseImportPackageUser(importID);
-                    foreach (String key in u.Keys)
+                    try
                     {
-                        if (key.ToLower() == "numcpf")
+                        foreach (String key in u.Keys)
                         {
-                            packageImp.AddProperty(key, u[key].Replace("-", "").Replace(".", "").Replace(" ", ""), "string");
+                            if (key.ToLower() == "numcpf")
+                            {
+                                packageImp.AddProperty(key, u[key].Replace("-", "").Replace(".", "").Replace(" ", ""), "string");
+                            }
+                            else
+                            {
+                                packageImp.AddProperty(key, u[key], "string");
+                            }
                         }
-                        else
-                        {
-                            packageImp.AddProperty(key, u[key], "string");
-                        }
+
+                        processLog.AppendLine("Import package generated:");
+                        processLog.AppendLine("\tImport ID: " + importID);
+                        processLog.AppendLine("\tPackage ID: " + packageImp.pkgId);
+                        processLog.AppendLine("");
+                        processLog.AppendLine(packageImp.ToString());
+
+                        ImportPackageUser(packageImp);
                     }
+                    catch (Exception ex2)
+                    {
 
-                    processLog.AppendLine("Import package generated:");
-                    processLog.AppendLine("\tImport ID: " + importID);
-                    processLog.AppendLine("\tPackage ID: " + packageImp.pkgId);
-                    processLog.AppendLine("");
-                    processLog.AppendLine(packageImp.ToString());
+                        processLog.AppendLine("Import package generated:");
+                        processLog.AppendLine("\tImport ID: " + importID);
+                        processLog.AppendLine("\tPackage ID: " + packageImp.pkgId);
+                        processLog.AppendLine("");
 
-                    ImportPackageUser(packageImp);
+                        processLog.AppendLine(packageImp.ToString());
+
+                    }
                 }
 
             }

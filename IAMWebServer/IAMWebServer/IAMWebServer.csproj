@@ -198,6 +198,7 @@
     <Content Include="_admin\content\roles.aspx" />
     <Content Include="_admin\direct\proxy.aspx" />
     <Content Include="_admin\module_direct.aspx" />
+    <Content Include="_admin\_ws\ws.aspx" />
     <Content Include="_autoservice\access_request.aspx" />
     <Content Include="_autoservice\action\access_request.aspx" />
     <Content Include="_autoservice\module_action.aspx" />
@@ -338,6 +339,7 @@
       <Link>App_Code\LicenseCheck.cs</Link>
     </Compile>
     <Compile Include="App_Code\CASUtils.cs" />
+    <Compile Include="App_Code\CSharpShell.cs" />
     <Compile Include="App_Code\HashData.cs" />
     <Compile Include="App_Code\JsonClasses.cs" />
     <Compile Include="proxy\methods\fetch_result.aspx.cs">
@@ -598,6 +600,13 @@
     </Compile>
     <Compile Include="_admin\module_direct.aspx.designer.cs">
       <DependentUpon>module_direct.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\_ws\ws.aspx.cs">
+      <DependentUpon>ws.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\_ws\ws.aspx.designer.cs">
+      <DependentUpon>ws.aspx</DependentUpon>
     </Compile>
     <Compile Include="_autoservice\access_request.aspx.cs">
       <DependentUpon>access_request.aspx</DependentUpon>

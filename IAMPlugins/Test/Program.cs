@@ -47,6 +47,8 @@ namespace Test
             pkg.pluginData = new List<PluginConnectorBasePackageData>();
             pkg.pluginData.Add(new PluginConnectorBasePackageData("Email", "helvio_junior@hotmail.com", "string"));
             pkg.properties.Add(new PluginConnectorBasePackageData("Nome_Compl", "Helvio Junior", "string"));
+            pkg.properties.Add(new PluginConnectorBasePackageData("numcpf", "03826650905", "string"));
+            //
             pkg.pluginAction.Add(new PluginConnectorBaseDeployPackageAction(PluginActionType.Add, "Test Role", "group", "Teste_direct"));
 
 
@@ -56,25 +58,30 @@ namespace Test
             Dictionary<String, Object> config = new Dictionary<String, Object>();
             config.Add("sample1", "sample_value");
             config.Add("sample2", "sample_value");
-            config.Add("sample3", "sample_value");
+            config.Add("numemp", "44");
 
             //Sample of config to use at LDAP
-            config.Add("ldap_server", "ldap_ip_address");
-            config.Add("username", "ldap_user");
-            config.Add("password", "ldap_password");
+            config.Add("server_uri", "http://bpcenter.isengard.info:4298/");
+            config.Add("username", "Fael");
+            config.Add("password", "10Rh2030");
+
+            //http://bpcenter.isengard.info:4298/
+            //Fael
+            //44
+            //10Rh2030
 
 
-            ActiveDirectory.ActiveDirectoryPlugin pg = new ActiveDirectory.ActiveDirectoryPlugin();
+            SeniorRH.SeniorPlugin pg = new SeniorRH.SeniorPlugin();
             pg.Log += new IAM.PluginInterface.LogEvent(pg_Log);
             pg.Log2 += new LogEvent2(pg_Log2);
             pg.NotityChangeUser += new NotityChangeUserEvent(pg_NotityChangeUser);
             pg.ImportPackageUser += new ImportPackageUserEvent(pg_ImportPackageUser);
 
             //Process Import of all users from Plugin
-            pg.ProcessImport("CacheID", "ImporID", config, fieldMapping);
+            //pg.ProcessImport("CacheID", "ImporID", config, fieldMapping);
 
             //Process Deploy of Package
-            pg.ProcessDeploy("CacheID", pkg, config, fieldMapping);
+            //pg.ProcessDeploy("CacheID", pkg, config, fieldMapping);
 
             //Process Import from the same user of an deployed User
             pg.ProcessImportAfterDeploy("CacheID", pkg, config, fieldMapping);

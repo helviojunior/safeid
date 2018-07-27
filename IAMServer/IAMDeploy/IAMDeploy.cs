@@ -12,6 +12,7 @@ using IAM.CA;
 using IAM.PluginInterface;
 using IAM.License;
 using IAM.GlobalDefs;
+using SafeTrend.Data;
 
 namespace IAM.Deploy
 {
@@ -381,15 +382,45 @@ namespace IAM.Deploy
                 FileInfo f = new FileInfo(Path.Combine(saveTo.FullName, DateTime.Now.ToString("yyyyMMddHHmss-ffffff")) + ".iamdat");
 
                 File.WriteAllBytes(f.FullName, cApi.ToBytes());
+
+
+
+                foreach (PluginConnectorBaseDeployPackage pkg in packages)
+                {
+                    try
+                    {
+                        //db.AddUserLog(LogKey.Deploy, null, "Deploy", UserLogLevel.Debug, 0, enterpriseId, 0, 0, 0, pkg.entityId, pkg.identityId, "Saving package ID: " + pkg.pkgId, SafeTrend.Json.JSON.Serialize<PluginConnectorBaseDeployPackage>(pkg));
+
+                        String tpkg = SafeTrend.Json.JSON.Serialize<PluginConnectorBaseDeployPackage>(pkg);
+
+                        DbParameterCollection par = new DbParameterCollection();
+                        par.Add("@entity_id", typeof(Int64)).Value = pkg.entityId;
+                        par.Add("@date", typeof(DateTime)).Value = DateTime.Now;
+                        par.Add("@flow", typeof(String)).Value = "deploy";
+                        par.Add("@package_id", typeof(String), pkg.pkgId.Length).Value = pkg.pkgId;
+                        par.Add("@filename", typeof(String), f.FullName.Length).Value = f.FullName;
+                        par.Add("@package", typeof(String), tpkg.Length).Value = tpkg;
+
+                        Int64 trackId = db.ExecuteScalar<Int64>("sp_new_package_track", System.Data.CommandType.StoredProcedure, par, null);
+
+                        tpkg = null;
+
+                        par = new DbParameterCollection();
+                        par.Add("@package_id", typeof(Int64)).Value = trackId;
+                        par.Add("@source", typeof(String)).Value = "deploy";
+                        par.Add("@text", typeof(String)).Value ="Package generated";
+
+                        db.ExecuteNonQuery("insert into st_package_track_history ([package_id] ,[source] ,[text]) values (@package_id ,@source ,@text)", System.Data.CommandType.Text, par, null);
+
+
+                    }
+                    catch { }
+                }
+               
+
 #if DEBUG
                 db.AddUserLog(LogKey.Deploy, null, "Deploy", UserLogLevel.Info, 0, enterpriseId, 0, 0, 0, 0, 0, "File to send created " + f.Name + " (" + packages.Count + ")");
 
-                try
-                {
-                    foreach(PluginConnectorBaseDeployPackage pkg in packages)
-                        db.AddUserLog(LogKey.Deploy, null, "Deploy", UserLogLevel.Debug, 0, enterpriseId, 0, 0, 0, pkg.entityId, pkg.identityId, "Saving package ID: " + pkg.pkgId, SafeTrend.Json.JSON.Serialize<PluginConnectorBaseDeployPackage>(pkg));
-                }
-                catch { }
 
 #endif
             }

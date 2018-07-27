@@ -83,6 +83,7 @@ namespace IAM.UserProcess
         private Int64 contextId;
         private PluginConfig pluginConfig;
         private UserData userData;
+        private Int64 packageTrackId;
 
         private StringBuilder internalLog;
 
@@ -143,6 +144,26 @@ namespace IAM.UserProcess
                 throw new Exception("Error on deserialize package", ex);
             }
             tmp.Stop(dbAux.Connection, null);
+
+
+            try
+            {
+
+                DbParameterCollection par = new DbParameterCollection();
+                par.Add("@date", typeof(DateTime)).Value = this.package.GetBuildDate();
+                par.Add("@package_id", typeof(String), this.package.pkgId.Length).Value = this.package.pkgId;
+
+                this.packageTrackId = db.ExecuteScalar<Int64>("select id from st_package_track where flow = 'inbound' date = @date and package_id = @package_id", System.Data.CommandType.Text, par, null);
+
+                par = new DbParameterCollection();
+                par.Add("@package_id", typeof(Int64)).Value = this.packageTrackId;
+                par.Add("@source", typeof(String)).Value = "engine";
+                par.Add("@text", typeof(String)).Value = "Started engine process";
+
+                db.ExecuteNonQuery("insert into st_package_track_history ([package_id] ,[source] ,[text]) values (@package_id ,@source ,@text)", System.Data.CommandType.Text, par, null);
+
+            }
+            catch { }
 
 #if DEBUG
             //this.db.Debug = true;
@@ -514,6 +535,17 @@ namespace IAM.UserProcess
 
                 }
 
+                try
+                {
+                    DbParameterCollection par = new DbParameterCollection();
+                    par.Add("@entity_id", typeof(Int64)).Value = userData.EntityId;
+                    par.Add("@date", typeof(DateTime)).Value = this.package.GetBuildDate();
+                    par.Add("@package_id", typeof(String), this.package.pkgId.Length).Value = this.package.pkgId;
+
+                    dbAux.ExecuteNonQuery("UPDATE st_package_track_history SET entity_id = @entity_id where flow = 'inbound' and date = @date and package_id = @package_id", System.Data.CommandType.Text, par, null);
+                }
+                catch { }
+
                 if (trans == null)
                     trans = db.Connection.BeginTransaction();
 
@@ -634,6 +666,19 @@ namespace IAM.UserProcess
                 tmp.Stop(dbAux.Connection, null);
 
 
+                try
+                {
+
+                    DbParameterCollection par = new DbParameterCollection();
+                    par.Add("@package_id", typeof(Int64)).Value = this.packageTrackId;
+                    par.Add("@source", typeof(String)).Value = "engine";
+                    par.Add("@text", typeof(String)).Value = "Process sucess: " + this.internalLog.ToString();
+
+                    dbAux.ExecuteNonQuery("insert into st_package_track_history ([package_id] ,[source] ,[text]) values (@package_id ,@source ,@text)", System.Data.CommandType.Text, par, null);
+                }
+                catch { }
+
+
                 Log("Success");
                 return RegistryProcessStatus.OK;
             }
@@ -666,6 +711,18 @@ namespace IAM.UserProcess
                         AddUserLog(dbAux.Connection, LogKey.User_ImportError, null, "Engine", UserLogLevel.Error, 0, 0, 0, this.resourceId, this.pluginId, (userData != null ? userData.EntityId : 0), (userData != null ? userData.IdentityId : 0), ex.Message, SafeTrend.Json.JSON.Serialize2(new { import_id = importId, package_id = packageId, trace_error = traceError }));
                     }
                 }
+
+                try
+                {
+
+                    DbParameterCollection par = new DbParameterCollection();
+                    par.Add("@package_id", typeof(Int64)).Value = this.packageTrackId;
+                    par.Add("@source", typeof(String)).Value = "engine";
+                    par.Add("@text", typeof(String)).Value = "Process error: " + SafeTrend.Json.JSON.Serialize2(new { error_message = ex.Message, error_stack_trace = ex.StackTrace, import_id = importId, package_id = packageId, trace_error = traceError });
+
+                    dbAux.ExecuteNonQuery("insert into st_package_track_history ([package_id] ,[source] ,[text]) values (@package_id ,@source ,@text)", System.Data.CommandType.Text, par, null);
+                }
+                catch { }
 
                 //Se o erro for de deadlock, mantem o registro na base para ser reprocessado
                 if (!(ex is SqlException) || ((ex is SqlException) && (ex.Message.IndexOf("deadlock") == -1)))

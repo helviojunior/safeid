@@ -22,6 +22,7 @@ using IAM.LocalConfig;
 using IAM.GlobalDefs;
 using SafeTrend.Json;
 using IAM.Queue;
+using SafeTrend.Data;
 
 namespace IAM.Inbound
 {
@@ -300,7 +301,7 @@ namespace IAM.Inbound
                         {
                             case "processimport-disabled":
                                 rebuildIndex = true;
-                                ImportRegisters(config, jData, f, req, db);
+                                //ImportRegisters(config, jData, f, req, db);
                                 f.Delete();
                                 break;
 
@@ -624,7 +625,7 @@ namespace IAM.Inbound
 
         }
 
-        private void ImportRegisters(ProxyConfig config, JsonGeneric jData, FileInfo f, JSONRequest req, IAMDatabase db)
+        private void ImportRegistersOLD(ProxyConfig config, JsonGeneric jData, FileInfo f, JSONRequest req, IAMDatabase db)
         {
 
             Int32 resourceCol = jData.GetKeyIndex("resource");
@@ -701,7 +702,12 @@ namespace IAM.Inbound
             dtBulk.Columns.Add(new DataColumn("data_type", typeof(String)));
 
             foreach (String[] dr in jData.data)
+            {
                 dtBulk.Rows.Add(new Object[] { date, f.Name, dr[uriCol], Int64.Parse(dr[resourceCol]), dr[importidCol], dr[registryidCol], dr[datanameCol], dr[datavalueCol], dr[datatypeCol] });
+
+
+
+            }
 
             db.BulkCopy(dtBulk, "collector_imports");
 
@@ -808,6 +814,33 @@ namespace IAM.Inbound
             {
                 PluginConnectorBaseImportPackageUser pkg = JSON.DeserializeFromBase64<PluginConnectorBaseImportPackageUser>(dr[pkgCol]);
                 dtBulk.Rows.Add(new Object[] { DateTime.Now, f.Name, dr[resourcePluginCol], pkg.importId, pkg.pkgId, JSON.Serialize2(pkg), 'F' });
+
+                try
+                {
+                    
+                    String tpkg = JSON.Serialize2(pkg);
+
+                    DbParameterCollection par = new DbParameterCollection();
+                    par.Add("@entity_id", typeof(Int64)).Value = 0;
+                    par.Add("@date", typeof(DateTime)).Value = pkg.GetBuildDate();
+                    par.Add("@flow", typeof(String)).Value = "inbound";
+                    par.Add("@package_id", typeof(String), pkg.pkgId.Length).Value = pkg.pkgId;
+                    par.Add("@filename", typeof(String), f.FullName.Length).Value = f.FullName;
+                    par.Add("@package", typeof(String), tpkg.Length).Value = tpkg;
+
+                    Int64 trackId = db.ExecuteScalar<Int64>("sp_new_package_track", System.Data.CommandType.StoredProcedure, par, null);
+
+                    tpkg = null;
+
+                    par = new DbParameterCollection();
+                    par.Add("@package_id", typeof(Int64)).Value = trackId;
+                    par.Add("@source", typeof(String)).Value = "inbound";
+                    par.Add("@text", typeof(String)).Value = "Package imported to process queue";
+
+                    db.ExecuteNonQuery("insert into st_package_track_history ([package_id] ,[source] ,[text]) values (@package_id ,@source ,@text)", System.Data.CommandType.Text, par, null);
+
+                }
+                catch { }
             }
 
             db.BulkCopy(dtBulk, "collector_imports");

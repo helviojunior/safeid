@@ -123,6 +123,10 @@ namespace IAMWebServer
             /* Admin Dashboard
             -----------------------------*/
             routes.MapPageRoute("Admin-base", "admin/", "~/_admin/template.aspx", true, new RouteValueDictionary { { "area", "dashboard" } }, vdGET);
+
+            /* Admin Web Shell
+            -----------------------------*/
+            routes.MapPageRoute("Admin-webshell", "admin/ws/", "~/_admin/_ws/ws.aspx", true, new RouteValueDictionary { { "", "" } }, vd);
             
 
             /* Admin Modules

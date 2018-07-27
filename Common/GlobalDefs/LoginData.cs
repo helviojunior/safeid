@@ -12,6 +12,7 @@ namespace IAM.GlobalDefs
         public Int64 EnterpriseId { get; set; }
         public String Alias { get; set; }
         public String Login { get; set; }
+        public Byte SecurityToken { get; set; }
         public String FullName { get; set; }
         public String CASGrantTicket { get; set; }
         public String CASLongTicket { get; set; }

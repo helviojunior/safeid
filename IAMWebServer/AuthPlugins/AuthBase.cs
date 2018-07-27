@@ -84,12 +84,15 @@ namespace IAM.AuthPlugins
                         using (CryptApi cApi = CryptApi.ParsePackage(sk.ServerPKCS12Cert, Convert.FromBase64String(dr["password"].ToString())))
                             if (byPassPasswordCheck || Encoding.UTF8.GetString(cApi.clearData) == password)
                             {
+                                Random rnd = new Random();
+
                                 LoginData l = new LoginData();
                                 l.Alias = tmp.Rows[0]["alias"].ToString();
                                 l.FullName = tmp.Rows[0]["full_name"].ToString();
                                 l.Login = tmp.Rows[0]["login"].ToString();
                                 l.Id = (Int64)tmp.Rows[0]["id"];
                                 l.EnterpriseId = (Int64)tmp.Rows[0]["enterprise_id"];
+                                l.SecurityToken = (Byte)rnd.Next(1, 255);
 
                                 SetLoginSession(page, l);
 
