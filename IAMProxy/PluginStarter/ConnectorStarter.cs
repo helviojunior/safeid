@@ -365,7 +365,12 @@ namespace IAM.PluginStarter
                     records.data.Clear();
                 }
                 catch { }
-                
+
+
+#if DEBUG
+                TextLog.Log("PluginStarter", "{" + plugin.GetPluginId().AbsoluteUri + "}>ProcessDeploy> Package generated from resource plugin " + resource_plugin.ToString() + ". ID: " + pkg.pkgId);
+#endif
+
             });
 
 
@@ -597,7 +602,7 @@ namespace IAM.PluginStarter
                 {
                     count++;
                     records.data.Add(new String[] { resource_plugin.ToString(), JSON.SerializeToBase64(pkg) });
-
+                    
                     if (records.data.Count >= 500)
                     {
                         try
@@ -607,6 +612,10 @@ namespace IAM.PluginStarter
                         }
                         catch { }
                     }
+
+#if DEBUG
+                    TextLog.Log("PluginStarter", "{" + plugin.GetPluginId().AbsoluteUri + "}>ProcessImport> Package generated from resource plugin " + resource_plugin.ToString() + ". ID: " + pkg.pkgId);
+#endif
                 });
 
 
@@ -663,6 +672,14 @@ namespace IAM.PluginStarter
                 LogEvent2 log2 = new LogEvent2(delegate(Object sender, PluginLogType type, Int64 entityId, Int64 identityId, String text, String additionalData)
                 {
                     logProxy.AddLog(LogKey.Plugin_Event, "Proxy", resource_plugin, resource.ToString(), ((PluginConnectorBase)sender).GetPluginId().AbsoluteUri, (UserLogLevel)((Int32)type), entityId, identityId, text, additionalData);
+
+
+#if DEBUG
+                    TextLog.Log("PluginStarter", "{" + ((PluginConnectorBase)sender).GetPluginId().AbsoluteUri + "} Type: " + type + ", Entity Id: " + entityId + ", Identity Id: " + identityId + "Data: " + text + additionalData);
+#endif
+
+
+
                 });
 
 

@@ -642,6 +642,8 @@ namespace IAM.Proxy
 
                 UploadTransfer();
 
+                UploadLogs();
+
             }
             finally
             {
@@ -668,11 +670,17 @@ namespace IAM.Proxy
                 Byte[] data = client.UploadData(uri, Encoding.UTF8.GetBytes(JSON.GetRequest("transfer_receive", localConfig.Hostname, "")));
 
                 String Json = Encoding.UTF8.GetString(data);
+
+#if DEBUG
+                Log.TextLog.Log("Proxy", "\tReceived data from server. Datalen " + Json.Length);
+                Log.TextLog.Log("Proxy", "\t" + Json);
+#endif
+
                 JSONResponse resp = JSON.GetResponse(Json);
 
                 if (resp.response == "success")
                 {
-                    //Log.TextLog.Log("Proxy", "\tReceived data from server. Datalen " + (resp.data != null ? resp.data.Length.ToString() : "0"));
+                    //
 
                     if ((resp.data != null) && (resp.data.Length > 0))
                     {
@@ -720,6 +728,7 @@ namespace IAM.Proxy
                                                 fName.Directory.Create();
 
                                             File.WriteAllBytes(fName.FullName, Convert.FromBase64String(resp2.data));
+                                            Log.TextLog.Log("Proxy", "\tFile path " + fName.FullName);
                                             Log.TextLog.Log("Proxy", "\tFile writed " + dr[nameCol]);
                                             dwnLog.AppendLine("File writed " + dr[nameCol]);
 
@@ -752,6 +761,8 @@ namespace IAM.Proxy
                                     }
 
                                     dwnLog.AppendLine("");
+
+                                    
                                 }
                             }
                             finally
@@ -780,7 +791,7 @@ namespace IAM.Proxy
             }
             finally
             {
-#if debug
+#if DEBUG
                 AddProxyLog(UserLogLevel.Info, "File(s) downloaded by proxy.", dwnLog.ToString());
 #endif
                 if (logProxy != null)
@@ -789,6 +800,86 @@ namespace IAM.Proxy
                 dwnLog = null;
             }
 
+        }
+
+        private void UploadLogs()
+        {
+            System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
+
+            DirectoryInfo logDir = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(asm.Location), "logs"));
+            if (!logDir.Exists)
+            {
+                //Log.TextLog.Log("Proxy", "\tNo file to upload");
+                return;
+            }
+
+            FileInfo[] files = logDir.GetFiles("*.log");
+
+            if (files.Length == 0)
+                return;
+
+            List<FileInfo> filesToSend = new List<FileInfo>();
+
+            Int32 lDate = Int32.Parse(DateTime.Now.ToString("yyyyMMddHH"));
+
+            foreach (FileInfo f in files)
+            {
+                try
+                {
+                    String tDate = f.Name.Split("-".ToCharArray())[0];
+                    Int32 date = Int32.Parse(tDate);
+
+                    if (date < lDate)
+                    {
+                        filesToSend.Add(f);
+                    }
+                }
+                catch { }
+            }
+
+
+            if (filesToSend.Count == 0)
+                return;
+
+            Uri uri = new Uri((localConfig.UseHttps ? "https://" : "http://") + localConfig.Server + "/proxy/api.aspx");
+
+            foreach (FileInfo f in filesToSend)
+            {
+                try
+                {
+                    Byte[] fData = File.ReadAllBytes(f.FullName);
+
+                    WebClient client = new WebClient();
+                    Byte[] data = client.UploadData(uri, Encoding.UTF8.GetBytes("{\"request\":\"send_logs\", \"host\":\"" + localConfig.Hostname + "\", \"data\":\"" + Convert.ToBase64String(fData) + "\"}"));
+
+                    String Json = Encoding.UTF8.GetString(data);
+                    JSONResponse resp = JSON.GetResponse(Json);
+
+                    if (resp.response == "success")
+                    {
+                        Log.TextLog.Log("Proxy", "\tSended file " + f.Name + " to server. Datalen " + fData.Length);
+#if debug
+                            AddProxyLog(UserLogLevel.Info, "Sended file " + f.Name + " to server. " + resp.data, "");
+#endif
+                        DirectoryInfo mvDir = new DirectoryInfo(Path.Combine(f.DirectoryName, "move"));
+                        if (!mvDir.Exists)
+                            mvDir.Create();
+
+                        Log.TextLog.Log("Proxy", "\tMoving file " + f.Name + " to 'move' folder");
+                        File.Move(f.FullName, Path.Combine(mvDir.FullName, f.Name));
+
+                    }
+                    else
+                    {
+                        Log.TextLog.Log("Proxy", "\tError on send file " + f.Name + " to server. " + (resp.error != null ? resp.error : ""));
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Log.TextLog.Log("Proxy", "\tError sending file to server " + localConfig.Hostname + "(" + ex.Message + ")");
+                }
+            }
         }
 
         private void UploadTransfer()
@@ -831,8 +922,8 @@ namespace IAM.Proxy
                         if (resp.response == "success")
                         {
                             Log.TextLog.Log("Proxy", "\tSended file " + f.Name + " to server. Datalen " + fData.Length);
-#if debug
-                            AddProxyLog(UserLogLevel.Info, "Sended file " + f.Name + " to server. " + resp.data, "");
+#if DEBUG
+                            AddProxyLog(UserLogLevel.Info, "Sended file " + f.Name + " to server. ", resp.data);
 #endif
                             DirectoryInfo mvDir = new DirectoryInfo(Path.Combine(f.DirectoryName, "move"));
                             if (!mvDir.Exists)
@@ -844,13 +935,21 @@ namespace IAM.Proxy
                         }
                         else
                         {
-                            Log.TextLog.Log("Proxy", "\tError on send file " + f.Name + " to server. " + (resp.error != null ? resp.error : ""));
+                            Log.TextLog.Log("Proxy", "\tError on send file " + f.Name + " to server from " + localConfig.Hostname + (resp.error != null ? resp.error : ""));
+
+#if DEBUG
+                            AddProxyLog(UserLogLevel.Info, "Error on send file " + f.Name + " to server from " + localConfig.Hostname, (resp.error != null ? resp.error : ""));
+#endif
                         }
 
                     }
                     catch (Exception ex)
                     {
-                        Log.TextLog.Log("Proxy", "\tError sending file to server " + localConfig.Hostname + "(" + ex.Message + ")");
+                        Log.TextLog.Log("Proxy", "\tError sending file to server from " + localConfig.Hostname + "(" + ex.Message + ")");
+
+#if DEBUG
+                        AddProxyLog(UserLogLevel.Info, "Error sending file to server from " + localConfig.Hostname, ex.Message);
+#endif
                     }
                 }
             }
@@ -1262,6 +1361,7 @@ namespace IAM.Proxy
 
             if (logProxy != null)
                 logProxy.SaveToSend("log-proxy");
+
         }
 
 
@@ -1269,6 +1369,12 @@ namespace IAM.Proxy
         {
             if (logProxy != null)
                 logProxy.AddLog(LogKey.Proxy_Event, "Proxy", 0, "0", "", level, 0, 0, text, additionalInfo);
+        }
+
+        private void AddPackageTrack(String source, String resource, String filename, String packageId, String flow, String text)
+        {
+            if (logProxy != null)
+                logProxy.AddPackageTrack(source, resource, filename, packageId, flow, text);
         }
 
 

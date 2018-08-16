@@ -150,6 +150,11 @@ namespace IAM.PluginStarter
 
                 LogEvent2 log2 = new LogEvent2(delegate(Object sender, PluginLogType type, Int64 entityId, Int64 identityId, String text, String additionalData)
                 {
+
+#if DEBUG
+                    TextLog.Log("PluginStarter", "{" + ((PluginBase)sender).GetPluginId().AbsoluteUri + "} Type: " + type + ", Entity Id: " + entityId + ", Identity Id: " + identityId + "Data: "  + text + additionalData);
+#endif
+
                     logProxy.AddLog(LogKey.Plugin_Event, "Proxy", 0, "0", ((PluginBase)sender).GetPluginId().AbsoluteUri, (UserLogLevel)((Int32)type), entityId, identityId, text, additionalData);
                     logProxy.SaveToSend("agentlog");
                 });
