@@ -176,14 +176,23 @@ namespace IAM.Watchdog
                 db.openDB();
                 db.Timeout = 600;
 
+                //Limpa status lixo
+                db.ExecuteNonQuery("delete from service_status where last_status < DATEADD(day,-15,getdate())");
+
+                //seleciona os servicos comproblema ou parados
                 DataTable dtServices = db.Select("select * from service_status where started_at is null or last_status < DATEADD(hour,-1,getdate()) or case when started_at is null then cast(getdate() as date) else cast(started_at as date) end <> cast(getdate() as date)");
                 if (dtServices != null && dtServices.Rows.Count > 0)
                 {
                     foreach (DataRow dr in dtServices.Rows)
                     {
                         String svcName = dr["service_name"].ToString();
+
+                        if (svcName.ToLower().IndexOf("watchdog") >= 0)
+                            continue;
+
                         TextLog.Log("Watchdog", "Killing service '" + svcName + "'");
                         Killall(svcName);
+                        Killall("IAM" + svcName);
                     }
                 }
 
@@ -205,6 +214,7 @@ namespace IAM.Watchdog
                 foreach(ServiceController service in ServiceController.GetServices())
                     try
                     {
+                        
                         switch (service.ServiceName.ToLower())
                         {
                             case "iambackup":
