@@ -130,6 +130,14 @@ namespace IAM.GlobalDefs
         }
 
 
+        public void ServiceStart(String serviceName, SqlTransaction transaction)
+        {
+            DbParameterCollection par = new DbParameterCollection();
+            par.Add("@name", typeof(String)).Value = serviceName;
+
+            ExecuteNonQuery("sp_service_start", System.Data.CommandType.StoredProcedure, par, transaction);
+        }
+
         public void ServiceStatus(String serviceName, String additionsData, SqlTransaction transaction)
         {
             DbParameterCollection par = new DbParameterCollection();

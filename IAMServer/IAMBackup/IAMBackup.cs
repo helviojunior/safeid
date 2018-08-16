@@ -79,6 +79,8 @@ namespace IAM.Backup
                     IAMDatabase db = new IAMDatabase(localConfig.SqlServer, localConfig.SqlDb, localConfig.SqlUsername, localConfig.SqlPassword);
                     db.openDB();
 
+                    db.ServiceStart("Backup", null);
+
                     db.closeDB();
 
                     break;

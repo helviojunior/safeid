@@ -78,6 +78,8 @@ namespace IAM.Report
                     IAMDatabase db = new IAMDatabase(localConfig.SqlServer, localConfig.SqlDb, localConfig.SqlUsername, localConfig.SqlPassword);
                     db.openDB();
 
+                    db.ServiceStart("Report", null);
+
                     db.closeDB();
 
                     break;

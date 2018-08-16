@@ -82,6 +82,8 @@ namespace IAM.Inbound
                     IAMDatabase db = new IAMDatabase(localConfig.SqlServer, localConfig.SqlDb, localConfig.SqlUsername, localConfig.SqlPassword);
                     db.openDB();
 
+                    db.ServiceStart("Inbound", null);
+
                     db.closeDB();
 
                     break;
@@ -338,6 +340,13 @@ namespace IAM.Inbound
                                 //f.MoveTo(f.FullName + ".imported");
                                 break;
 
+                            case "packagetrack":
+                                last_status = "Executando importação de track dos pacotes";
+                                ImportPackageTrack(config, jData, f, req, db);
+                                f.Delete();
+                                //f.MoveTo(f.FullName + ".imported");
+                                break;
+
                             default:
                                 db.AddUserLog(LogKey.Inbound, null, "Inbound", UserLogLevel.Error, config.proxyID, 0, 0, 0, 0, 0, 0, "Invalid jData function '" + jData.function + "'");
                                 break;
@@ -388,6 +397,116 @@ namespace IAM.Inbound
             }
         }
 
+        private void ImportPackageTrack(ProxyConfig config, JsonGeneric jData, FileInfo f, JSONRequest req, IAMDatabase db)
+        {
+            Int32 resourceCol = jData.GetKeyIndex("resource");
+
+            Int32 dateCol = jData.GetKeyIndex("date");
+            Int32 sourceCol = jData.GetKeyIndex("source");
+            Int32 filenameCol = jData.GetKeyIndex("filename");
+            Int32 packageIdCol = jData.GetKeyIndex("packageid");
+            Int32 flowCol = jData.GetKeyIndex("flow");
+            Int32 textCol = jData.GetKeyIndex("text");
+
+
+            if (resourceCol == -1)
+            {
+                TextLog.Log("Inbound", "\t[ImportLogs] Erro on find column 'resource' in " + f.Name + " enterprise " + req.enterpriseid + " and proxy " + req.host);
+                return;
+            }
+
+
+            if (sourceCol == -1)
+            {
+                TextLog.Log("Inbound", "\t[ImportLogs] Erro on find column 'source' in " + f.Name + " enterprise " + req.enterpriseid + " and proxy " + req.host);
+                return;
+            }
+
+            if (textCol == -1)
+            {
+                TextLog.Log("Inbound", "\t[ImportLogs] Erro on find column 'text' in " + f.Name + " enterprise " + req.enterpriseid + " and proxy " + req.host);
+                return;
+            }
+
+
+            if (flowCol == -1)
+            {
+                TextLog.Log("Inbound", "\t[ImportLogs] Erro on find column 'flow' in " + f.Name + " enterprise " + req.enterpriseid + " and proxy " + req.host);
+                return;
+            }
+
+
+            if (filenameCol == -1)
+            {
+                TextLog.Log("Inbound", "\t[ImportLogs] Erro on find column 'filename' in " + f.Name + " enterprise " + req.enterpriseid + " and proxy " + req.host);
+                return;
+            }
+
+            if (packageIdCol == -1)
+            {
+                TextLog.Log("Inbound", "\t[ImportLogs] Erro on find column 'packageid' in " + f.Name + " enterprise " + req.enterpriseid + " and proxy " + req.host);
+                return;
+            }
+
+
+            DateTime date = DateTime.Now;
+
+            foreach (String[] dr in jData.data)
+                try
+                {
+                    //Console.WriteLine(f.Name + " - " + dr[entityIdCol] + " ==> " + dr[textCol]);
+                    //Console.WriteLine(dr[additionaldataCol]);
+                    //Console.WriteLine("");
+
+                    Int64 packageId = 0;
+
+                    DbParameterCollection par = new DbParameterCollection();
+                    par.Add("@flow", typeof(String)).Value = dr[flowCol];
+                    par.Add("@package_id", typeof(String)).Value = dr[packageIdCol];
+
+                    try
+                    {
+                        Int64 tmp = db.ExecuteScalar<Int64>("select id from st_package_track where flow = @flow and package_id = @package_id", System.Data.CommandType.Text, par, null);
+
+                        if (tmp > 0)
+                            packageId = tmp;
+                    }
+                    catch { }
+
+                    if (packageId == 0)
+                    {
+                        par = new DbParameterCollection();
+                        par.Add("@entity_id", typeof(Int64)).Value = 0;
+                        par.Add("@date", typeof(DateTime)).Value = (dateCol >= 0 ? DateTime.Parse(dr[dateCol]) : date);
+                        par.Add("@flow", typeof(String)).Value = dr[flowCol];
+                        par.Add("@package_id", typeof(String), dr[packageIdCol].Length).Value = dr[packageIdCol];
+                        par.Add("@filename", typeof(String), dr[filenameCol].Length).Value = dr[filenameCol];
+                        par.Add("@package", typeof(String), dr[textCol].Length).Value = dr[textCol];
+
+                        packageId = db.ExecuteScalar<Int64>("sp_new_package_track", System.Data.CommandType.StoredProcedure, par, null);
+
+                    }
+
+
+
+                    par = new DbParameterCollection();
+                    par.Add("@package_id", typeof(Int64)).Value = packageId;
+                    par.Add("@source", typeof(String)).Value = dr[flowCol];
+                    par.Add("@text", typeof(String), dr[textCol].Length).Value = dr[textCol];
+
+                    db.ExecuteNonQuery("insert into st_package_track_history ([package_id] ,[source] ,[text]) values (@package_id ,@source ,@text)", System.Data.CommandType.Text, par, null);
+
+
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+
+            jData = null;
+
+
+        }
 
         private void ImportLogs(ProxyConfig config, JsonGeneric jData, FileInfo f, JSONRequest req, IAMDatabase db)
         {

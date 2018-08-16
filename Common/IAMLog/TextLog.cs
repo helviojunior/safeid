@@ -30,7 +30,7 @@ namespace IAM.Log
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
 
-                BinaryWriter writer = new BinaryWriter(File.Open(Path.Combine(path, DateTime.Now.ToString("yyyyMMdd") + "-" + module + "-" + pid + ".log"), FileMode.Append));
+                BinaryWriter writer = new BinaryWriter(File.Open(Path.Combine(path, DateTime.Now.ToString("yyyyMMddHH") + "-" + module + "-" + pid + ".log"), FileMode.Append));
                 writer.Write(Encoding.UTF8.GetBytes(DateTime.Now.ToString("o") + " ==> [" + module + (submodule != null ? "-" + submodule : "") + (pid > 0 ? " -> " + pid : "") +"] " + text.Replace("\r", "").Replace("\n", " ") + Environment.NewLine));
                 writer.Flush();
                 writer.Close();

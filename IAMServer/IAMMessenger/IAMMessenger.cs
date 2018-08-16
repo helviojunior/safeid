@@ -75,6 +75,10 @@ namespace IAM.Messenger
                     IAMDatabase db = new IAMDatabase(localConfig.SqlServer, localConfig.SqlDb, localConfig.SqlUsername, localConfig.SqlPassword);
                     db.openDB();
 
+
+                    db.ServiceStart("Messenger", null);
+
+
                     db.closeDB();
 
                     break;

@@ -78,6 +78,8 @@ namespace IAM.Dispatcher
                     IAMDatabase db = new IAMDatabase(localConfig.SqlServer, localConfig.SqlDb, localConfig.SqlUsername, localConfig.SqlPassword);
                     db.openDB();
 
+                    db.ServiceStart("Dispatcher", null);
+
                     db.closeDB();
                     db.Dispose();
 

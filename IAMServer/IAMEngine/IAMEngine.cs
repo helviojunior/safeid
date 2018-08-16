@@ -70,6 +70,8 @@ namespace IAM.Engine
                     IAMDatabase db = new IAMDatabase(localConfig.SqlServer, localConfig.SqlDb, localConfig.SqlUsername, localConfig.SqlPassword);
                     db.openDB();
 
+                    db.ServiceStart("Engine", null);
+
                     db.closeDB();
 
                     break;
@@ -90,19 +92,6 @@ namespace IAM.Engine
                 }
             }
 
-
-            /*************
-             * Inicia processo de verificação/atualização da base de dados
-             */
-            try
-            {
-                using (IAM.GlobalDefs.Update.IAMDbUpdate updt = new GlobalDefs.Update.IAMDbUpdate(localConfig.SqlServer, localConfig.SqlDb, localConfig.SqlUsername, localConfig.SqlPassword))
-                    updt.Update();
-            }
-            catch (Exception ex)
-            {
-                StopOnError("Falha ao atualizar o banco de dados", ex);
-            }
 
 
             /*************
