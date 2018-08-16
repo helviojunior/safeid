@@ -74,6 +74,20 @@ namespace IAM.Watchdog
                 StopOnError("Parâmetro 'sqlpassword' não localizado no arquivo de configuração 'server.conf'", null);
 
 
+            /*************
+             * Inicia processo de verificação/atualização da base de dados
+             */
+            try
+            {
+                using (IAM.GlobalDefs.Update.IAMDbUpdate updt = new GlobalDefs.Update.IAMDbUpdate(localConfig.SqlServer, localConfig.SqlDb, localConfig.SqlUsername, localConfig.SqlPassword))
+                    updt.Update();
+            }
+            catch (Exception ex)
+            {
+                StopOnError("Falha ao atualizar o banco de dados", ex);
+            }
+
+
             Int32 cnt = 0;
             Int32 stepWait = 15000;
             while (cnt <= 10)
@@ -82,6 +96,8 @@ namespace IAM.Watchdog
                 {
                     IAMDatabase db = new IAMDatabase(localConfig.SqlServer, localConfig.SqlDb, localConfig.SqlUsername, localConfig.SqlPassword);
                     db.openDB();
+
+                    db.ServiceStart("Watchdog", null);
 
                     db.closeDB();
 
@@ -102,6 +118,7 @@ namespace IAM.Watchdog
                     }
                 }
             }
+
 
             
             /*************
@@ -136,8 +153,51 @@ namespace IAM.Watchdog
             }
         }
 
+        public void Killall(String name)
+        {
+            foreach (Process p in Process.GetProcesses())
+            {
+                try
+                {
+                    if (p.ProcessName.ToLower() == name.ToLower())
+                        p.Kill();
+                }
+                catch { }
+            }
+        }
+
         private void WatchdogTimerCallback(Object o)
         {
+            IAMDatabase db = null;
+            try
+            {
+                //check if we need to stop any service
+                db = new IAMDatabase(localConfig.SqlServer, localConfig.SqlDb, localConfig.SqlUsername, localConfig.SqlPassword);
+                db.openDB();
+                db.Timeout = 600;
+
+                DataTable dtServices = db.Select("select * from service_status where started_at is null or last_status < DATEADD(hour,-1,getdate()) or case when started_at is null then cast(getdate() as date) else cast(started_at as date) end <> cast(getdate() as date)");
+                if (dtServices != null && dtServices.Rows.Count > 0)
+                {
+                    foreach (DataRow dr in dtServices.Rows)
+                    {
+                        String svcName = dr["service_name"].ToString();
+                        TextLog.Log("Watchdog", "Killing service '" + svcName + "'");
+                        Killall(svcName);
+                    }
+                }
+
+                db.closeDB();
+            }
+            catch { }
+            finally
+            {
+                if (db != null)
+                    db.Dispose();
+
+                db = null;
+            }
+
             try
             {
                 ServiceController[] services = ServiceController.GetServices();
@@ -166,8 +226,6 @@ namespace IAM.Watchdog
                                             TextLog.Log("Watchdog", "Starting service '" + service.DisplayName + "'");
                                             service.Start();
 
-
-                                            IAMDatabase db = null;
                                             try
                                             {
                                                 db = new IAMDatabase(localConfig.SqlServer, localConfig.SqlDb, localConfig.SqlUsername, localConfig.SqlPassword);
