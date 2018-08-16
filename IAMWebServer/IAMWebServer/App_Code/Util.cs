@@ -182,7 +182,11 @@ namespace Tools
 
                 MailMessage mail = new MailMessage();
                 mail.From = new MailAddress(conf.GetItem("mailFrom"));
-                mail.To.Add(new MailAddress(to));
+
+                if (to.IndexOf(",") > 0)
+                    foreach(String t in to.Split(",".ToCharArray()))
+                        if (!String.IsNullOrEmpty(t))
+                            mail.To.Add(new MailAddress(t));
 
                 mail.Subject = Subject;
 

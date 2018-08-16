@@ -94,7 +94,7 @@ namespace IAMWebServer.proxy.methods
                         }
                         */
 
-                        ReturnHolder.Controls.Add(new LiteralControl(JSON.GetResponse(true, "", "Request received ans proxy finded (" + (req.data != null ? req.data.Length.ToString() : "0") + ")")));
+                        ReturnHolder.Controls.Add(new LiteralControl(JSON.GetResponse(true, "", "Request received and proxy finded (" + (req.data != null ? req.data.Length.ToString() : "0") + ")")));
 
                     }
                 }

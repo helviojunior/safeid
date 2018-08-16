@@ -71,7 +71,7 @@ namespace IAMWebServer.proxy.methods
                                         DbParameterCollection par = new DbParameterCollection();
                                         par.Add("@filename", typeof(String)).Value = fName.FullName;
 
-                                        Int64 packageTrackId = database.ExecuteScalar<Int64>("select id from st_package_track where flow = 'deploy' filename = @filename", System.Data.CommandType.Text, par, null);
+                                        Int64 packageTrackId = database.ExecuteScalar<Int64>("select id from st_package_track where flow = 'deploy' and filename = @filename", System.Data.CommandType.Text, par, null);
 
                                         par = new DbParameterCollection();
                                         par.Add("@package_id", typeof(Int64)).Value = packageTrackId;

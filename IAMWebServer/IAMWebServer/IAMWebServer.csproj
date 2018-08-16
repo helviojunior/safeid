@@ -137,6 +137,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="js\jquery.tree.js" />
+    <Content Include="proxy\methods\send_logs.aspx" />
     <Content Include="proxy\methods\fetch_result.aspx" />
     <Content Include="proxy\methods\fetch.aspx" />
     <Content Include="proxy\sync.aspx" />
@@ -342,6 +343,13 @@
     <Compile Include="App_Code\CSharpShell.cs" />
     <Compile Include="App_Code\HashData.cs" />
     <Compile Include="App_Code\JsonClasses.cs" />
+    <Compile Include="proxy\methods\send_logs.aspx.cs">
+      <DependentUpon>send_logs.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="proxy\methods\send_logs.aspx.designer.cs">
+      <DependentUpon>send_logs.aspx</DependentUpon>
+    </Compile>
     <Compile Include="proxy\methods\fetch_result.aspx.cs">
       <DependentUpon>fetch_result.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
