@@ -20,7 +20,7 @@ namespace SeniorRH
 
         public override Uri GetPluginId()
         {
-            return new Uri("connector://iam/plugins/seniorrhdebug");
+            return new Uri("connector://iam/plugins/seniorrh");
         }
 
         public override PluginConfigFields[] GetConfigFields()
@@ -159,12 +159,9 @@ namespace SeniorRH
             {
 
                 debugLog.AppendLine("######");
-                debugLog.AppendLine("## JSON Debug message: " + data);
+                debugLog.AppendLine("## [" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] JSON Debug message: " + data);
                 debugLog.AppendLine(debug);
 
-#if DEBUG
-                Log2(this, PluginLogType.Debug, 0, 0, "JSON Debug message: " + data, debug);
-#endif
             });
 
             try
@@ -177,10 +174,34 @@ namespace SeniorRH
                 if (users == null)
                     throw new Exception("User data is empty");
 
+
                 foreach (Dictionary<String, String> u in users)
                 {
 
+                    StringBuilder userDebugLog = new StringBuilder();
+
+                    //userDebugLog.AppendLine(debugLog.ToString());
+
+                    try
+                    {
+                        userDebugLog.AppendLine("######");
+                        userDebugLog.AppendLine("### User Data");
+                        userDebugLog.AppendLine(JSON.Serialize<Dictionary<String, String>>(u));
+                    }
+                    catch { }
+
+                    userDebugLog.AppendLine("");
+
+                    String cNumCad = "";//Data de admissao
+
+                    if (u.ContainsKey("numCad"))
+                        cNumCad = u["numCad"];
+                    else if (u.ContainsKey("numcad"))
+                        cNumCad = u["numcad"];
+
                     PluginConnectorBaseImportPackageUser package = new PluginConnectorBaseImportPackageUser(importId);
+                    userDebugLog.AppendLine("######");
+                    userDebugLog.AppendLine("### Package id: " + package.pkgId);
                     foreach (String key in u.Keys)
                     {
                         if (key.ToLower() == "numcpf")
@@ -192,6 +213,38 @@ namespace SeniorRH
                             package.AddProperty(key, u[key], "string");
                         }
                     }
+
+                    userDebugLog.AppendLine("");
+
+                    XML.DebugMessage userDbgC = new XML.DebugMessage(delegate(String data, String debug)
+                    {
+
+                        userDebugLog.AppendLine("######");
+                        userDebugLog.AppendLine("## ["+ DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") +"] JSON Debug message: " + data);
+                        userDebugLog.AppendLine(debug);
+
+                    });
+
+
+                    Dictionary<String, Dictionary<String, String>> cData = GetComplementatyData(api, u, userDbgC);
+                    if (cData.ContainsKey(cNumCad))
+                    {
+                        foreach (String key in cData[cNumCad].Keys)
+                        {
+                            if (key.ToLower() == "numcpf")
+                            {
+                                package.AddProperty(key, cData[cNumCad][key].Replace("-", "").Replace(".", "").Replace(" ", ""), "string");
+                            }
+                            else
+                            {
+                                package.AddProperty(key, cData[cNumCad][key], "string");
+                            }
+                        }
+                    }
+
+#if DEBUG
+                    Log2(this, PluginLogType.Debug, 0, 0, "Import debug log for pachage " + package.pkgId, userDebugLog.ToString());
+#endif
 
                     ImportPackageUser(package);
                 }
@@ -207,6 +260,10 @@ namespace SeniorRH
             finally
             {
 
+#if DEBUG
+                Log2(this, PluginLogType.Debug, 0, 0, "Import debug log", debugLog.ToString());
+#endif
+
                 if (logType != PluginLogType.Information)
                     processLog.AppendLine(debugLog.ToString());
 
@@ -219,6 +276,66 @@ namespace SeniorRH
             }
 
 
+        }
+
+        private Dictionary<String, Dictionary<String, String>> GetComplementatyData(SeniorAPI api, Dictionary<String, String> user, XML.DebugMessage debugCallback = null)
+        {
+            Dictionary<String, Dictionary<String, String>> uData = new Dictionary<string,Dictionary<string,string>>();
+            List<String> dates = new List<String>();
+
+            //Preeche as datas que detem contratacoes
+            String datAdm = "";//Data de admissao
+
+            if (user.ContainsKey("datAdm"))
+                datAdm = user["datAdm"];
+            else if (user.ContainsKey("datadm"))
+                datAdm = user["datadm"];
+
+            if (!String.IsNullOrEmpty(datAdm))
+                if (!dates.Contains(datAdm))
+                    dates.Add(datAdm);
+
+
+            if (dates.Count == 0)
+                return uData;
+
+            //Resgata todos os colaboradores por cada um das datas
+            foreach (String d in dates)
+            {
+
+                try
+                {
+                    List<Dictionary<String, String>> usersData = api.GetComplememtaryByDate(d, debugCallback);
+
+                    if (usersData == null)
+                        continue;
+
+                    foreach (Dictionary<String, String> u in usersData)
+                    {
+                        String cNumCad = "";//Data de admissao
+
+                        if (u.ContainsKey("numCad"))
+                            cNumCad = u["numCad"];
+                        else if (u.ContainsKey("numcad"))
+                            cNumCad = u["numcad"];
+
+                        if (!String.IsNullOrEmpty(cNumCad))
+                        {
+                            if (!uData.ContainsKey(cNumCad))
+                                uData.Add(cNumCad, new Dictionary<string, string>(u));
+
+                        }
+
+                    }
+
+                }
+                catch(Exception ex) {
+                    if (debugCallback != null)
+                        debugCallback("Error getting complementary user data", ex.Message);
+                }
+            }
+           
+            return uData;
         }
 
         public override void ProcessImportAfterDeploy(String cacheId, PluginConnectorBaseDeployPackage package, Dictionary<String, Object> config, List<PluginConnectorBaseDeployPackageMapping> fieldMapping)
@@ -241,9 +358,6 @@ namespace SeniorRH
                 debugLog.AppendLine("## JSON Debug message: " + data);
                 debugLog.AppendLine(debug);
 
-#if DEBUG
-                Log2(this, PluginLogType.Debug, package.entityId, package.identityId, "JSON Debug message: " + data, debug);
-#endif
             });
 
             try
@@ -324,6 +438,14 @@ namespace SeniorRH
                 foreach (Dictionary<String, String> u in users)
                 {
 
+                    String cNumCad = "";//Data de admissao
+
+                    if (u.ContainsKey("numCad"))
+                        cNumCad = u["numCad"];
+                    else if (u.ContainsKey("numcad"))
+                        cNumCad = u["numcad"];
+
+
                     PluginConnectorBaseImportPackageUser packageImp = new PluginConnectorBaseImportPackageUser(importID);
                     try
                     {
@@ -338,6 +460,24 @@ namespace SeniorRH
                                 packageImp.AddProperty(key, u[key], "string");
                             }
                         }
+
+
+                        Dictionary<String, Dictionary<String, String>> cData = GetComplementatyData(api, u, dbgC);
+                        if (cData.ContainsKey(cNumCad))
+                        {
+                            foreach (String key in cData[cNumCad].Keys)
+                            {
+                                if (key.ToLower() == "numcpf")
+                                {
+                                    packageImp.AddProperty(key, cData[cNumCad][key].Replace("-", "").Replace(".", "").Replace(" ", ""), "string");
+                                }
+                                else
+                                {
+                                    packageImp.AddProperty(key, cData[cNumCad][key], "string");
+                                }
+                            }
+                        }
+
 
                         processLog.AppendLine("Import package generated:");
                         processLog.AppendLine("\tImport ID: " + importID);
@@ -358,6 +498,9 @@ namespace SeniorRH
                         processLog.AppendLine(packageImp.ToString());
 
                     }
+
+
+
                 }
 
             }
@@ -380,6 +523,11 @@ namespace SeniorRH
                 
 #if DEBUG
                 processLog.AppendLine(debugLog.ToString());
+
+                Log2(this, PluginLogType.Debug, 0, 0, "Import debug log", debugLog.ToString());
+
+                Log2(this, PluginLogType.Debug, package.entityId, package.identityId, "Import debug log", debugLog.ToString());
+
 #else
                 if (logType != PluginLogType.Information)
                     processLog.AppendLine(debugLog.ToString());

@@ -24,6 +24,12 @@ namespace SeniorRH
         public ColaboradorResponse ColaboradoresResponse { get; set; }
     }
 
+    public class ComplementaresBody
+    {
+        [XmlElement(ElementName = "ComplementaresResponse", Namespace = "http://services.senior.com.br")]
+        public ComplementaresResponse ComplementaresResponse { get; set; }
+    }
+
 
     [XmlType(Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
     [XmlRoot(ElementName = "Envelope", Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
@@ -32,6 +38,16 @@ namespace SeniorRH
 
         [XmlElement(ElementName = "Body", Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
         public ColaboradoresAdmitidosBody Body { get; set; }
+
+    }
+
+    [XmlType(Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
+    [XmlRoot(ElementName = "Envelope", Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
+    public class ComplementaresSOAP : SOAPEnvelope
+    {
+
+        [XmlElement(ElementName = "Body", Namespace = "http://schemas.xmlsoap.org/soap/envelope/")]
+        public ComplementaresBody Body { get; set; }
 
     }
 
@@ -94,6 +110,30 @@ namespace SeniorRH
 
     }
 
+
+    public class ComplementaresResult : GenericResult
+    {
+
+        [XmlElement("TMCSColaboradores")]
+        public List<Object> colaboradores { get; set; }
+
+        public List<Dictionary<String, String>> getDict()
+        {
+            List<Dictionary<String, String>> tmp = new List<Dictionary<String, String>>();
+
+            foreach (Object o in colaboradores)
+            {
+                if (o is XmlNode[])
+                {
+                    tmp.Add(((XmlNode[])o).ToDictionary(element => element.Name, element => element.InnerText));
+                }
+            }
+
+            return tmp;
+        }
+
+    }
+
     public class TMCSColaboradores
     {
         [XmlElement("numCpf")]
@@ -111,6 +151,12 @@ namespace SeniorRH
     {
         [XmlElement("result", Namespace = "")]
         public ColaboradoresResult Result { get; set; }
+    }
+
+    public class ComplementaresResponse
+    {
+        [XmlElement("result", Namespace = "")]
+        public ComplementaresResult Result { get; set; }
     }
 
 }
