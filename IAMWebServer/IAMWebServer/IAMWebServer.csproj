@@ -143,6 +143,7 @@
     <Content Include="proxy\sync.aspx" />
     <Content Include="_admin\action\container.aspx" />
     <Content Include="_admin\action\access_request.aspx" />
+    <Content Include="_admin\action\service_status.aspx" />
     <Content Include="_admin\action\license.aspx" />
     <Content Include="_admin\action\workflow.aspx" />
     <Content Include="_admin\action\filter.aspx" />
@@ -384,6 +385,13 @@
     </Compile>
     <Compile Include="_admin\action\access_request.aspx.designer.cs">
       <DependentUpon>access_request.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="_admin\action\service_status.aspx.cs">
+      <DependentUpon>service_status.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="_admin\action\service_status.aspx.designer.cs">
+      <DependentUpon>service_status.aspx</DependentUpon>
     </Compile>
     <Compile Include="_admin\action\license.aspx.cs">
       <DependentUpon>license.aspx</DependentUpon>

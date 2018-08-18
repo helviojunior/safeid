@@ -222,6 +222,17 @@ textarea, input[type=text], input[type=password], select {
     overflow: hidden;
 }
 
+.btn-service {
+    min-width: 30px;
+}
+
+.btn-service .ico:Before {
+    font-size: 20px;
+    margin-right: 5px;
+    font-family: 'icomoon';
+    color: #bcbdbd;
+}
+
 .fcContent {
     background: #f7f7f7;
     /*box-shadow: inset 2px 3px 10px rgba(0,0,0,.4);*/

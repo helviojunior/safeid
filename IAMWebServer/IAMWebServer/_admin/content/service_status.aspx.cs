@@ -132,10 +132,12 @@ namespace IAMWebServer._admin.content
                             html += "    <tr>";
                             html += "        <th class=\"pointer header headerSortDown\" data-column=\"name\">Serviço <div class=\"icomoon\"></div></th>";
                             html += "        <th class=\"pointer tHide header\" data-column=\"login\">Status do serviço <div class=\"icomoon\"></div></th>";
+                            html += "        <th class=\"pointer tHide mHide header\" data-column=\"login\">Data de inicio <div class=\"icomoon\"></div></th>";
                             html += "        <th class=\"pointer tHide mHide header\" data-column=\"login\">Status da execução <div class=\"icomoon\"></div></th>";
-                            html += "        <th class=\"pointer tHide mHide header\" data-column=\"login\">Data de início <div class=\"icomoon\"></div></th>";
+                            html += "        <th class=\"pointer tHide mHide header\" data-column=\"login\">Data do processamento <div class=\"icomoon\"></div></th>";
                             html += "        <th class=\"pointer w150 tHide mHide header\" data-column=\"login\">% <div class=\"icomoon\"></div></th>";
                             html += "        <th class=\"pointer tHide mHide header\" data-column=\"login\">Informações adicionais <div class=\"icomoon\"></div></th>";
+                            html += "        <th class=\"pointer w80 tHide mHide header\" data-column=\"login\">Ações <div class=\"icomoon\"></div></th>";
                             html += "    </tr>";
                             html += "</thead>";
 
@@ -147,15 +149,24 @@ namespace IAMWebServer._admin.content
                             trTemplate += "            <td class=\"pointer tHide mHide\">{2}</td>";
                             trTemplate += "            <td class=\"pointer tHide mHide\">{3}</td>";
                             trTemplate += "            <td class=\"pointer tHide mHide\">{4}</td>";
-                            trTemplate += "            <td class=\"pointer tHide mHide\" style=\"line-height: 17px;\">{5}</td>";
+                            trTemplate += "            <td class=\"pointer tHide mHide\">{5}</td>";
+                            trTemplate += "            <td class=\"pointer tHide mHide\" style=\"line-height: 17px;\">{6}</td>";
+                            trTemplate += "            <td class=\"pointer tHide mHide\"><button href=\"/admin/service_status/{0}/action/restart/\" class=\"a-btn btn-service confirm-action\" confirm-title=\"Restart\" confirm-text=\"Deseja reiniciar o serviço '{0}'?\" ok=\"Sim\" cancel=\"Não\"><div class=\"ico icon-loop\"></div></button></td>";
                             trTemplate += "    </tr>";
 
                             foreach (DataRow drS in dtServices.Rows)
                             {
                                 String eStatus = "";
                                 String eDate = "";
+                                String sDate = "";
                                 String ePercent = "";
                                 String eInfo = "";
+
+                                try
+                                {
+                                    sDate = MessageResource.FormatDate((DateTime)drS["started_date"], false);
+                                }
+                                catch { }
 
                                 String sStatus = "";
                                 DateTime lastSync = (DateTime)drS["last_status"];
@@ -274,7 +285,7 @@ namespace IAMWebServer._admin.content
                                     catch { }
                                 }
 
-                                html += String.Format(trTemplate, drS["service_name"], sStatus, eStatus, eDate, ePercent, eInfo);
+                                html += String.Format(trTemplate, drS["service_name"], sStatus, sDate, eStatus, eDate, ePercent, eInfo);
                             }
 
                             html += "</tbody></table>";
