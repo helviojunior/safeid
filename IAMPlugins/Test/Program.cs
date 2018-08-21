@@ -14,8 +14,8 @@ namespace Test
 {
     class Program
     {
-        
-        
+
+
         static void Main(string[] args)
         {
 
@@ -34,8 +34,8 @@ namespace Test
             fieldMapping.Add(new PluginConnectorBaseDeployPackageMapping("Nome_Compl", "string", false, false, false));
             fieldMapping.Add(new PluginConnectorBaseDeployPackageMapping("CPF", "string", false, false, false));
             fieldMapping.Add(new PluginConnectorBaseDeployPackageMapping("Setor", "string", false, false, false));
-            
-            
+
+
             PluginConnectorBaseDeployPackage pkg = new PluginConnectorBaseDeployPackage();
             pkg.container = "BaseContainer";
             pkg.entityId = 10;
@@ -47,8 +47,6 @@ namespace Test
             pkg.pluginData = new List<PluginConnectorBasePackageData>();
             pkg.pluginData.Add(new PluginConnectorBasePackageData("Email", "helvio_junior@hotmail.com", "string"));
             pkg.properties.Add(new PluginConnectorBasePackageData("Nome_Compl", "Helvio Junior", "string"));
-            pkg.properties.Add(new PluginConnectorBasePackageData("numcpf", "03826650905", "string"));
-            //
             pkg.pluginAction.Add(new PluginConnectorBaseDeployPackageAction(PluginActionType.Add, "Test Role", "group", "Teste_direct"));
 
 
@@ -58,54 +56,49 @@ namespace Test
             Dictionary<String, Object> config = new Dictionary<String, Object>();
             config.Add("sample1", "sample_value");
             config.Add("sample2", "sample_value");
-            config.Add("numemp", "44");
+            config.Add("sample3", "sample_value");
 
             //Sample of config to use at LDAP
-            config.Add("server_uri", "http://bpcenter.isengard.info:4298/");
-            config.Add("username", "Fael");
-            config.Add("password", "10Rh2030");
-
-            //http://bpcenter.isengard.info:4298/
-            //Fael
-            //44
-            //10Rh2030
+            config.Add("ldap_server", "ldap_ip_address");
+            config.Add("username", "ldap_user");
+            config.Add("password", "ldap_password");
 
 
-            SeniorRH.SeniorPlugin pg = new SeniorRH.SeniorPlugin();
+            ActiveDirectory.ActiveDirectoryPlugin pg = new ActiveDirectory.ActiveDirectoryPlugin();
             pg.Log += new IAM.PluginInterface.LogEvent(pg_Log);
             pg.Log2 += new LogEvent2(pg_Log2);
             pg.NotityChangeUser += new NotityChangeUserEvent(pg_NotityChangeUser);
             pg.ImportPackageUser += new ImportPackageUserEvent(pg_ImportPackageUser);
 
             //Process Import of all users from Plugin
-            //pg.ProcessImport("CacheID", "ImporID", config, fieldMapping);
+            pg.ProcessImport("CacheID", "ImporID", config, fieldMapping);
 
             //Process Deploy of Package
-            //pg.ProcessDeploy("CacheID", pkg, config, fieldMapping);
+            pg.ProcessDeploy("CacheID", pkg, config, fieldMapping);
 
             //Process Import from the same user of an deployed User
             pg.ProcessImportAfterDeploy("CacheID", pkg, config, fieldMapping);
-            
+
         }
 
         static void pg_ImportPackageUser(PluginConnectorBaseImportPackageUser package)
         {
-            
+
         }
 
         static void pg_NotityDeletedUser(object sender, long entityId, long identityId = 0)
         {
-            
+
         }
 
         static void pg_ImportPackage(PluginConnectorBaseImportPackageUser pckage)
         {
-            
+
         }
 
         static void pg_NotityChangeUser(Object sender, long entityId, long identityId)
         {
-            
+
         }
 
         static void pg_Log2(Object sender, PluginLogType type, long entityId, long identityId, string text, string additionalData)
