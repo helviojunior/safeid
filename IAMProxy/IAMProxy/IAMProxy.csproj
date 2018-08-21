@@ -103,6 +103,10 @@
       <Project>{7432DC63-265B-4989-87ED-26CD44C67D41}</Project>
       <Name>OpenSSL</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\XMLBase\XMLBase.csproj">
+      <Project>{6BF4F754-DC17-4BF5-940C-B9C0FEE57C4F}</Project>
+      <Name>XMLBase</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resource1.resx">

@@ -642,7 +642,7 @@ namespace IAM.Proxy
 
                 UploadTransfer();
 
-                UploadLogs();
+                //UploadLogs();
 
             }
             finally
@@ -1111,9 +1111,12 @@ namespace IAM.Proxy
                         Log.TextLog.Log("Proxy", "\tUpdating local config file 'config.json'");
                         File.WriteAllBytes(Path.Combine(basePath, "config.json"), Encoding.UTF8.GetBytes(config.ToJsonString()));
                     }
-                    catch
+                    catch(Exception ex)
                     {
-                        Log.TextLog.Log("Proxy", "\tError on save local config file 'config.json'");
+                        Log.TextLog.Log("Proxy", "\tError saving local config file 'config.json'");
+#if DEBUG
+                        Log.TextLog.Log("Proxy", "\tError: " + ex.Message);
+#endif
                         return;
                     }
 
@@ -1125,22 +1128,35 @@ namespace IAM.Proxy
 
                         List<PluginConnectorBase> plugins = Plugins.GetPlugins<PluginConnectorBase>(Path.Combine(basePath, "plugins"));
 
-                        if ((config.plugins != null))
+                        if ((config.plugins == null))
+                            throw new Exception("Plugin list is null");
+
+#if DEBUG
+                        if (plugins.Count == 0)
+                            Log.TextLog.Log("Proxy", "\tLocal plugin list is empty");
+#endif
+
+                        foreach (PluginConnectorBase p in plugins)
                         {
-                            foreach (PluginConnectorBase p in plugins)
+
+#if DEBUG
+                            Log.TextLog.Log("Proxy", "\tStarting config loader to " + p.GetPluginId().AbsoluteUri);
+#endif
+
+                            foreach (PluginConfig pConf in config.plugins)
                             {
-
-                                foreach (PluginConfig pConf in config.plugins)
+#if DEBUG
+                                Log.TextLog.Log("Proxy", "\tChecking local math to received plugin config " + pConf.uri.ToLower());
+#endif
+                                if (pConf.uri.ToLower() == p.GetPluginId().AbsoluteUri.ToLower())
                                 {
-                                    if (pConf.uri.ToLower() == p.GetPluginId().AbsoluteUri.ToLower())
-                                    {
-                                        TextLog.Log("Proxy", "\tResource x plugin " + pConf.resource_plugin + " for " + p.GetPluginId().AbsoluteUri);
-                                    }
-
+                                    TextLog.Log("Proxy", "\tResource x plugin " + pConf.resource_plugin + " for " + p.GetPluginId().AbsoluteUri);
                                 }
 
                             }
+
                         }
+
 
                     }
                     catch (Exception ex)
@@ -1246,6 +1262,9 @@ namespace IAM.Proxy
 
         private void UpdatePlugin(Uri pluginUri, String assembly)
         {
+
+
+
             Log.TextLog.Log("Proxy", "\tStarting plugin update " + pluginUri.AbsoluteUri);
 
             try
@@ -1312,26 +1331,34 @@ namespace IAM.Proxy
                             throw new Exception("Decrypt error " + ex.Message);
                         }
 
-                        try
+                        DateTime serverUpdated = updatedDate;
+                        
+                        DateTime.TryParseExact(resp.date, "yyyy-MM-dd HH:mm:ss", null, System.Globalization.DateTimeStyles.None, out serverUpdated);
+
+                        if (updatedDate > serverUpdated)
                         {
-                            if (pluginFile.Exists)
-                                File.Delete(pluginFile.FullName + ".old");
+                            Log.TextLog.Log("Proxy", "\tLocal version of this plugin is more updated than server version, ignoring server version...");
+                            Log.TextLog.Log("Proxy", "\tIf you want to update local version, just delete local plugin dll");
+                        }else{
+                            try
+                            {
+                                if (pluginFile.Exists)
+                                    File.Delete(pluginFile.FullName + ".old");
 
-                            if (pluginFile.Exists)
-                                File.Move(pluginFile.FullName, pluginFile.FullName + ".old");
+                                if (pluginFile.Exists)
+                                    File.Move(pluginFile.FullName, pluginFile.FullName + ".old");
+                            }
+                            catch { }
+
+                            File.WriteAllBytes(pluginFile.FullName, fData);
+
+                            pluginFile.LastAccessTimeUtc = serverUpdated;
+                            pluginFile.CreationTimeUtc = serverUpdated;
+                            pluginFile.LastWriteTimeUtc = serverUpdated;
+
+                            Log.TextLog.Log("Proxy", "\tPlugin file writed");
+                            //throw new Exception("Server error " + resp.error);
                         }
-                        catch { }
-
-                        File.WriteAllBytes(pluginFile.FullName, fData);
-
-                        DateTime.TryParseExact(resp.date, "yyyy-MM-dd HH:mm:ss", null, System.Globalization.DateTimeStyles.None, out updatedDate);
-
-                        pluginFile.LastAccessTimeUtc = updatedDate;
-                        pluginFile.CreationTimeUtc = updatedDate;
-                        pluginFile.LastWriteTimeUtc = updatedDate;
-
-                        Log.TextLog.Log("Proxy", "\tPlugin file writed");
-                        //throw new Exception("Server error " + resp.error);
                     }
                 }
             }

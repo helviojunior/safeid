@@ -164,7 +164,7 @@ namespace IAMWebServer._admin.content
 
                                 try
                                 {
-                                    sDate = MessageResource.FormatDate((DateTime)drS["started_date"], false);
+                                    sDate = MessageResource.FormatDate((DateTime)drS["started_at"], false);
                                 }
                                 catch { }
 

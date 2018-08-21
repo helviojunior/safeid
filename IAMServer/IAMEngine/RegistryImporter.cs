@@ -411,6 +411,15 @@ namespace IAM.Engine
                 db.AddUserLog(LogKey.Import, null, "Engine", UserLogLevel.Error, 0, 0, 0, 0, 0, 0, 0, "DB Error on registry processor", procLog.ToString());
                 TextLog.Log("Engine", "Importer", "\tError on registry processor timer " + e.Message + " " + db.LastDBError);
             }
+            catch (OutOfMemoryException ex)
+            {
+                procLog.AppendLine("[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] Error on registry processor: " + ex.Message);
+
+                db.AddUserLog(LogKey.Import, null, "Engine", UserLogLevel.Error, 0, 0, 0, 0, 0, 0, 0, "Out Of Memory processing registry, killing processor", procLog.ToString());
+                TextLog.Log("Engine", "Importer", "\tError on registry processor timer " + ex.Message);
+
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
+            }
             catch (Exception ex)
             {
                 procLog.AppendLine("[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] Error on registry processor: " + ex.Message);

@@ -48,7 +48,11 @@ namespace IAM.PluginManager
             }
             catch (Exception ex)
             {
-                //Console.WriteLine("PluginManager error: " + ex.Message);
+#if DEBUG
+
+                Console.WriteLine("PluginManager error: " + ex.Message);
+
+#endif
             }
 
             return tList;

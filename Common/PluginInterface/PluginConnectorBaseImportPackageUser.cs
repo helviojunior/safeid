@@ -37,7 +37,11 @@ namespace IAM.PluginInterface
 
         public void AddProperty(PluginConnectorBasePackageData propertyData)
         {
-            properties.Add(propertyData);
+            if (String.IsNullOrEmpty(propertyData.dataValue))
+                return;
+
+            if (!properties.Exists(p => (p.dataName == propertyData.dataName && p.dataType == propertyData.dataType && p.dataValue == propertyData.dataValue)))
+                properties.Add(propertyData);
         }
 
         public void AddGroup(String groupName)

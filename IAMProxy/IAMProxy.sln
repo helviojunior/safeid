@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseResource", "..\Comm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filters", "..\Common\Filters\Filters.csproj", "{C83BDB17-3325-4E28-B949-50BCD340E206}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XMLBase", "..\Common\XMLBase\XMLBase.csproj", "{6BF4F754-DC17-4BF5-940C-B9C0FEE57C4F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -131,6 +133,16 @@ Global
 		{C83BDB17-3325-4E28-B949-50BCD340E206}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{C83BDB17-3325-4E28-B949-50BCD340E206}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{C83BDB17-3325-4E28-B949-50BCD340E206}.Release|x86.ActiveCfg = Release|Any CPU
+		{6BF4F754-DC17-4BF5-940C-B9C0FEE57C4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BF4F754-DC17-4BF5-940C-B9C0FEE57C4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BF4F754-DC17-4BF5-940C-B9C0FEE57C4F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6BF4F754-DC17-4BF5-940C-B9C0FEE57C4F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6BF4F754-DC17-4BF5-940C-B9C0FEE57C4F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6BF4F754-DC17-4BF5-940C-B9C0FEE57C4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BF4F754-DC17-4BF5-940C-B9C0FEE57C4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BF4F754-DC17-4BF5-940C-B9C0FEE57C4F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{6BF4F754-DC17-4BF5-940C-B9C0FEE57C4F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{6BF4F754-DC17-4BF5-940C-B9C0FEE57C4F}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

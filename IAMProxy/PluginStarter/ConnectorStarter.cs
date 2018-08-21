@@ -675,7 +675,7 @@ namespace IAM.PluginStarter
 
 
 #if DEBUG
-                    TextLog.Log("PluginStarter", "{" + ((PluginConnectorBase)sender).GetPluginId().AbsoluteUri + "} Type: " + type + ", Entity Id: " + entityId + ", Identity Id: " + identityId + "Data: " + text + additionalData);
+                    TextLog.Log("PluginStarter", "{" + ((PluginConnectorBase)sender).GetPluginId().AbsoluteUri + "} Type: " + type + ", Entity Id: " + entityId + ", Identity Id: " + identityId + ", Data: " + text + additionalData);
 #endif
 
 

@@ -962,7 +962,26 @@ namespace IAM.Inbound
                 catch { }
             }
 
-            db.BulkCopy(dtBulk, "collector_imports");
+            //Recria a tabela temporária
+            try
+            {
+                db.ExecuteNonQuery("drop table [collector_imports_temp];", System.Data.CommandType.Text, null, null);
+            }
+            catch { }
+            try
+            {
+                db.ExecuteNonQuery("select top 0 * into collector_imports_temp from collector_imports", System.Data.CommandType.Text, null, null);
+            }
+            catch { }
+
+            db.BulkCopy(dtBulk, "collector_imports_temp");
+
+            //Proteção contra reimportação de pacotes (loop)
+            db.ExecuteNonQuery("delete from collector_imports_temp where exists (select 1 from collector_imports_old o where o.date >= dateadd(day,-1,getdate()) and o.file_name = file_name and o.resource_plugin_id = resource_plugin_id and o.import_id = import_id and o.package_id = package_id)", System.Data.CommandType.Text, null, null);
+            db.ExecuteNonQuery("delete from collector_imports_temp where exists (select 1 from collector_imports o where o.date >= dateadd(day,-1,getdate()) and o.file_name = file_name and o.resource_plugin_id = resource_plugin_id and o.import_id = import_id and o.package_id = package_id)", System.Data.CommandType.Text, null, null);
+
+            db.ExecuteNonQuery("insert into collector_imports select * from collector_imports_temp", System.Data.CommandType.Text, null, null);
+
 
             //Atualiza os registros importados deste arquivo para liberar o processamento
             //Isso avisa o sistema que estes registros estão livres para processamento
