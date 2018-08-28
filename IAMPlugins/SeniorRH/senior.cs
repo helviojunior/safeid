@@ -166,11 +166,11 @@ namespace SeniorRH
 
             try
             {
-                
+
                 lastStep = "Resgata os colaboradores contratados nos ultimos 365 dias";
 
                 List<Dictionary<String, String>> users = api.GetUsers(dbgC);
-                
+
                 if (users == null)
                     throw new Exception("User data is empty");
 
@@ -220,7 +220,7 @@ namespace SeniorRH
                     {
 
                         userDebugLog.AppendLine("######");
-                        userDebugLog.AppendLine("## ["+ DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") +"] JSON Debug message: " + data);
+                        userDebugLog.AppendLine("## [" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] JSON Debug message: " + data);
                         userDebugLog.AppendLine(debug);
 
                     });
@@ -479,23 +479,24 @@ namespace SeniorRH
                         }
 
 
-                        processLog.AppendLine("Import package generated:");
+                        processLog.AppendLine("Import (after deploy) package generated:");
                         processLog.AppendLine("\tImport ID: " + importID);
                         processLog.AppendLine("\tPackage ID: " + packageImp.pkgId);
                         processLog.AppendLine("");
-                        processLog.AppendLine(packageImp.ToString());
+                        processLog.AppendLine("Package data:");
+                        processLog.AppendLine( JSON.Serialize(packageImp) );
 
                         ImportPackageUser(packageImp);
                     }
                     catch (Exception ex2)
                     {
 
-                        processLog.AppendLine("Import package generated:");
+                        processLog.AppendLine("Import (after deploy) package generated:");
                         processLog.AppendLine("\tImport ID: " + importID);
                         processLog.AppendLine("\tPackage ID: " + packageImp.pkgId);
                         processLog.AppendLine("");
-
-                        processLog.AppendLine(packageImp.ToString());
+                        processLog.AppendLine("Package data:");
+                        processLog.AppendLine(JSON.Serialize(packageImp));
 
                     }
 
@@ -506,16 +507,22 @@ namespace SeniorRH
             }
             catch (Exception ex)
             {
+                
                 logType = PluginLogType.Error;
-                processLog.AppendLine("Error on process import (" + lastStep + "): " + ex.Message);
+                processLog.AppendLine("Error processing import (" + lastStep + "): " + ex.Message);
+
+                if (ex is SafeTrend.Xml.ResultEmptyException)
+                {
+                    Log2(this, PluginLogType.Error, package.entityId, package.identityId, "Network erro or API lock error importing user data", ex.Message + Environment.NewLine + debugLog.ToString());
+                }
 
                 try
                 {
-                    Log2(this, PluginLogType.Error, package.entityId, package.identityId, "Error on process import after deploy: " + ex.Message, debugLog.ToString());
+                    Log2(this, PluginLogType.Error, package.entityId, package.identityId, "Error processing import after deploy: " + ex.Message, debugLog.ToString());
                 }
                 catch
                 {
-                    Log2(this, PluginLogType.Error, 0, 0, "Error on process import after deploy: " + ex.Message, debugLog.ToString());
+                    Log2(this, PluginLogType.Error, 0, 0, "Error processing import after deploy: " + ex.Message, debugLog.ToString());
                 }
             }
             finally

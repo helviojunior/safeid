@@ -61,7 +61,7 @@ namespace SeniorRH
                     ColaboradoresAdmitidosSOAP result = XML.XmlWebRequest<ColaboradoresAdmitidosSOAP>(callUri, post.ToString(), "text/xml", null, "POST", this.cookie, debugCallback);
 
                     if (result == null || result.Body == null || result.Body.ColaboradoresResponse == null || result.Body.ColaboradoresResponse.Result == null)
-                        throw new Exception("ResultSet is empty");
+                        throw new SafeTrend.Xml.ResultEmptyException("ResultSet is empty");
 
                     if (!String.IsNullOrEmpty(result.Body.ColaboradoresResponse.Result.ErroExecucao))
                         throw new Exception(result.Body.ColaboradoresResponse.Result.ErroExecucao);
@@ -111,7 +111,7 @@ namespace SeniorRH
                     ComplementaresSOAP result = XML.XmlWebRequest<ComplementaresSOAP>(callUri, post.ToString(), "text/xml", null, "POST", this.cookie, debugCallback);
 
                     if (result == null || result.Body == null || result.Body.ComplementaresResponse == null || result.Body.ComplementaresResponse.Result == null)
-                        throw new Exception("ResultSet is empty");
+                        throw new SafeTrend.Xml.ResultEmptyException("ResultSet is empty");
 
                     if (!String.IsNullOrEmpty(result.Body.ComplementaresResponse.Result.ErroExecucao))
                         throw new Exception(result.Body.ComplementaresResponse.Result.ErroExecucao);
@@ -154,7 +154,7 @@ namespace SeniorRH
                 ConsultarColaboradorPorCPFSOAP result = XML.XmlWebRequest<ConsultarColaboradorPorCPFSOAP>(callUri, post.ToString(), "text/xml", null, "POST", this.cookie, debugCallback);
 
                 if (result == null || result.Body == null || result.Body.ColaboradoresResponse == null || result.Body.ColaboradoresResponse.Result == null)
-                    throw new Exception("ResutSet is empty");
+                    throw new SafeTrend.Xml.ResultEmptyException("ResutSet is empty");
 
                 if (!String.IsNullOrEmpty(result.Body.ColaboradoresResponse.Result.ErroExecucao))
                     throw new Exception(result.Body.ColaboradoresResponse.Result.ErroExecucao);
