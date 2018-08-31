@@ -29,6 +29,8 @@ namespace IAM.Engine
 {
     class RegistryImporter
     {
+        public delegate void DebugMessage(String message);
+
         private ServerLocalConfig localConfig;
         private String basePath;
         private Boolean executing;
@@ -192,6 +194,13 @@ namespace IAM.Engine
                 tCount = 1;
 #endif
 
+                DebugMessage dbgC = new DebugMessage(delegate(String message)
+                {
+                    procLog.AppendLine(message);
+                });
+
+
+
                 Console.WriteLine("Starting...");
                 queueManager = new QueueManager<RegistryProcessStarter>(tCount, ProcQueue);
                 queueManager.OnThreadStart += new QueueManager<RegistryProcessStarter>.StartThread(delegate(Int32 threadIndex)
@@ -216,6 +225,7 @@ namespace IAM.Engine
                             obj.lockRules.GetDBConfig(obj.db.Connection);
                             obj.ignoreRules.GetDBConfig(obj.db.Connection);
                             obj.roleRules.GetDBConfig(obj.db.Connection);
+                            obj.debugCallback = dbgC;
                             break;
                         }
                         catch(Exception ex) {
@@ -568,7 +578,8 @@ namespace IAM.Engine
                 if (pluginConfig == null)
                     throw new Exception("Resource x plugin not found");
 
-                
+                if (starter.debugCallback != null)
+                    starter.debugCallback("Package ID: " + queueItem.packageId);
 
                 //Realiza todo o processamento deste registro
                 
@@ -611,6 +622,9 @@ namespace IAM.Engine
                 Console.Write("!");
                 errors++;
 
+
+                if (starter.debugCallback != null)
+                    starter.debugCallback("\tError processing package (" + queueItem.packageId + "): " + ex.Message);
 
 //#if !DEBUG
                 try

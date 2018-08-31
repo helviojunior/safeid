@@ -21,7 +21,7 @@ namespace SafeTrend.Data.Update.SqlServer
 	                        [entity_id] [bigint] NOT NULL  DEFAULT ((0)),
 	                        [date] [datetime] NOT NULL DEFAULT (getdate()),
 	                        [flow] [varchar](20) NOT NULL,
-                            [package_id] [varchar](50) NOT NULL,
+                            [package_id] [varchar](100) NOT NULL,
                             [filename] [varchar](500) NOT NULL,
 	                        [package] [varchar](max) NOT NULL,
                          CONSTRAINT [PK_st_package_track] PRIMARY KEY CLUSTERED 

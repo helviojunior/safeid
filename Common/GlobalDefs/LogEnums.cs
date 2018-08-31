@@ -97,6 +97,7 @@ namespace IAM.GlobalDefs
         Proxy_Deleted = 8001,
         Proxy_Inserted = 8002,
         Proxy_Changed = 8003,
+        Proxy_ResetRequest = 8004,
 
         /* Resource 9000 */
         Resource_Deleted = 9001,

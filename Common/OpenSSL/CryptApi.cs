@@ -34,7 +34,13 @@ namespace IAM.CA
         {
             this.encryptedKey = encryptedKey;
             this.encryptedData = encryptedData;
-            clearkey = Encoding.UTF8.GetString(CATools.AsymmetricDencrypt(cert, Convert.FromBase64String(encryptedKey)));
+
+            Byte[] k = Convert.FromBase64String(encryptedKey);
+
+            if ((k == null) || (k.Length <= 0))
+                throw new Exception("Encrypted key is empty");
+
+            clearkey = Encoding.UTF8.GetString(CATools.AsymmetricDencrypt(cert, k));
 
             clearData = CATools.Dencrypt(encryptedData, clearkey);
             clearDataHash = CATools.SHA1Checksum(clearData);
@@ -73,18 +79,33 @@ namespace IAM.CA
         [SecurityCritical]
         public static CryptApi ParsePackage(X509Certificate cert, Byte[] package)
         {
+            if (cert == null)
+                throw new Exception("Certificate is empty");
+
+            if ((package == null) || (package.Length < 10))
+                throw new Exception("Package is empty");
+
             using (MemoryStream ms = new MemoryStream(package))
             using (BinaryReader r = new BinaryReader(ms))
             {
                 Int32 len = r.ReadInt32();
                 String encryptedKey = Convert.ToBase64String(r.ReadBytes(len));
 
+                if (String.IsNullOrEmpty(encryptedKey))
+                    throw new Exception("Encrypted key is empty");
+
+
                 len = r.ReadInt32();
                 String clearDataHash = Encoding.UTF8.GetString(r.ReadBytes(len));
+
+                if (String.IsNullOrEmpty(clearDataHash))
+                    throw new Exception("Clear-text hash is empty");
 
                 len = r.ReadInt32();
                 Byte[] encryptedData = r.ReadBytes(len);
 
+                if ((encryptedData == null) || (encryptedData.Length <= 0))
+                    throw new Exception("Encrypted data hash is empty");
 
                 CryptApi api = new CryptApi(cert, encryptedData, encryptedKey);
 

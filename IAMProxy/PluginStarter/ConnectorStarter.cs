@@ -357,6 +357,7 @@ namespace IAM.PluginStarter
 
             ImportPackageUserEvent newPackage = new ImportPackageUserEvent(delegate(PluginConnectorBaseImportPackageUser pkg)
             {
+
                 records.data.Add(new String[] { resource_plugin.ToString(), JSON.SerializeToBase64(pkg) });
 
                 try
@@ -366,10 +367,9 @@ namespace IAM.PluginStarter
                 }
                 catch { }
 
-
-#if DEBUG
+                deployLog.AppendLine("Package generated from resource plugin " + resource_plugin.ToString() + ". ID: " + pkg.pkgId);
+ 
                 TextLog.Log("PluginStarter", "{" + plugin.GetPluginId().AbsoluteUri + "}>ProcessDeploy> Package generated from resource plugin " + resource_plugin.ToString() + ". ID: " + pkg.pkgId);
-#endif
 
             });
 
@@ -421,14 +421,14 @@ namespace IAM.PluginStarter
 
                         LogEvent log = new LogEvent(delegate(Object sender, PluginLogType type, String text)
                         {
-                            TextLog.Log("PluginStarter", "{" + ((PluginConnectorBase)sender).GetPluginId().AbsoluteUri + "} " + type + ", " + text);
+                            TextLog.Log("PluginStarter", "{" + ((PluginConnectorBase)sender).GetPluginId().AbsoluteUri + "}>Log> " + type + ", " + text);
                         });
 
                         LogEvent2 log2 = new LogEvent2(delegate(Object sender, PluginLogType type, Int64 entityId, Int64 identityId, String text, String additionalData)
                         {
                             logProxy.AddLog(LogKey.Plugin_Event, "Proxy", resource_plugin, resource.ToString(), ((PluginConnectorBase)sender).GetPluginId().AbsoluteUri, (UserLogLevel)((Int32)type), entityId, identityId, text, additionalData);
 #if DEBUG
-                            TextLog.Log("PluginStarter", (((UserLogLevel)((Int32)type)).ToString()) + " entityId = " + entityId + ", identityId = " + identityId + ", " + text);
+                            TextLog.Log("PluginStarter", "{" + ((PluginConnectorBase)sender).GetPluginId().AbsoluteUri + "}>Log2> " + (((UserLogLevel)((Int32)type)).ToString()) + " entityId = " + entityId + ", identityId = " + identityId + ", " + text + additionalData);
 #endif
                         });
 
@@ -449,7 +449,7 @@ namespace IAM.PluginStarter
                         plugin.NotityDeletedUser += log4;
 
                         //Somente realiza a importação após o deploy se for o Deploy Only, ou seja, a publicação sobre demanda de um usuário estecífico
-                        Boolean doImportAfterLogin = (fData.Count == 1);
+                        Boolean doImportAfterLogin = (fData.Count <= 5);
 
                         try
                         {
@@ -465,11 +465,25 @@ namespace IAM.PluginStarter
                                     else
                                     {
                                         plugin.ProcessDeploy(resource_plugin.ToString(), pkg, connectorConf, mapping);
-                                        if (doImportAfterLogin) plugin.ProcessImportAfterDeploy(resource_plugin.ToString(), pkg, connectorConf, mapping);
+                                        if (doImportAfterLogin) 
+                                        {
+#if DEBUG
+                                            TextLog.Log("PluginStarter", "{" + plugin.GetPluginId().AbsoluteUri + "} [" + resource_plugin + "] Doing import after deploy");
+                        
+#endif
+
+                                            plugin.ProcessImportAfterDeploy(resource_plugin.ToString(), pkg, connectorConf, mapping);
+#if DEBUG
+                                            TextLog.Log("PluginStarter", "{" + plugin.GetPluginId().AbsoluteUri + "} [" + resource_plugin + "] Finihing import after deploy");
+
+#endif
+                                        }
                                     }
                                 }
                                 catch (Exception ex)
                                 {
+                                    TextLog.Log("PluginStarter", "{" + plugin.GetPluginId().AbsoluteUri + "} [" + resource_plugin + "] EntityId = " + pkg.entityId + ", IdentityId = " + pkg.identityId + ",  Error on ProcessDeploy thread of file " + f.FullName.Replace(basePath, "") + ", " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : ""));
+                        
                                     logProxy.AddLog(LogKey.Proxy_Event, "Proxy", resource_plugin, resource.ToString(), plugin.GetPluginId().AbsoluteUri, UserLogLevel.Error, pkg.entityId, pkg.identityId, "error on ProcessDeploy thread of file " + f.FullName.Replace(basePath, "") + ", " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : ""), "");
                                     deployLog.AppendLine("[" + DateTime.Now.ToString("HH:mm:ss") + "] EntityId = " + pkg.entityId + ", IdentityId = " + pkg.identityId + ",  Error on ProcessDeploy thread of file " + f.FullName.Replace(basePath, "") + ", " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : ""));
                                 }
@@ -487,7 +501,6 @@ namespace IAM.PluginStarter
                             log2 = null;
                             log3 = null;
                             log4 = null;
-                            newPackage = null;
                         }
 
                         //Salva as notificações
@@ -498,24 +511,32 @@ namespace IAM.PluginStarter
                         if (deleted.data.Count > 0)
                             SaveToSend(deleted, resource_plugin.ToString() + "deleted");
 
+                        if (records.data.Count > 0)
+                            SaveToSend(records, resource_plugin.ToString());
+
+
                         try
                         {
                             f.Delete();
 
-                            if (dirFrom.GetFiles("*.iamdat").Length == 0)
-                                dirFrom.Delete();
+                            try
+                            {
+                                if (dirFrom.GetFiles("*.iamdat").Length == 0)
+                                    dirFrom.Delete();
 
-                            if (dirFrom.Parent.GetFiles("*.iamdat").Length == 0)
-                                dirFrom.Parent.Delete();
+                                if (dirFrom.Parent.GetFiles("*.iamdat").Length == 0)
+                                    dirFrom.Parent.Delete();
+                            }
+                            catch { }
                         }
                         catch(Exception ex) {
-                            deployLog.AppendLine("[" + DateTime.Now.ToString("HH:mm:ss") + "] Erro on delete file " + f.FullName.Replace(basePath, "") + ", " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : ""));
+                            deployLog.AppendLine("[" + DateTime.Now.ToString("HH:mm:ss") + "] Error deleting file " + f.FullName.Replace(basePath, "") + ", " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : ""));
                         }
                     }
                     catch (Exception ex)
                     {
                         logProxy.AddLog(LogKey.Proxy_Event, "Proxy", resource_plugin, resource.ToString(), plugin.GetPluginId().AbsoluteUri, UserLogLevel.Error, 0, 0, "Erro on deploy thread of file " + f.FullName.Replace(basePath, "") + ", " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : ""), "");
-                        deployLog.AppendLine("[" + DateTime.Now.ToString("HH:mm:ss") + "] Erro on deploy thread of file " + f.FullName.Replace(basePath, "") + ", " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : ""));
+                        deployLog.AppendLine("[" + DateTime.Now.ToString("HH:mm:ss") + "] Error on deploy thread of file " + f.FullName.Replace(basePath, "") + ", " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : ""));
                     }
                     finally
                     {
@@ -524,6 +545,7 @@ namespace IAM.PluginStarter
                             foreach (PluginConnectorBaseDeployPackage p in fData)
                                 p.Dispose();
                         }
+
 
                     }
                 }
@@ -558,6 +580,9 @@ namespace IAM.PluginStarter
 
                 //Salva os logs para envio
                 logProxy.SaveToSend(resource_plugin.ToString() + "log");
+
+
+                newPackage = null;
 
             }
 
@@ -706,6 +731,8 @@ namespace IAM.PluginStarter
                 if (structRecords.data.Count > 0)
                     SaveToSend(structRecords, id + "-struct");
 
+                if (records.data.Count > 0)
+                    SaveToSend(records, resource_plugin.ToString());
 
                 importLog.AppendLine("[" + DateTime.Now.ToString("HH:mm:ss") + "] Imported "+ count +" items...");
                 TextLog.Log("PluginStarter", "{" + plugin.GetPluginId().AbsoluteUri + "} Imported " + count + " items...");

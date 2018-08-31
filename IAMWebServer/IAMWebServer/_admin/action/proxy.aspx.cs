@@ -93,6 +93,45 @@ namespace IAMWebServer._admin.action
                         }
                         break;
 
+                    case "restart":
+
+                        var reqDst = new
+                        {
+                            jsonrpc = "1.0",
+                            method = "proxy.restart",
+                            parameters = new
+                            {
+                                proxyid = proxyId
+                            },
+                            id = 1
+                        };
+
+                        rData = JSON.Serialize2(reqDst);
+
+                        using (IAMDatabase database = new IAMDatabase(IAMDatabase.GetWebConnectionString())) jData = WebPageAPI.ExecuteLocal(database, this, rData);
+
+                        if (String.IsNullOrWhiteSpace(jData))
+                            throw new Exception("");
+
+                        RoleDeleteResult retRst = JSON.Deserialize<RoleDeleteResult>(jData);
+                        if (retRst == null)
+                        {
+                            contentRet = new WebJsonResponse("", MessageResource.GetMessage("role_not_found"), 3000, true);
+                        }
+                        else if (retRst.error != null)
+                        {
+                            contentRet = new WebJsonResponse("", retRst.error.data, 3000, true);
+                        }
+                        else if (!retRst.result)
+                        {
+                            contentRet = new WebJsonResponse("", MessageResource.GetMessage("role_not_found"), 3000, true);
+                        }
+                        else
+                        {
+                            contentRet = new WebJsonResponse();
+                        }
+                        break;
+
                     case "change_name":
 
                         String name = Request.Form["name"];

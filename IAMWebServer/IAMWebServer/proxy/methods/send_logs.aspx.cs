@@ -27,6 +27,7 @@ namespace IAMWebServer.proxy.methods
                 JSONRequest req = JSON.GetRequest(Request.InputStream);
 
                 using (IAMDatabase database = new IAMDatabase(IAMDatabase.GetWebConnectionString()))
+                using (ServerDBConfig conf = new ServerDBConfig(database.Connection))
                 {
                     ProxyConfig config = new ProxyConfig();
                     config.GetDBConfig(database.Connection, ((EnterpriseData)Page.Session["enterprise_data"]).Id, req.host);
@@ -49,13 +50,11 @@ namespace IAMWebServer.proxy.methods
                             header += "IP: " + Tools.Tool.GetIPAddress() + Environment.NewLine;
                             header += "Data: " + Environment.NewLine + Environment.NewLine;
 
-                            using (ServerDBConfig conf = new ServerDBConfig(IAMDatabase.GetWebConnection()))
-                                Tools.Tool.sendEmail("Proxy log received from " + req.host, conf.GetItem("to"), header + dData, false);
+                            Tools.Tool.sendEmail("Proxy log received from " + req.host + " " + DateTime.Now.ToString("yyyy-MM-dd"), conf.GetItem("to"), header + dData, false);
 
-                            
                         }
 
-                        ReturnHolder.Controls.Add(new LiteralControl(JSON.GetResponse(true, "", "Request received and proxy finded (" + (req.data != null ? req.data.Length.ToString() : "0") + ")")));
+                        ReturnHolder.Controls.Add(new LiteralControl(JSON.GetResponse(true, "", "Request received with " + (req.data != null ? req.data.Length.ToString() : "0") + " bytes and proxy found")));
 
                     }
                 }

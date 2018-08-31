@@ -44,7 +44,7 @@ namespace IAM.UserProcess
         public String importId { get; protected set; }
         public String packageId { get; protected set; }
         public String package { get; set; }
-
+        public Int64 packageTrackId { get; set; }
 
 
         public RegistryProcessStarter(Int64 enterpriseId, Int64 contextId, Uri pluginUri, Int64 resourceId, Int64 pluginId, Int64 resourcePluginId, String importId, String packageId, String package)
@@ -146,25 +146,6 @@ namespace IAM.UserProcess
             tmp.Stop(dbAux.Connection, null);
 
 
-            try
-            {
-
-                DbParameterCollection par = new DbParameterCollection();
-                par.Add("@date", typeof(DateTime)).Value = this.package.GetBuildDate();
-                par.Add("@package_id", typeof(String), this.package.pkgId.Length).Value = this.package.pkgId;
-
-                this.packageTrackId = db.ExecuteScalar<Int64>("select id from st_package_track where flow = 'inbound' date = @date and package_id = @package_id", System.Data.CommandType.Text, par, null);
-
-                par = new DbParameterCollection();
-                par.Add("@package_id", typeof(Int64)).Value = this.packageTrackId;
-                par.Add("@source", typeof(String)).Value = "engine";
-                par.Add("@text", typeof(String)).Value = "Started engine process";
-
-                db.ExecuteNonQuery("insert into st_package_track_history ([package_id] ,[source] ,[text]) values (@package_id ,@source ,@text)", System.Data.CommandType.Text, par, null);
-
-            }
-            catch { }
-
 #if DEBUG
             //this.db.Debug = true;
 #endif
@@ -241,6 +222,32 @@ namespace IAM.UserProcess
                 String where = "ci.status = 'F' and ci.resource_plugin_id = '" + this.resourcePluginId + "' and  ci.import_id = '" + this.importId + "' and ci.package_id = '" + this.packageId + "'";
 
                 tmp.Stop(dbAux.Connection, null);
+
+
+                /*
+                ======================================
+                == Resgata Package Track ID*/
+
+
+                try
+                {
+                    DbParameterCollection par = new DbParameterCollection();
+                    
+                    par.Add("@date", typeof(DateTime)).Value = this.package.GetBuildDate();
+                    par.Add("@package_id", typeof(String), this.package.pkgId.Length).Value = this.package.pkgId;
+
+                    this.packageTrackId = dbAux.ExecuteScalar<Int64>("select id from st_package_track where flow = 'inbound' and date = @date and package_id = @package_id", System.Data.CommandType.Text, par, null);
+                }
+                catch (Exception ex)
+                {
+#if DEBUG
+                    internalLog.AppendLine("Error getting package track entity id: " + ex.Message);
+#endif
+                }
+
+                /*
+                == Final do resgate Package Track ID
+                ======================================*/
 
 
                 /*
@@ -542,9 +549,13 @@ namespace IAM.UserProcess
                     par.Add("@date", typeof(DateTime)).Value = this.package.GetBuildDate();
                     par.Add("@package_id", typeof(String), this.package.pkgId.Length).Value = this.package.pkgId;
 
-                    dbAux.ExecuteNonQuery("UPDATE st_package_track_history SET entity_id = @entity_id where flow = 'inbound' and date = @date and package_id = @package_id", System.Data.CommandType.Text, par, null);
+                    dbAux.ExecuteNonQuery("UPDATE st_package_track SET entity_id = @entity_id where flow = 'inbound' and date = @date and package_id = @package_id", System.Data.CommandType.Text, par, null);
                 }
-                catch { }
+                catch(Exception ex) {
+#if DEBUG
+                    internalLog.AppendLine("Error updating package track entity id: " + ex.Message);
+#endif
+                }
 
                 if (trans == null)
                     trans = db.Connection.BeginTransaction();
@@ -618,18 +629,6 @@ namespace IAM.UserProcess
                     @new_status varchar(2)*/
 
 
-                    DbParameterCollection par = new DbParameterCollection();
-                    par.Add("@resource_plugin_id", typeof(Int64)).Value = resourcePluginId;
-                    par.Add("@import_id", typeof(String)).Value = importId;
-                    par.Add("@package_id", typeof(String)).Value = packageId;
-                    par.Add("@status", typeof(String)).Value = 'F';
-                    par.Add("@new_status", typeof(String)).Value = 'I';
-
-                    ExecuteNonQuery(db.Connection, "sp_migrate_imported2", CommandType.StoredProcedure, par, trans);
-
-                    par.Clear();
-                    par = null;
-
                     tmp.Stop(dbAux.Connection, null);
                     tmp = new TestTimer("Process->Commit", dLog);
 
@@ -637,7 +636,40 @@ namespace IAM.UserProcess
                     trans.Commit();
                     trans = null;
 
+                    //try to rebuild user index
+                    for (Int32 i = 0; i <= 5; i++)
+                    {
+                        try
+                        {
+                            if (pluginConfig.enable_import)
+                            {
+                                userData.RebuildIndexes(null);
+                                break;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        catch {
+                            Thread.Sleep(2000);
+                        }
+                    }
+
                     tmp.Stop(dbAux.Connection, null);
+
+                    DbParameterCollection par = new DbParameterCollection();
+                    par.Add("@resource_plugin_id", typeof(Int64)).Value = resourcePluginId;
+                    par.Add("@import_id", typeof(String)).Value = importId;
+                    par.Add("@package_id", typeof(String)).Value = packageId;
+                    par.Add("@status", typeof(String)).Value = 'F';
+                    par.Add("@new_status", typeof(String)).Value = 'I';
+
+                    ExecuteNonQuery(db.Connection, "sp_migrate_imported2", CommandType.StoredProcedure, par, null);
+
+                    par.Clear();
+                    par = null;
+
 
                     /*
                     ======================================*/
@@ -669,15 +701,14 @@ namespace IAM.UserProcess
                 try
                 {
 
-                    DbParameterCollection par = new DbParameterCollection();
-                    par.Add("@package_id", typeof(Int64)).Value = this.packageTrackId;
-                    par.Add("@source", typeof(String)).Value = "engine";
-                    par.Add("@text", typeof(String)).Value = "Process sucess: " + this.internalLog.ToString();
+                    dbAux.AddPackageTrack(this.packageTrackId, "engine", "Process sucess: " + this.internalLog.ToString());
 
-                    dbAux.ExecuteNonQuery("insert into st_package_track_history ([package_id] ,[source] ,[text]) values (@package_id ,@source ,@text)", System.Data.CommandType.Text, par, null);
                 }
                 catch { }
 
+#if DEBUG
+                AddUserLog(dbAux.Connection, LogKey.User_ImportInfo, null, "Engine", UserLogLevel.Debug, 0, 0, 0, this.resourceId, this.pluginId, (userData != null ? userData.EntityId : 0), (userData != null ? userData.IdentityId : 0), "User process status", this.internalLog.ToString());
+#endif
 
                 Log("Success");
                 return RegistryProcessStatus.OK;
@@ -715,12 +746,8 @@ namespace IAM.UserProcess
                 try
                 {
 
-                    DbParameterCollection par = new DbParameterCollection();
-                    par.Add("@package_id", typeof(Int64)).Value = this.packageTrackId;
-                    par.Add("@source", typeof(String)).Value = "engine";
-                    par.Add("@text", typeof(String)).Value = "Process error: " + SafeTrend.Json.JSON.Serialize2(new { error_message = ex.Message, error_stack_trace = ex.StackTrace, import_id = importId, package_id = packageId, trace_error = traceError });
+                    dbAux.AddPackageTrack(this.packageTrackId, "engine", "Process error: " + SafeTrend.Json.JSON.Serialize2(new { error_message = ex.Message, error_stack_trace = ex.StackTrace, import_id = importId, package_id = packageId, trace_error = traceError }));
 
-                    dbAux.ExecuteNonQuery("insert into st_package_track_history ([package_id] ,[source] ,[text]) values (@package_id ,@source ,@text)", System.Data.CommandType.Text, par, null);
                 }
                 catch { }
 

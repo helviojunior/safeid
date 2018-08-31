@@ -142,6 +142,7 @@ namespace IAMWebServer._admin.action
                                         resourcepluginid = resourcePluginId,
                                         enable_deploy = (!String.IsNullOrEmpty(Request.Form["enable_deploy"]) ? true : false),
                                         deploy_all = (!String.IsNullOrEmpty(Request.Form["deploy_all"]) ? true : false),
+                                        deploy_individual_package = (!String.IsNullOrEmpty(Request.Form["deploy_individual_package"]) ? true : false),
                                         deploy_after_login = (!String.IsNullOrEmpty(Request.Form["deploy_after_login"]) ? true : false),
                                         password_after_login = (!String.IsNullOrEmpty(Request.Form["password_after_login"]) ? true : false),
                                         deploy_password_hash = (!String.IsNullOrEmpty(Request.Form["password_hash"]) ? Request.Form["password_hash"] : "none"),

@@ -7,8 +7,8 @@ using System.IO;
 
 namespace IAM.PluginInterface
 {
-    
-    public abstract class PluginBase
+
+    public abstract class PluginBase : IDisposable
     {
         // Informacoes do plugin
         public abstract Uri GetPluginId(); //interface://IAM/plugins/pluginbase
@@ -22,6 +22,11 @@ namespace IAM.PluginInterface
         public abstract event LogEvent2 Log2;
 
         public Boolean Equal(PluginBase p) { return p.GetPluginId().Equals(this.GetPluginId()); }
+
+        public void Dispose()
+        {
+
+        }
 
         public static void FillConfig(PluginBase plugin, ref Dictionary<String, Object> config, String key, Object value)
         {

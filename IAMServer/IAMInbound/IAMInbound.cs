@@ -84,6 +84,20 @@ namespace IAM.Inbound
 
                     db.ServiceStart("Inbound", null);
 
+                    //Recria a tabela temporária
+                    db.ExecuteNonQuery(@"
+                    IF (EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'collector_imports_temp'))
+                    BEGIN
+                        DROP TABLE [collector_imports_temp];
+                    END", System.Data.CommandType.Text, null, null);
+
+                    db.ExecuteNonQuery(@"
+                    IF (NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'collector_imports_temp'))
+                    BEGIN
+                        select top 0 * into [collector_imports_temp] from [collector_imports];
+                    END", System.Data.CommandType.Text, null, null);
+
+
                     db.closeDB();
 
                     break;
@@ -299,7 +313,7 @@ namespace IAM.Inbound
 
                         type = jData.function.ToLower();
 
-                        switch (jData.function.ToLower())
+                        switch (type)
                         {
                             case "processimport-disabled":
                                 rebuildIndex = true;
@@ -363,7 +377,7 @@ namespace IAM.Inbound
                 catch (Exception ex)
                 {
                     TextLog.Log("Inbound", "Erro on process file '" + f.Name + "' (" + type + "): " + ex.Message);
-                    db.AddUserLog(LogKey.Import, null, "Inbound", UserLogLevel.Info, 0, 0, 0, 0, 0, 0, 0, "Erro on process file '" + f.Name + "' (" + type + "): " + ex.Message);
+                    db.AddUserLog(LogKey.Import, null, "Inbound", UserLogLevel.Info, 0, 0, 0, 0, 0, 0, 0, "Erro processing file '" + f.Name + "' (" + type + "): " + ex.Message);
                 }
                 finally
                 {
@@ -487,14 +501,7 @@ namespace IAM.Inbound
 
                     }
 
-
-
-                    par = new DbParameterCollection();
-                    par.Add("@package_id", typeof(Int64)).Value = packageId;
-                    par.Add("@source", typeof(String)).Value = dr[flowCol];
-                    par.Add("@text", typeof(String), dr[textCol].Length).Value = dr[textCol];
-
-                    db.ExecuteNonQuery("insert into st_package_track_history ([package_id] ,[source] ,[text]) values (@package_id ,@source ,@text)", System.Data.CommandType.Text, par, null);
+                    db.AddPackageTrack(packageId, dr[flowCol], dr[textCol]);
 
 
                 }
@@ -937,42 +944,25 @@ namespace IAM.Inbound
                 try
                 {
                     
-                    String tpkg = JSON.Serialize2(pkg);
-
                     DbParameterCollection par = new DbParameterCollection();
-                    par.Add("@entity_id", typeof(Int64)).Value = 0;
+                    
                     par.Add("@date", typeof(DateTime)).Value = pkg.GetBuildDate();
-                    par.Add("@flow", typeof(String)).Value = "inbound";
                     par.Add("@package_id", typeof(String), pkg.pkgId.Length).Value = pkg.pkgId;
-                    par.Add("@filename", typeof(String), f.FullName.Length).Value = f.FullName;
-                    par.Add("@package", typeof(String), tpkg.Length).Value = tpkg;
 
-                    Int64 trackId = db.ExecuteScalar<Int64>("sp_new_package_track", System.Data.CommandType.StoredProcedure, par, null);
+                    Int64 trackId = db.ExecuteScalar<Int64>("select id from st_package_track where flow = 'inbound' and date = @date and package_id = @package_id", System.Data.CommandType.Text, par, null);
 
-                    tpkg = null;
-
-                    par = new DbParameterCollection();
-                    par.Add("@package_id", typeof(Int64)).Value = trackId;
-                    par.Add("@source", typeof(String)).Value = "inbound";
-                    par.Add("@text", typeof(String)).Value = "Package imported to process queue";
-
-                    db.ExecuteNonQuery("insert into st_package_track_history ([package_id] ,[source] ,[text]) values (@package_id ,@source ,@text)", System.Data.CommandType.Text, par, null);
+                    db.AddPackageTrack(trackId, "inbound", "Package imported to process queue");
 
                 }
                 catch { }
             }
 
-            //Recria a tabela temporária
-            try
-            {
-                db.ExecuteNonQuery("drop table [collector_imports_temp];", System.Data.CommandType.Text, null, null);
-            }
-            catch { }
-            try
-            {
-                db.ExecuteNonQuery("select top 0 * into collector_imports_temp from collector_imports", System.Data.CommandType.Text, null, null);
-            }
-            catch { }
+            db.BulkCopy(dtBulk, "collector_imports");
+
+            //Apaga todos os registros da tabela temporaria
+            /*
+             * Procedimento desabiliato em 2018-08-29 por suspeita de problema
+            db.ExecuteNonQuery("delete from collector_imports_temp", System.Data.CommandType.Text, null, null);
 
             db.BulkCopy(dtBulk, "collector_imports_temp");
 
@@ -981,7 +971,8 @@ namespace IAM.Inbound
             db.ExecuteNonQuery("delete from collector_imports_temp where exists (select 1 from collector_imports o where o.date >= dateadd(day,-1,getdate()) and o.file_name = file_name and o.resource_plugin_id = resource_plugin_id and o.import_id = import_id and o.package_id = package_id)", System.Data.CommandType.Text, null, null);
 
             db.ExecuteNonQuery("insert into collector_imports select * from collector_imports_temp", System.Data.CommandType.Text, null, null);
-
+            db.ExecuteNonQuery("delete from collector_imports_temp", System.Data.CommandType.Text, null, null);
+             * */
 
             //Atualiza os registros importados deste arquivo para liberar o processamento
             //Isso avisa o sistema que estes registros estão livres para processamento

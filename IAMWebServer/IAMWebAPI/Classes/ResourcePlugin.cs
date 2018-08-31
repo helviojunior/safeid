@@ -298,6 +298,7 @@ namespace IAM.WebAPI.Classes
             newItem.Add("password_after_login", dr1["password_after_login"]);
             newItem.Add("deploy_process", dr1["deploy_process"]);
             newItem.Add("deploy_all", dr1["deploy_all"]);
+            newItem.Add("deploy_individual_package", dr1["deploy_individual_package"]);
             newItem.Add("use_password_salt", dr1["use_password_salt"]);
             newItem.Add("password_salt_end", dr1["password_salt_end"]);
             newItem.Add("password_salt", dr1["password_salt"]);
@@ -1056,6 +1057,7 @@ namespace IAM.WebAPI.Classes
             newItem.Add("password_after_login", dr1["password_after_login"]);
             newItem.Add("deploy_process", dr1["deploy_process"]);
             newItem.Add("deploy_all", dr1["deploy_all"]);
+            newItem.Add("deploy_individual_package", dr1["deploy_individual_package"]);
             newItem.Add("deploy_password_hash", (dr1["deploy_password_hash"] != DBNull.Value ? dr1["deploy_password_hash"].ToString().ToLower() : "none"));
             newItem.Add("proxy_last_sync", (dr1["proxy_last_sync"] != DBNull.Value ? (Int32)((((DateTime)dr1["proxy_last_sync"]) - new DateTime(1970, 1, 1)).TotalSeconds) : 0));
             newItem.Add("create_date", (dr1["create_date"] != DBNull.Value ? (Int32)((((DateTime)dr1["create_date"]) - new DateTime(1970, 1, 1)).TotalSeconds) : 0));
@@ -3579,6 +3581,35 @@ namespace IAM.WebAPI.Classes
                         }
                         break;
 
+
+                    case "deploy_individual_package":
+                        if (!String.IsNullOrWhiteSpace((String)parameters["deploy_individual_package"].ToString()))
+                        {
+                            Boolean deploy_individual_package = false;
+                            try
+                            {
+                                deploy_individual_package = Boolean.Parse(parameters["deploy_individual_package"].ToString());
+                            }
+                            catch
+                            {
+                                Error(ErrorType.InvalidRequest, "Parameter deploy_individual_package is not a boolean.", "", null);
+                                return null;
+                            }
+
+                            if (deploy_individual_package != (Boolean)dtResourcePlugin.Rows[0]["deploy_individual_package"])
+                            {
+                                par.Add("@deploy_individual_package", typeof(Boolean)).Value = deploy_individual_package;
+                                if (updateSQL != "") updateSQL += ", ";
+                                updateSQL += " deploy_individual_package = @deploy_individual_package";
+                                update = true;
+
+                                log.Add("Deploy individual package changed from '" + dtResourcePlugin.Rows[0]["deploy_individual_package"] + "' to '" + deploy_individual_package + "'");
+                            }
+
+                        }
+                        break;
+
+
                     case "deploy_after_login":
                         if (!String.IsNullOrWhiteSpace((String)parameters["deploy_after_login"].ToString()))
                         {
@@ -3947,6 +3978,7 @@ namespace IAM.WebAPI.Classes
             newItem.Add("password_after_login", dr1["password_after_login"]);
             newItem.Add("deploy_process", dr1["deploy_process"]);
             newItem.Add("deploy_all", dr1["deploy_all"]);
+            newItem.Add("deploy_individual_package", dr1["deploy_individual_package"]);
             newItem.Add("deploy_password_hash", (dr1["deploy_password_hash"] != DBNull.Value ? dr1["deploy_password_hash"].ToString().ToLower() : "none"));
             newItem.Add("create_date", (dr1["create_date"] != DBNull.Value ? (Int32)((((DateTime)dr1["create_date"]) - new DateTime(1970, 1, 1)).TotalSeconds) : 0));
 

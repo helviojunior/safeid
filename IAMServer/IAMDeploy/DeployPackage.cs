@@ -26,6 +26,9 @@ namespace IAM.Deploy
 
             List<String> deployInfo = new List<string>();//"Identity addedd in deploy package with ";
             String deployText = "";
+
+            deployText = "Package ID: " + pkg.pkgId + Environment.NewLine;
+
             try
             {
 

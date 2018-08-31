@@ -78,6 +78,51 @@ namespace SeniorRH
             }
         }
 
+        public List<Dictionary<String, String>> GetComplememtaryByCPF(String cpf, XML.DebugMessage debugCallback = null)
+        {
+            try
+            {
+                List<Dictionary<String, String>> tmp = new List<Dictionary<string, string>>();
+
+                Uri callUri = new Uri(this.baseUri.Scheme + "://" + this.baseUri.Host + ":" + this.baseUri.Port + "/g5-senior-services/rubi_Synccom_senior_g5_rh_fp_consultarColaboradorPorCPF?wsdl");
+
+
+                StringBuilder post = new StringBuilder();
+
+                post.AppendLine("<?xml version='1.0' encoding='UTF-8'?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ser=\"http://services.senior.com.br\">");
+                post.AppendLine("  <soapenv:Header/>");
+                post.AppendLine("  <soapenv:Body>");
+                post.AppendLine("    <ser:Complementares>");
+                post.AppendLine("      <user>" + this.username + "</user>");
+                post.AppendLine("      <password>" + this.password + "</password>");
+                post.AppendLine("      <encryption>0</encryption>");
+                post.AppendLine("      <parameters>");
+                post.AppendLine("        <numcpf>" + cpf + "</numcpf>");
+                post.AppendLine("      </parameters>");
+                post.AppendLine("    </ser:Complementares>");
+                post.AppendLine("  </soapenv:Body>");
+                post.AppendLine("</soapenv:Envelope>");
+
+                ComplementaresSOAP result = XML.XmlWebRequest<ComplementaresSOAP>(callUri, post.ToString(), "text/xml", null, "POST", this.cookie, debugCallback);
+
+                if (result == null || result.Body == null || result.Body.ComplementaresResponse == null || result.Body.ComplementaresResponse.Result == null)
+                    throw new SafeTrend.Xml.ResultEmptyException("ResultSet is empty");
+
+                if (!String.IsNullOrEmpty(result.Body.ComplementaresResponse.Result.ErroExecucao))
+                    throw new Exception(result.Body.ComplementaresResponse.Result.ErroExecucao);
+
+                tmp.AddRange(result.Body.ComplementaresResponse.Result.getDict());
+
+                return tmp;
+
+            }
+            catch (DeserializeException ex)
+            {
+                throw ex.Exception;
+            }
+        }
+
+
         public List<Dictionary<String, String>> GetComplememtaryByDate(String date, XML.DebugMessage debugCallback = null)
         {
             try
@@ -101,7 +146,7 @@ namespace SeniorRH
                     post.AppendLine("      <parameters>");
                     post.AppendLine("        <numEmp>" + this.numEmp + "</numEmp>");
                     post.AppendLine("        <tipCol>" + abrTipCol + "</tipCol>");
-                    post.AppendLine("        <iniPer>"+ date + "</iniPer>");
+                    post.AppendLine("        <iniPer>" + date + "</iniPer>");
                     post.AppendLine("        <fimPer>" + date + "</fimPer>");
                     post.AppendLine("      </parameters>");
                     post.AppendLine("    </ser:Complementares>");

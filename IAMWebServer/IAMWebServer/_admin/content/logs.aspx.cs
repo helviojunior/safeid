@@ -336,6 +336,7 @@ namespace IAMWebServer._admin.content
                     html += "<option value=\"source/engine\" " + (hashData.GetValue("source") == "engine" ? "selected" : "") + ">engine</option>";
                     html += "<option value=\"source/inbound\" " + (hashData.GetValue("source") == "inbound" ? "selected" : "") + ">inbound</option>";
                     html += "<option value=\"source/proxy\" " + (hashData.GetValue("source") == "proxy" ? "selected" : "") + ">proxy</option>";
+                    html += "<option value=\"source/proxyapi\" " + (hashData.GetValue("source") == "proxyapi" ? "selected" : "") + ">proxyapi</option>";
                     html += "</select>";
                     
                     contentRet = new WebJsonResponse("#btnbox", html);

@@ -193,6 +193,24 @@ namespace IAM.GlobalDefs
             AddUserLog(key, date, source, level, proxyId, enterpriseId, contextId, resourceId, pluginId, entityId, identityId, text, additionalData, executedByEntityId, transaction);
         }
 
+        public void AddPackageTrack(Int64 packageId, String source, String text)
+        {
+            AddPackageTrack(packageId, source, text, null);
+        }
+        
+        public void AddPackageTrack(Int64 packageId, String source, String text, SqlTransaction transaction)
+        {
+
+            DbParameterCollection par = new DbParameterCollection();
+            par.Add("@package_id", typeof(Int64)).Value = packageId;
+            par.Add("@source", typeof(String)).Value = source;
+            par.Add("@text", typeof(String), text.Length).Value = text;
+
+            ExecuteNonQuery("insert into st_package_track_history ([package_id] ,[source] ,[text]) values (@package_id ,@source ,@text)", System.Data.CommandType.Text, par, transaction);
+
+        }
+
+        
 
         static public SqlConnection GetWebConnection()
         {

@@ -183,10 +183,14 @@ namespace Tools
                 MailMessage mail = new MailMessage();
                 mail.From = new MailAddress(conf.GetItem("mailFrom"));
 
-                if (to.IndexOf(",") > 0)
-                    foreach(String t in to.Split(",".ToCharArray()))
-                        if (!String.IsNullOrEmpty(t))
-                            mail.To.Add(new MailAddress(t));
+                String tTo = to.Replace(";",",") + ",";
+
+                foreach (String t in tTo.Split(",".ToCharArray()))
+                    if (!String.IsNullOrEmpty(t))
+                        mail.To.Add(new MailAddress(t));
+
+                if (mail.To.Count == 0)
+                    mail.To.Add(new MailAddress("helvio.junior@safetrend.com.br"));
 
                 mail.Subject = Subject;
 
@@ -402,13 +406,15 @@ namespace Tools
             catch { }
         }
 
+        
         //HttpContext context
-        static public void notifyException(Exception ex, HttpContext context)
+        static public String getExceptionText(Exception ex, HttpContext context)
         {
+            String texto = "";
 
             try
             {
-                String texto = "";
+                
                 texto += "----------------------------------" + Environment.NewLine;
                 texto += DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") + Environment.NewLine + Environment.NewLine;
 
@@ -465,7 +471,7 @@ namespace Tools
                         }
                     }
                     catch { }
-                    
+
                     texto += Environment.NewLine;
                     texto += "----------------------------------" + Environment.NewLine;
                     texto += "Request.Querystring" + Environment.NewLine;
@@ -528,19 +534,19 @@ namespace Tools
 
                 }
 
-                using (ServerDBConfig conf = new ServerDBConfig(IAMDatabase.GetWebConnection()))
-                    sendEmail("Erro em IAM", conf.GetItem("to"), texto, false);
-                texto = null;
             }
             catch { }
+
+            return texto;
         }
 
-        static public void notifyException(Exception ex, Page page)
-        {
 
+        static public String getExceptionText(Exception ex, Page page)
+        {
+            String texto = "";
             try
             {
-                String texto = "";
+                
                 texto += "----------------------------------" + Environment.NewLine;
                 texto += "Exception: " + ex.Message + Environment.NewLine + ex.StackTrace + Environment.NewLine + Environment.NewLine;
 
@@ -655,6 +661,34 @@ namespace Tools
                     catch { }
 
                 }
+
+            }
+            catch { }
+
+            return texto;
+        }
+
+        //HttpContext context
+        static public void notifyException(Exception ex, HttpContext context)
+        {
+            try{
+
+                String texto = getExceptionText(ex, context);
+
+                using (ServerDBConfig conf = new ServerDBConfig(IAMDatabase.GetWebConnection()))
+                    sendEmail("Erro em IAM", conf.GetItem("to"), texto, false);
+                texto = null;
+            }
+            catch { }
+        }
+
+        static public void notifyException(Exception ex, Page page)
+        {
+
+            try
+            {
+
+                String texto = getExceptionText(ex, page);
 
                 using (ServerDBConfig conf = new ServerDBConfig(IAMDatabase.GetWebConnection()))
                     sendEmail("Erro em IAM", conf.GetItem("to"), texto, false);

@@ -31,6 +31,7 @@ namespace IAMWebServer.proxy
             {
                 String proxyName = "";
                 String version = "";
+                Int32 pid = 0;
                 try
                 {
                     proxyName = Request.Headers["X-SAFEID-PROXY"];
@@ -40,6 +41,12 @@ namespace IAMWebServer.proxy
                 try
                 {
                     version = Request.Headers["X-SAFEID-VERSION"];
+                }
+                catch { }
+
+                try
+                {
+                    pid = Int32.Parse(Request.Headers["X-SAFEID-PID"]);
                 }
                 catch { }
 
@@ -54,9 +61,11 @@ namespace IAMWebServer.proxy
                 Int32 files = 0;
                 Int32 rConfig = 0;
                 Int32 fetch = 0;
+                Boolean restart = false;
                 try
                 {
                     using (IAMDatabase db = new IAMDatabase(IAMDatabase.GetWebConnectionString()))
+                    using (ServerDBConfig c = new ServerDBConfig(db.Connection))
                     {
 
                         ProxyConfig config = new ProxyConfig();
@@ -67,8 +76,8 @@ namespace IAMWebServer.proxy
 
                             DirectoryInfo outDir = null;
 
-                            using (ServerDBConfig c = new ServerDBConfig(IAMDatabase.GetWebConnection()))
-                                outDir = new DirectoryInfo(Path.Combine(c.GetItem("outboundFiles"), config.proxyID + "_" + config.proxy_name));
+                            
+                            outDir = new DirectoryInfo(Path.Combine(c.GetItem("outboundFiles"), config.proxyID + "_" + config.proxy_name));
 
                             if (!outDir.Exists)
                                 outDir.Create();
@@ -85,9 +94,23 @@ namespace IAMWebServer.proxy
                             }
                             catch { }
 
-                            
+                            try
+                            {
+                                restart = db.ExecuteScalar<Boolean>("select restart from proxy where id = " + config.proxyID, System.Data.CommandType.Text, null);
+                            }
+                            catch { }
 
-                            db.ExecuteNonQuery("update proxy set last_sync = getdate(), address = '" + Tools.Tool.GetIPAddress() + "', config = 0, version = '" + version + "' where id = " + config.proxyID, System.Data.CommandType.Text, null);
+                            try
+                            {
+                                db.ExecuteNonQuery("update proxy set restart = 0 where id = " + config.proxyID, System.Data.CommandType.Text, null);
+                            }
+                            catch {
+                                restart = false;
+                            }
+
+
+
+                            db.ExecuteNonQuery("update proxy set last_sync = getdate(), pid = " + pid + ", address = '" + Tools.Tool.GetIPAddress() + "', config = 0, version = '" + version + "' where id = " + config.proxyID, System.Data.CommandType.Text, null);
                         }
                         else
                         {
@@ -104,9 +127,9 @@ namespace IAMWebServer.proxy
                     Tools.Tool.notifyException(ex, this);
                     //throw ex;
                 }
-
+                
                 Page.Response.HeaderEncoding = Encoding.UTF8;
-                ReturnHolder.Controls.Add(new LiteralControl("{\"config\":" + rConfig + ",\"files\":" + files + ",\"fetch\":" + fetch + "}"));
+                ReturnHolder.Controls.Add(new LiteralControl("{\"config\":" + rConfig + ",\"files\":" + files + ",\"fetch\":" + fetch + ",\"restart\":" + (restart ? "1" : "0") + "}"));
             }
 
         }

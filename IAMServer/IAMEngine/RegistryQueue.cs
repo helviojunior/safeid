@@ -14,6 +14,12 @@ namespace IAM.Engine
         public LockRules lockRules { get; set; }
         public IgnoreRules ignoreRules { get; set; }
         public RoleRules roleRules { get; set; }
+        public RegistryImporter.DebugMessage debugCallback { get; set; }
+
+        public LocalTheadObjects()
+        {
+            this.debugCallback = null;
+        }
 
         public void Dispose()
         {
@@ -34,6 +40,7 @@ namespace IAM.Engine
             db = null;
             lockRules = null;
             roleRules = null;
+            this.debugCallback = null;
         }
     }
 

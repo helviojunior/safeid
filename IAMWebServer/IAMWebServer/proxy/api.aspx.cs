@@ -54,7 +54,7 @@ namespace IAMWebServer.proxy
                     try
                     {
                         using (IAMDatabase db = new IAMDatabase(IAMDatabase.GetWebConnectionString()))
-                            db.AddUserLog(LogKey.API_Error, null, "ProxyAPI", UserLogLevel.Error, 0, (((Page.Session["enterprise_data"]) != null && (Page.Session["enterprise_data"] is EnterpriseData) && (((EnterpriseData)Page.Session["enterprise_data"]).Id != null)) ? ((EnterpriseData)Page.Session["enterprise_data"]).Id : 0), 0, 0, 0, 0, 0, "Proxy API error: " + ex.Message, "{ \"ipaddr\":\"" + Tools.Tool.GetIPAddress() + "\"} ");
+                            db.AddUserLog(LogKey.API_Error, null, "ProxyAPI", UserLogLevel.Error, 0, (((Page.Session["enterprise_data"]) != null && (Page.Session["enterprise_data"] is EnterpriseData) && (((EnterpriseData)Page.Session["enterprise_data"]).Id != null)) ? ((EnterpriseData)Page.Session["enterprise_data"]).Id : 0), 0, 0, 0, 0, 0, "Proxy API error: " + ex.Message, Tools.Tool.getExceptionText(ex, this) );
                     }
                     catch { }
                 }

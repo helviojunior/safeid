@@ -216,6 +216,19 @@ namespace IAM.CA
             return result;
         }
 
+
+        public static Boolean SHA1CheckHash(Byte[] data, String hash)
+        {
+            if (String.IsNullOrEmpty(hash))
+                return false;
+
+            System.Security.Cryptography.SHA1Managed sha1 = new System.Security.Cryptography.SHA1Managed();
+            String cHash = BitConverter.ToString(sha1.ComputeHash(data)).Replace("-", "");
+
+            return (hash.Replace("-", "").ToLower() == cHash.ToLower());
+        }
+
+
         public static String MD5Checksum(Byte[] data)
         {
             System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create();

@@ -8,7 +8,7 @@ using System.IO;
 namespace IAM.PluginInterface
 {
 
-    public abstract class PluginConnectorBase : PluginBase
+    public abstract class PluginConnectorBase : PluginBase, IDisposable
     {
         public abstract PluginConnectorConfigActions[] GetConfigActions();
 
@@ -104,7 +104,10 @@ namespace IAM.PluginInterface
             return true;
         }
 
+        public void Dispose()
+        {
 
+        }
 
     }
 }

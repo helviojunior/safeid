@@ -60,6 +60,11 @@ namespace IAM.Config
                 this.is_login,
                 this.is_name);
         }
+
+        public String ToString()
+        {
+            return data_name + "/" + field_id + "/" + field_name;
+        }
     }
 
 

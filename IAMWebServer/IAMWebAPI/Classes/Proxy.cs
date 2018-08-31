@@ -81,6 +81,10 @@ namespace IAM.WebAPI.Classes
                     return delete(database, parameters);
                     break;
 
+                case "restart":
+                    return restart(database, parameters);
+                    break;
+
                 case "change":
                     return change(database, parameters);
                     break;
@@ -224,6 +228,7 @@ namespace IAM.WebAPI.Classes
             newItem.Add("last_sync", (dr1["last_sync"] != DBNull.Value ? (Int32)((((DateTime)dr1["last_sync"]) - new DateTime(1970, 1, 1)).TotalSeconds) : 0));
             newItem.Add("last_sync_address", dr1["address"]);
             newItem.Add("last_sync_version", dr1["version"]);
+            newItem.Add("last_sync_pid", dr1["pid"]);
             newItem.Add("resource_qty", dr1["resource_qty"]);
             newItem.Add("create_date", (dr1["create_date"] != DBNull.Value ? (Int32)((((DateTime)dr1["create_date"]) - new DateTime(1970, 1, 1)).TotalSeconds) : 0));
 
@@ -299,6 +304,65 @@ namespace IAM.WebAPI.Classes
             return true;
         }
 
+
+        /// <summary>
+        /// Método privado para processamento do método 'user.resetpassword'
+        /// </summary>
+        /// <param name="sqlConnection">Conexão com o banco de dados MS-SQL</param>
+        /// <param name="parameters">Dicionário (String, Object) contendo todos os parâmetros necessários</param>
+        private Boolean restart(IAMDatabase database, Dictionary<String, Object> parameters)
+        {
+
+            if (!parameters.ContainsKey("proxyid"))
+            {
+                Error(ErrorType.InvalidRequest, "Parameter proxyid is not defined.", "", null);
+                return false;
+            }
+
+
+            String proxy = parameters["proxyid"].ToString();
+            if (String.IsNullOrWhiteSpace(proxy))
+            {
+                Error(ErrorType.InvalidRequest, "Parameter proxyid is not defined.", "", null);
+                return false;
+            }
+
+            Int64 proxyid = 0;
+            try
+            {
+                proxyid = Int64.Parse(proxy);
+
+            }
+            catch
+            {
+                Error(ErrorType.InvalidRequest, "Parameter proxyid is not a long integer.", "", null);
+                return false;
+            }
+
+
+            DbParameterCollection par = new DbParameterCollection();
+            par.Add("@enterprise_id", typeof(Int64)).Value = this._enterpriseId;
+            par.Add("@proxy_id", typeof(Int64)).Value = proxyid;
+
+            DataTable dtProxy = database.ExecuteDataTable("select * from proxy p where (p.enterprise_id = @enterprise_id or p.enterprise_id = 0) and p.id = @proxy_id", CommandType.Text, par, null);
+            if (dtProxy == null)
+            {
+                Error(ErrorType.InternalError, "", "", null);
+                return false;
+            }
+
+            if (dtProxy.Rows.Count == 0)
+            {
+                Error(ErrorType.InvalidRequest, "Proxy not found.", "", null);
+                return false;
+            }
+
+            database.ExecuteNonQuery("update proxy set restart = 1 where id = @proxy_id", CommandType.Text, par);
+            database.AddUserLog(LogKey.Proxy_ResetRequest, null, "API", UserLogLevel.Info, 0, this._enterpriseId, 0, 0, 0, 0, 0, "Proxy " + dtProxy.Rows[0]["name"] + " reset requested", "");
+
+            return true;
+        }
+
         /// <summary>
         /// Método privado para processamento do método 'user.resetpassword'
         /// </summary>
@@ -365,6 +429,7 @@ namespace IAM.WebAPI.Classes
                     newItem.Add("last_sync", (dr1["last_sync"] != DBNull.Value ? (Int32)((((DateTime)dr1["last_sync"]) - new DateTime(1970, 1, 1)).TotalSeconds) : 0));
                     newItem.Add("last_sync_address", dr1["address"]);
                     newItem.Add("last_sync_version", dr1["version"]);
+                    newItem.Add("last_sync_pid", dr1["pid"]);
                     newItem.Add("resource_qty", dr1["resource_qty"]);
                     newItem.Add("create_date", (dr1["create_date"] != DBNull.Value ? (Int32)((((DateTime)dr1["create_date"]) - new DateTime(1970, 1, 1)).TotalSeconds) : 0));
 

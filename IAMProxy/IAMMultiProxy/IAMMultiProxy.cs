@@ -78,7 +78,7 @@ namespace IAM.MultiProxy
 
             onlineProxy.Remove(p.StartInfo.FileName);
 
-            Log.TextLog.Log("MultiProxy", "Proxy " + p.StartInfo.Arguments + " with pid " + p.Id + " closed");
+            Log.TextLog.Log("MultiProxy", "Proxy " + p.StartInfo.Arguments + " with pid " + p.Id + " closed, restarting in 60 seconds");
 
             Thread.Sleep(60000);
             StartProxy(new FileInfo( p.StartInfo.FileName), "");

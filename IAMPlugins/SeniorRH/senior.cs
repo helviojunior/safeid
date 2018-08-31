@@ -167,7 +167,7 @@ namespace SeniorRH
             try
             {
 
-                lastStep = "Resgata os colaboradores contratados nos ultimos 365 dias";
+                lastStep = "Resgata os colaboradores contratados nos últimos 365 dias";
 
                 List<Dictionary<String, String>> users = api.GetUsers(dbgC);
 
@@ -255,7 +255,17 @@ namespace SeniorRH
                 logType = PluginLogType.Error;
                 processLog.AppendLine("Error on process import (" + lastStep + "): " + ex.Message);
 
-                Log2(this, PluginLogType.Error, 0, 0, "Error on process import: " + ex.Message, "Last step: " + lastStep);
+
+                if (ex is SafeTrend.Xml.ResultEmptyException)
+                {
+                    Log2(this, PluginLogType.Error, 0, 0, "Network erro or API lock error importing user data", ex.Message + Environment.NewLine + "Last step: " + lastStep);
+                }
+                else
+                {
+
+
+                    Log2(this, PluginLogType.Error, 0, 0, "Error on process import: " + ex.Message, "Last step: " + lastStep);
+                }
             }
             finally
             {
@@ -279,6 +289,63 @@ namespace SeniorRH
         }
 
         private Dictionary<String, Dictionary<String, String>> GetComplementatyData(SeniorAPI api, Dictionary<String, String> user, XML.DebugMessage debugCallback = null)
+        {
+            Dictionary<String, Dictionary<String, String>> uData = new Dictionary<string, Dictionary<string, string>>();
+
+            //Preeche as datas que detem contratacoes
+            String numCpf = "";//Data de admissao
+
+            if (user.ContainsKey("numCpf"))
+                numCpf = user["numCpf"];
+            else if (user.ContainsKey("numcpf"))
+                numCpf = user["numcpf"];
+
+            numCpf = numCpf.Replace("-", "").Replace(".", "").Replace(" ", "");
+
+            if (!String.IsNullOrEmpty(numCpf))
+            {
+
+                try
+                {
+                    List<Dictionary<String, String>> usersData = api.GetComplememtaryByCPF(numCpf, debugCallback);
+
+                    if (usersData == null)
+                        return uData;
+
+                    foreach (Dictionary<String, String> u in usersData)
+                    {
+                        String cNumCad = "";//Data de admissao
+
+                        if (u.ContainsKey("numCad"))
+                            cNumCad = u["numCad"];
+                        else if (u.ContainsKey("numcad"))
+                            cNumCad = u["numcad"];
+
+                        if (!String.IsNullOrEmpty(cNumCad))
+                        {
+                            if (!uData.ContainsKey(cNumCad))
+                                uData.Add(cNumCad, new Dictionary<string, string>(u));
+
+                        }
+
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    if (debugCallback != null)
+                        debugCallback("Error getting complementary user data", ex.Message);
+
+                    
+                    if (ex is SafeTrend.Xml.ResultEmptyException)
+                        throw ex;
+                }
+            }
+
+            return uData;
+        }
+
+        private Dictionary<String, Dictionary<String, String>> GetComplementatyDataOld(SeniorAPI api, Dictionary<String, String> user, XML.DebugMessage debugCallback = null)
         {
             Dictionary<String, Dictionary<String, String>> uData = new Dictionary<string,Dictionary<string,string>>();
             List<String> dates = new List<String>();
@@ -332,6 +399,9 @@ namespace SeniorRH
                 catch(Exception ex) {
                     if (debugCallback != null)
                         debugCallback("Error getting complementary user data", ex.Message);
+
+                    if (ex is SafeTrend.Xml.ResultEmptyException)
+                        throw ex;
                 }
             }
            
@@ -363,7 +433,7 @@ namespace SeniorRH
             try
             {
 
-                String importID = "ProcessImportAfterDeploy-" + Guid.NewGuid().ToString();
+                String importID = "ImpAfDep-" + Guid.NewGuid().ToString();
 
                 lastStep = "Checa CPF no pacote";
 
@@ -479,16 +549,14 @@ namespace SeniorRH
                         }
 
 
-                        processLog.AppendLine("Import (after deploy) package generated:");
-                        processLog.AppendLine("\tImport ID: " + importID);
-                        processLog.AppendLine("\tPackage ID: " + packageImp.pkgId);
-                        processLog.AppendLine("");
-                        processLog.AppendLine("Package data:");
-                        processLog.AppendLine( JSON.Serialize(packageImp) );
-
-                        ImportPackageUser(packageImp);
                     }
                     catch (Exception ex2)
+                    {
+
+                        processLog.AppendLine("Error: " + ex2.Message);
+                        
+                    }
+                    finally
                     {
 
                         processLog.AppendLine("Import (after deploy) package generated:");
@@ -498,6 +566,7 @@ namespace SeniorRH
                         processLog.AppendLine("Package data:");
                         processLog.AppendLine(JSON.Serialize(packageImp));
 
+                        ImportPackageUser(packageImp);
                     }
 
 

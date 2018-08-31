@@ -530,6 +530,12 @@ namespace SafeTrend.Json
 
         [DataMember]
         public string enterpriseid;
+
+        [DataMember, OptionalField]
+        public string filename;
+
+        [DataMember, OptionalField]
+        public string sha1hash;
     }
 
     [DataContract]

@@ -275,7 +275,7 @@ namespace IAMWebServer._admin.content
                                             }
                                             else
                                             {
-                                                text = "On-line através do endereço " + proxy.last_sync_address + ". Versão: " + proxy.last_sync_version;
+                                                text = "On-line através do endereço " + proxy.last_sync_address + ". Versão: " + proxy.last_sync_version + ". Pid: " + proxy.last_sync_pid;
                                             }
                                         }
                                         else
@@ -285,6 +285,8 @@ namespace IAMWebServer._admin.content
 
                                         String links = "";
                                         links += (proxy.resource_qty > 0 ? "" : "<a class=\"confirm-action\" href=\"" + ApplicationVirtualPath + "admin/proxy/" + proxy.proxy_id + "/action/delete/" + (Request.Form["hashtag"] != null ? "#" + Request.Form["hashtag"].ToString() : "") + "\" confirm-title=\"Exclusão\" confirm-text=\"Deseja excluir definitivamente o proxy '" + proxy.name + "'?\" ok=\"Excluir\" cancel=\"Cancelar\"><div class=\"ico icon-close\">Apagar</div></a>");
+                                        links += "<a class=\"confirm-action\" href=\"" + ApplicationVirtualPath + "admin/proxy/" + proxy.proxy_id + "/action/restart/" + (Request.Form["hashtag"] != null ? "#" + Request.Form["hashtag"].ToString() : "") + "\" confirm-title=\"Reset\" confirm-text=\"Deseja reiniciar o proxy '" + proxy.name + "' no servidor remoto?\" ok=\"Reiniciar\" cancel=\"Cancelar\"><div class=\"ico icon-loop\">Reiniciar</div></a>";
+                                        
                                         links += "<a href=\"" + ApplicationVirtualPath + "admin/proxy/" + proxy.proxy_id + "/direct/download/" + (Request.Form["hashtag"] != null ? "#" + Request.Form["hashtag"].ToString() : "") + "\"><div class=\"ico icon-download-alt\">Download (instalador e configuração)</div></a>";
 
                                         html += String.Format(proxyTemplate, proxy.proxy_id, proxy.name, proxy.resource_qty, (proxy.create_date > 0 ? "Criado em " + MessageResource.FormatDate(new DateTime(1970, 1, 1).AddSeconds(proxy.create_date), true) : ""), text, links);

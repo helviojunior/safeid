@@ -48,6 +48,9 @@ namespace IAM.Proxy
 
         [OptionalField]
         public Int32 fetch;
+
+        [OptionalField]
+        public Boolean restart = false;
     }
 
     internal class Proxy
@@ -55,7 +58,6 @@ namespace IAM.Proxy
         LocalConfig localConfig;
         ProxyConfig config;
 
-        Timer configTimer;
         String basePath = "";
         List<Uri> onlinePlugins;
 
@@ -225,6 +227,15 @@ namespace IAM.Proxy
 
             GetSync();
 
+            if (lastSync.restart)
+            {
+                AddProxyLog(UserLogLevel.Error, "Restart requested by server, doing it... (" + localConfig.Hostname + ")", "");
+                Log.TextLog.Log("Proxy", "Restart requested by server, doing it...");
+                SaveLogToSend();
+                End();
+                Process.GetCurrentProcess().Kill();
+            }
+
             if ((lastSync.files > 0) && (lastSync.config > 0) && (lastSync.fetch > 0))
             {
                 Log.TextLog.Log("Proxy", "Starting thread of download config, files and fetch (Real time sync)");
@@ -297,6 +308,7 @@ namespace IAM.Proxy
         {
             Config();
             ReceiveFiles();
+            CheckInactiveStarters();
         }
 
         private void DeleteTimer(Object state)
@@ -323,18 +335,26 @@ namespace IAM.Proxy
         private void GetSync()
         {
             WebClient client = new WebClient();
+            String jData = ""; 
             try
             {
                 Uri uri = new Uri((localConfig.UseHttps ? "https://" : "http://") + localConfig.Server + "/proxy/sync/");
                 client.Headers.Add("X-SAFEID-PROXY", localConfig.Hostname);
                 client.Headers.Add("X-SAFEID-VERSION", ver.ToString());
+                client.Headers.Add("X-SAFEID-PID", Process.GetCurrentProcess().Id.ToString());
                 
-                String jData = client.DownloadString(uri);
+                jData = client.DownloadString(uri);
                 lastSync = SyncStatus.Deserialize<SyncStatus>(jData);
             }
-            catch { }
+            catch(Exception ex) { 
+#if DEBUG
+                Log.TextLog.Log("Proxy", "Error syncing: " + ex.Message);
+                Log.TextLog.Log("Proxy", jData);
+#endif
+            }
             finally
             {
+                jData = null;
                 client.Dispose();
             }
         }
@@ -552,6 +572,12 @@ namespace IAM.Proxy
             }
         }
 
+        private void CheckInactiveStarters()
+        {
+            //DirectoryInfo dirFrom = new DirectoryInfo(Path.Combine(basePath, "In\\" + Path.GetFileNameWithoutExtension(asm.Location)));
+
+        }
+
         private void ReceiveFiles()
         {
             if (receiveFilesExecuting)
@@ -642,7 +668,7 @@ namespace IAM.Proxy
 
                 UploadTransfer();
 
-                //UploadLogs();
+                UploadLogs();
 
             }
             finally
@@ -791,11 +817,12 @@ namespace IAM.Proxy
             }
             finally
             {
-#if DEBUG
-                AddProxyLog(UserLogLevel.Info, "File(s) downloaded by proxy.", dwnLog.ToString());
-#endif
+
+                AddProxyLog(UserLogLevel.Info, "File(s) downloaded by proxy " + localConfig.Hostname, dwnLog.ToString());
+
                 if (logProxy != null)
                     logProxy.SaveToSend("log-proxy");
+
                 dwnLog.Clear();
                 dwnLog = null;
             }
@@ -847,39 +874,39 @@ namespace IAM.Proxy
             {
                 try
                 {
-                    Byte[] fData = File.ReadAllBytes(f.FullName);
+                    
+                    String fileData = File.ReadAllText(f.FullName, Encoding.UTF8);
 
-                    WebClient client = new WebClient();
-                    Byte[] data = client.UploadData(uri, Encoding.UTF8.GetBytes("{\"request\":\"send_logs\", \"host\":\"" + localConfig.Hostname + "\", \"data\":\"" + Convert.ToBase64String(fData) + "\"}"));
+                    AddProxyLog(UserLogLevel.Debug, "Log file from " + localConfig.Hostname, "Filename: " + f.FullName + Environment.NewLine + fileData);
 
-                    String Json = Encoding.UTF8.GetString(data);
-                    JSONResponse resp = JSON.GetResponse(Json);
-
-                    if (resp.response == "success")
+#if DEBUG
+                    try
                     {
-                        Log.TextLog.Log("Proxy", "\tSended file " + f.Name + " to server. Datalen " + fData.Length);
-#if debug
-                            AddProxyLog(UserLogLevel.Info, "Sended file " + f.Name + " to server. " + resp.data, "");
+                        WebClient client = new WebClient();
+                        Byte[] data = client.UploadData(uri, Encoding.UTF8.GetBytes("{\"request\":\"send_logs\", \"host\":\"" + localConfig.Hostname + "\", \"data\":\"" + Convert.ToBase64String(Encoding.UTF8.GetBytes(fileData)) + "\"}"));
+
+                        String Json = Encoding.UTF8.GetString(data);
+                        JSONResponse resp = JSON.GetResponse(Json);
+                    }
+                    catch { }
 #endif
-                        DirectoryInfo mvDir = new DirectoryInfo(Path.Combine(f.DirectoryName, "move"));
-                        if (!mvDir.Exists)
-                            mvDir.Create();
 
-                        Log.TextLog.Log("Proxy", "\tMoving file " + f.Name + " to 'move' folder");
-                        File.Move(f.FullName, Path.Combine(mvDir.FullName, f.Name));
+                    DirectoryInfo mvDir = new DirectoryInfo(Path.Combine(f.DirectoryName, "move"));
+                    if (!mvDir.Exists)
+                        mvDir.Create();
 
-                    }
-                    else
-                    {
-                        Log.TextLog.Log("Proxy", "\tError on send file " + f.Name + " to server. " + (resp.error != null ? resp.error : ""));
-                    }
+                    File.Move(f.FullName, Path.Combine(mvDir.FullName, f.Name));
+
 
                 }
                 catch (Exception ex)
                 {
-                    Log.TextLog.Log("Proxy", "\tError sending file to server " + localConfig.Hostname + "(" + ex.Message + ")");
+                    Log.TextLog.Log("Proxy", "\tError sending log file to server " + localConfig.Hostname + " with "+ f.Length + " bytes (" + ex.Message + ")");
                 }
             }
+
+            SaveLogToSend();
+
         }
 
         private void UploadTransfer()
@@ -913,8 +940,10 @@ namespace IAM.Proxy
                     {
                         Byte[] fData = File.ReadAllBytes(f.FullName);
 
+                        String hash = CA.CATools.SHA1Checksum(fData);
+
                         WebClient client = new WebClient();
-                        Byte[] data = client.UploadData(uri, Encoding.UTF8.GetBytes("{\"request\":\"transfer_send\", \"host\":\"" + localConfig.Hostname + "\", \"data\":\"" + Convert.ToBase64String(fData) + "\"}"));
+                        Byte[] data = client.UploadData(uri, Encoding.UTF8.GetBytes("{\"request\":\"transfer_send\", \"host\":\"" + localConfig.Hostname + "\", \"filename\":\"" + f.Name + "\", \"sha1hash\":\"" + hash + "\", \"data\":\"" + Convert.ToBase64String(fData) + "\"}"));
 
                         String Json = Encoding.UTF8.GetString(data);
                         JSONResponse resp = JSON.GetResponse(Json);
@@ -935,10 +964,10 @@ namespace IAM.Proxy
                         }
                         else
                         {
-                            Log.TextLog.Log("Proxy", "\tError on send file " + f.Name + " to server from " + localConfig.Hostname + (resp.error != null ? resp.error : ""));
+                            Log.TextLog.Log("Proxy", "\tError sending file " + f.Name + " to server with "+ f.Length +" bytes from " + localConfig.Hostname + (resp.error != null ? resp.error : ""));
 
 #if DEBUG
-                            AddProxyLog(UserLogLevel.Info, "Error on send file " + f.Name + " to server from " + localConfig.Hostname, (resp.error != null ? resp.error : ""));
+                            AddProxyLog(UserLogLevel.Info, "Error sending file " + f.Name + " to server with " + f.Length + " bytes from " + localConfig.Hostname, (resp.error != null ? resp.error : ""));
 #endif
                         }
 
@@ -1001,10 +1030,6 @@ namespace IAM.Proxy
                 {
                     tmpConfig = new ProxyConfig();
                     tmpConfig.FromJsonString(Json);
-
-                    if (configTimer != null)
-                        configTimer.Dispose();
-                    configTimer = null;
 
                 }
                 catch (Exception ex)
@@ -1126,7 +1151,18 @@ namespace IAM.Proxy
                         if (!Directory.Exists(Path.Combine(basePath, "plugins")))
                             Directory.CreateDirectory(Path.Combine(basePath, "plugins"));
 
-                        List<PluginConnectorBase> plugins = Plugins.GetPlugins<PluginConnectorBase>(Path.Combine(basePath, "plugins"));
+
+                        Plugins.DebugMessage dbgC = new Plugins.DebugMessage(delegate(String message, Exception exception)
+                        {
+                            TextLog.Log("Proxy", "\t" + message + Environment.NewLine + exception.Message + Environment.NewLine + exception.StackTrace);
+                            
+                            if (exception != null)
+                                TextLog.Log("Proxy", "\t"+  exception.Message + Environment.NewLine + exception.StackTrace);
+
+                        });
+
+
+                        List<PluginConnectorBase> plugins = Plugins.GetPlugins<PluginConnectorBase>(Path.Combine(basePath, "plugins"), dbgC);
 
                         if ((config.plugins == null))
                             throw new Exception("Plugin list is null");
@@ -1135,28 +1171,38 @@ namespace IAM.Proxy
                         if (plugins.Count == 0)
                             Log.TextLog.Log("Proxy", "\tLocal plugin list is empty");
 #endif
-
+                        TextLog.Log("Proxy", "\tLocal DLL plugins:");
                         foreach (PluginConnectorBase p in plugins)
                         {
-
-#if DEBUG
-                            Log.TextLog.Log("Proxy", "\tStarting config loader to " + p.GetPluginId().AbsoluteUri);
-#endif
-
-                            foreach (PluginConfig pConf in config.plugins)
-                            {
-#if DEBUG
-                                Log.TextLog.Log("Proxy", "\tChecking local math to received plugin config " + pConf.uri.ToLower());
-#endif
-                                if (pConf.uri.ToLower() == p.GetPluginId().AbsoluteUri.ToLower())
-                                {
-                                    TextLog.Log("Proxy", "\tResource x plugin " + pConf.resource_plugin + " for " + p.GetPluginId().AbsoluteUri);
-                                }
-
-                            }
-
+                            TextLog.Log("Proxy", "\t\tPlugin " + p.GetPluginId().AbsoluteUri);
                         }
 
+                        TextLog.Log("Proxy", "\tConfig plugins:");
+                        foreach (PluginConfig pConf in config.plugins)
+                        {
+                            TextLog.Log("Proxy", "\t\tPlugin " + pConf.uri.ToLower() + " for resource x plugin " + pConf.resource_plugin);
+                        }
+
+                        //Checa consistencia, se tudo que veio na config tem o plugin
+                        foreach (PluginConfig pConf in config.plugins)
+                        {
+                            Boolean found = false;
+                            foreach (PluginConnectorBase p in plugins)
+                            {
+
+                                if (pConf.uri.ToLower() == p.GetPluginId().AbsoluteUri.ToLower())
+                                    found = true;
+                            }
+
+                            if (!found)
+                            {
+                                AddProxyLog(UserLogLevel.Error, "Configuration received, but DLL for plugin not found, this plugin will not start (" + localConfig.Hostname + ")", pConf.uri.ToLower());
+                                Log.TextLog.Log("Proxy", "\tConfiguration received, but plugin not found, this plugin will not start");
+                                SaveLogToSend();
+                                //End();
+                                //Process.GetCurrentProcess().Kill();
+                            }
+                        }
 
                     }
                     catch (Exception ex)

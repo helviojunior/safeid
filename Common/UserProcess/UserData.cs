@@ -20,6 +20,8 @@ namespace IAM.UserProcess
     
     public class UserData: IAMDatabase, IDisposable
     {
+
+        
         public Int64 EntityId { get; set; }
         public Int64 IdentityId { get; set; }
         public Boolean Locked { get; set; }
@@ -177,8 +179,8 @@ namespace IAM.UserProcess
                         }
                         catch (Exception ex)
                         {
-                            AddUserLog(conn, LogKey.User_Update, null, "Engine", UserLogLevel.Error, 0, 0, 0, this.resource, this.pluginId, this.EntityId, this.IdentityId, "Error update entity index", ex.Message, null);
-                            txtEntities.AppendLine("Error update entity index: " + ex.Message);
+                            AddUserLog(conn, LogKey.User_Update, null, "Engine", UserLogLevel.Error, 0, 0, 0, this.resource, this.pluginId, this.EntityId, this.IdentityId, "Error updating entity index", ex.Message, null);
+                            txtEntities.AppendLine("Error updating entity index: " + ex.Message);
 
                             //Se o erro for de deadlock, causa exception, pois este erro automaticamente causa o Rollback da transação
                             if ((ex is SqlException) && (ex.Message.IndexOf("deadlock") > -1))
@@ -605,6 +607,32 @@ namespace IAM.UserProcess
 
         }
 
+        public void RebuildIndexes(SqlTransaction trans)
+        {
+
+            try
+            {
+                DbParameterCollection par2 = new DbParameterCollection();
+                par2.Add("@entity_id", typeof(Int64)).Value = EntityId;
+
+                ExecuteNonQuery(conn, "sp_rebuild_entity_keys2", CommandType.StoredProcedure, par2, trans);
+            }
+            catch (Exception ex)
+            {
+                AddUserLog(conn, LogKey.User_Update, null, "Engine", UserLogLevel.Error, 0, 0, 0, this.resource, this.pluginId, this.EntityId, this.IdentityId, "Error updating entity index", ex.Message, trans);
+                Log("Error updating entity index: " + ex.Message);
+
+                //Se o erro for de deadlock, causa exception, pois este erro automaticamente causa o Rollback da transação
+                if ((ex is SqlException) && (ex.Message.IndexOf("deadlock") > -1))
+                {
+                    trans = null;
+                    throw ex;
+                }
+
+            }
+
+        }
+
         public void UpdateUser(SqlTransaction trans)
         {
             TestTimer tmp = new TestTimer("UserData.UpdateUser->Build values", dLog);
@@ -727,27 +755,6 @@ namespace IAM.UserProcess
                 }
             }
 
-
-            try
-            {
-                DbParameterCollection par2 = new DbParameterCollection();
-                par2.Add("@entity_id", typeof(Int64)).Value = EntityId;
-
-                ExecuteNonQuery(conn, "sp_rebuild_entity_keys2", CommandType.StoredProcedure, par2, trans);
-            }
-            catch(Exception ex) {
-                AddUserLog(conn, LogKey.User_Update, null, "Engine", UserLogLevel.Error, 0, 0, 0, this.resource, this.pluginId, this.EntityId, this.IdentityId, "Error update entity index", ex.Message, trans);
-                Log("Error update entity index: " + ex.Message);
-
-                //Se o erro for de deadlock, causa exception, pois este erro automaticamente causa o Rollback da transação
-                if ((ex is SqlException) && (ex.Message.IndexOf("deadlock") > -1))
-                {
-                    trans = null;
-                    throw ex;
-                }
-                
-            }
-
             AddUserLog(conn,LogKey.User_Update, null, "Engine", UserLogLevel.Info, 0, 0, 0, this.resource, this.pluginId, this.EntityId, this.IdentityId, "Updating user in IAM Database", "", trans);
 
             //Em caso de alteração de status marca para realizar o deploy em 15 minutos
@@ -818,8 +825,11 @@ namespace IAM.UserProcess
 
             List<String> fds = new List<String>();
 
+            Log("Fields data");
             foreach (UserDataFields u in fields)
             {
+                Log("\t" + u.Mapping.field_name + " ("+ u.Mapping.field_id + "): " + u.StringValue);
+
                 fds.Add(u.Mapping.field_id.ToString());
 
                 //Nome

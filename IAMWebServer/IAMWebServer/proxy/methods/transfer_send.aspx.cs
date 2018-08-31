@@ -12,6 +12,8 @@ using System.Text;
 using System.IO;
 using System.Data.SqlClient;
 using IAM.GlobalDefs;
+using IAM.PluginInterface;
+using SafeTrend.Data;
 
 namespace IAMWebServer.proxy.methods
 {
@@ -27,7 +29,7 @@ namespace IAMWebServer.proxy.methods
 
                 using (IAMDatabase database = new IAMDatabase(IAMDatabase.GetWebConnectionString()))
                 {
-                    ProxyConfig config = new ProxyConfig();
+                    ProxyConfig config = new ProxyConfig(true);
                     config.GetDBConfig(database.Connection, ((EnterpriseData)Page.Session["enterprise_data"]).Id, req.host);
 
                     if (config.fqdn != null) //Encontrou o proxy
@@ -43,56 +45,156 @@ namespace IAMWebServer.proxy.methods
 
                         req.enterpriseid = ((EnterpriseData)Page.Session["enterprise_data"]).Id.ToString();
 
-                        File.WriteAllBytes(Path.Combine(inDir.FullName, config.proxy_name + "-" + DateTime.Now.ToString("yyyyMMddHHmmss-ffffff") + ".iamreq"), Encoding.UTF8.GetBytes(JSON.Serialize<JSONRequest>(req)));
+                        String filename = config.proxy_name + "-" + DateTime.Now.ToString("yyyyMMddHHmmss-ffffff") + ".iamreq";
 
-                        /*
 
-                        Byte[] cData = new Byte[0];
+                        if (String.IsNullOrEmpty(req.filename))
+                            req.filename = "Empty";
 
+                        StringBuilder trackData = new StringBuilder();
+                        trackData.AppendLine("Proxy: " + req.host);
+                        trackData.AppendLine("Enterprise ID: " + req.enterpriseid);
+                        trackData.AppendLine("Proxy filename: " + req.filename);
+                        trackData.AppendLine("Saved filename: " + filename);
+
+                        UserLogLevel level = UserLogLevel.Info;
+
+                        trackData.AppendLine("");
+                        trackData.AppendLine("Checking package...");
+
+                        if (String.IsNullOrEmpty(req.data))
+                            throw new Exception("Request data is empty");
+
+                        Byte[] rData = Convert.FromBase64String(req.data);
+
+                        if (!String.IsNullOrEmpty(req.sha1hash))
+                        {
+                            if(!CATools.SHA1CheckHash(rData, req.sha1hash))
+                                throw new Exception("SHA1 Checksum is not equal");
+
+                        }
+
+                        String type = "";
                         try
                         {
+                            
+                            JsonGeneric jData = new JsonGeneric();
+                            try
+                            {
 
-                            String certPass = CATools.SHA1Checksum(Encoding.UTF8.GetBytes(config.fqdn));
-                            using (CryptApi cApi = CryptApi.ParsePackage(CATools.LoadCert(Convert.FromBase64String(config.server_cert), certPass), Convert.FromBase64String(req.data)))
-                                cData = cApi.clearData;
+                                String certPass = CATools.SHA1Checksum(Encoding.UTF8.GetBytes(config.fqdn));
+                                if (String.IsNullOrEmpty(config.server_pkcs12_cert))
+                                    throw new Exception("Server PKCS12 from proxy config is empty");
 
+                                using (CryptApi cApi = CryptApi.ParsePackage(CATools.LoadCert(Convert.FromBase64String(config.server_pkcs12_cert), certPass), rData))
+                                    jData.FromJsonBytes(cApi.clearData);
+                            }
+                            catch (Exception ex)
+                            {
+                                jData = null;
+                                trackData.AppendLine("Error decrypting package data for enterprise " + req.enterpriseid + " and proxy " + req.host + ", " + ex.Message);
+
+#if DEBUG
+                                trackData.AppendLine(ex.StackTrace);
+
+#endif
+
+                            }
+
+                            if (jData != null)
+                            {
+
+#if DEBUG
+                                trackData.AppendLine("");
+                                trackData.AppendLine("Request data:");
+                                trackData.AppendLine(jData.ToJsonString());
+
+                                trackData.AppendLine("");
+#endif
+
+                                type = jData.function;
+
+                                trackData.AppendLine("Type: " + type);
+                                trackData.AppendLine("Data array length: " + (jData.data == null ? "0" : jData.data.Count.ToString()));
+
+                                if (type.ToLower() == "processimportv2")
+                                {
+                                    
+                                    Int32 d = 1;
+                                    foreach (String[] dr in jData.data)
+                                    {
+                                        try
+                                        {
+                                            Int32 resourcePluginCol = jData.GetKeyIndex("resource_plugin");
+                                            Int32 pkgCol = jData.GetKeyIndex("package");
+
+                                            if (resourcePluginCol == -1)
+                                            {
+                                                trackData.AppendLine("[Package data " + d + "] Erro finding column 'resource_plugin'");
+                                            }
+
+                                            if (pkgCol == -1)
+                                            {
+                                                trackData.AppendLine("[Package data " + d + "] Erro finding column 'package'");
+                                            }
+
+                                            if ((resourcePluginCol != -1) && (pkgCol != -1))
+                                            {
+                                                PluginConnectorBaseImportPackageUser pkg = JSON.DeserializeFromBase64<PluginConnectorBaseImportPackageUser>(dr[pkgCol]);
+                                                trackData.AppendLine("[Package data " + d + "] Import id: " + pkg.importId);
+                                                trackData.AppendLine("[Package data " + d + "] Package id: " + pkg.pkgId);
+
+                                                Int64 trackId = 0;
+                                                try
+                                                {
+
+                                                    String tpkg = JSON.Serialize2(pkg);
+
+                                                    DbParameterCollection par = new DbParameterCollection();
+                                                    par.Add("@entity_id", typeof(Int64)).Value = 0;
+                                                    par.Add("@date", typeof(DateTime)).Value = pkg.GetBuildDate();
+                                                    par.Add("@flow", typeof(String)).Value = "inbound";
+                                                    par.Add("@package_id", typeof(String), pkg.pkgId.Length).Value = pkg.pkgId;
+                                                    par.Add("@filename", typeof(String)).Value = req.filename;
+                                                    par.Add("@package", typeof(String), tpkg.Length).Value = tpkg;
+
+                                                    trackId = database.ExecuteScalar<Int64>("sp_new_package_track", System.Data.CommandType.StoredProcedure, par, null);
+
+                                                    trackData.AppendLine("[Package data " + d + "] Package track id: " + trackId);
+
+                                                    tpkg = null;
+
+                                                    if (trackId > 0)
+                                                        database.AddPackageTrack(trackId, "ProxyAPI", "Package received from proxy and saved at " + filename);
+
+                                                }
+                                                catch(Exception ex3) {
+                                                    trackData.AppendLine("[Package data " + d + "] Erro generating package track: " + ex3.Message);
+                                                }
+
+
+                                                pkg.Dispose();
+                                                pkg = null;
+                                            }
+                                        }
+                                        catch (Exception ex2)
+                                        {
+                                            trackData.AppendLine("[Package data " + d + "] Erro parsing package data " + ex2.Message);
+                                        }
+                                        d++;
+                                    }
+                                }
+                            }
                         }
-                        catch (Exception ex)
-                        {
-                            ReturnHolder.Controls.Add(new LiteralControl(JSON.GetResponse(false, "Error on decryption " + ex.Message, "")));
-                            return;
+                        catch(Exception ex1) {
+                            trackData.AppendLine("Erro parsing package " + ex1.Message);
+                            level = UserLogLevel.Error;
                         }
 
-                        JsonGeneric jData = null;
-                        try
-                        {
-                            jData = new JsonGeneric();
-                            jData.FromJsonBytes(cData);
-                        }
-                        catch (Exception ex)
-                        {
-                            ReturnHolder.Controls.Add(new LiteralControl(JSON.GetResponse(false, "Error parsing Json data " + ex.Message, "")));
-                            return;
-                        }
+                        database.AddUserLog(LogKey.API_Log, DateTime.Now, "ProxyAPI", level, 0, ((EnterpriseData)Page.Session["enterprise_data"]).Id, 0, 0, 0, 0, 0, "File received from proxy " + req.host + (String.IsNullOrEmpty(type) ? "" : " (" + type + ")"), trackData.ToString());
 
-                        if (jData == null)
-                            return;
 
-                        //"context", "uri", "importid", "registryid", "dataname", "datavalue", "datatype"
-
-                        Int32 contextCol = jData.GetKeyIndex("context");
-                        Int32 registryidCol = jData.GetKeyIndex("registryid");
-                        Int32 datanameCol = jData.GetKeyIndex("dataname");
-                        Int32 datavalueCol = jData.GetKeyIndex("datavalue");
-                        Int32 datatypeCol = jData.GetKeyIndex("datatype");
-
-                        foreach (String[] d1 in jData.data)
-                        {
-                     
-                        
-                            packages[d1[registryidCol]].data.Add(new PluginBaseDeployPackageData(d1[datanameCol], d1[datavalueCol], d1[datatypeCol]));
-                        }
-                        */
+                        File.WriteAllBytes(Path.Combine(inDir.FullName, filename), Encoding.UTF8.GetBytes(JSON.Serialize<JSONRequest>(req)));
 
                         ReturnHolder.Controls.Add(new LiteralControl(JSON.GetResponse(true, "", "Request received and proxy finded (" + (req.data != null ? req.data.Length.ToString() : "0") + ")")));
 

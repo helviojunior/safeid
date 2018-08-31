@@ -756,8 +756,8 @@ namespace InstallWizard
 
                     EXEC('CREATE PROCEDURE [dbo].[sp_migrate_imported2] 
 	                    @resource_plugin_id bigint,
-                        @import_id varchar(40),
-                        @package_id varchar(40),
+                        @import_id varchar(100),
+                        @package_id varchar(100),
                         @status varchar(2),
                         @new_status varchar(2)
                     AS

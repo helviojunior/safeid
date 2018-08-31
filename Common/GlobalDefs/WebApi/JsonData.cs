@@ -788,6 +788,9 @@ namespace IAM.GlobalDefs.WebApi
         public string last_sync_version;
 
         [OptionalField()]
+        public Int32 last_sync_pid;
+
+        [OptionalField()]
         public Int32 resource_qty;
 
     }
@@ -979,6 +982,9 @@ namespace IAM.GlobalDefs.WebApi
 
         [OptionalField()]
         public Boolean enable_deploy;
+
+        [OptionalField()]
+        public Boolean deploy_individual_package;
 
         [OptionalField()]
         public Boolean deploy_after_login;

@@ -103,7 +103,7 @@ namespace IAM.Deploy
 
             try
             {
-                dtPlugins = db.Select("select r.context_id, p.id, p.scheme, p.uri, p.assembly, p.create_date, rp.id resource_plugin_id, r.id resource_id, r.proxy_id, p1.name as proxy_name, p1.id proxy_id, p1.enterprise_id, rp.deploy_after_login, rp.password_after_login, rp.deploy_process, rp.deploy_all, rp.deploy_password_hash, rp.use_password_salt, rp.password_salt_end, rp.password_salt from plugin p with(nolock)  inner join resource_plugin rp with(nolock) on rp.plugin_id = p.id  inner join [resource] r on r.id = rp.resource_id inner join proxy p1 on r.proxy_id = p1.id  where " + (resourcePluginId > 0 ? " rp.id = " + resourcePluginId + " and " : "") + " r.enabled = 1 and rp.enabled = 1 and rp.enable_deploy = 1 order by rp.[order]");
+                dtPlugins = db.Select("select r.context_id, p.id, p.scheme, p.uri, p.assembly, p.create_date, rp.id resource_plugin_id, rp.deploy_individual_package, r.id resource_id, r.proxy_id, p1.name as proxy_name, p1.id proxy_id, p1.enterprise_id, rp.deploy_after_login, rp.password_after_login, rp.deploy_process, rp.deploy_all, rp.deploy_password_hash, rp.use_password_salt, rp.password_salt_end, rp.password_salt from plugin p with(nolock)  inner join resource_plugin rp with(nolock) on rp.plugin_id = p.id  inner join [resource] r on r.id = rp.resource_id inner join proxy p1 on r.proxy_id = p1.id  where " + (resourcePluginId > 0 ? " rp.id = " + resourcePluginId + " and " : "") + " r.enabled = 1 and rp.enabled = 1 and rp.enable_deploy = 1 order by rp.[order]");
                 if ((dtPlugins == null) || (dtPlugins.Rows.Count == 0))
                 {
                     if ((entityId > 0) || (resourcePluginId > 0))
@@ -123,6 +123,8 @@ namespace IAM.Deploy
                 //Lista todos os plugins e resources habilitados
                 foreach (DataRow dr in dtPlugins.Rows)
                 {
+                    Boolean individualPackage =  (Boolean)dr["deploy_individual_package"];
+
                     deployLog = new StringBuilder();
 
                     DebugLog(entityId, "proxy_name = " + dr["proxy_name"].ToString() + ", plugin = " + dr["uri"].ToString() + ", deploy_all? " + dr["deploy_all"].ToString());
@@ -289,7 +291,7 @@ namespace IAM.Deploy
                             db.AddUserLog(LogKey.User_Deploy, null, "Deploy", UserLogLevel.Info, (Int64)dr["proxy_id"], 0, 0, (Int64)dr["resource_id"], (Int64)dr["id"], (Int64)drE["id"], (Int64)drE["identity_id"], "Erro on deploy user: " + ex.Message);
                         }
 
-                        if (packageList.Count > 500)
+                        if (individualPackage || packageList.Count > 500)
                         {
                             SaveToSend(enterpriseId, proxyDir, config, packageList);
                             packageList.Clear();
@@ -405,12 +407,8 @@ namespace IAM.Deploy
 
                         tpkg = null;
 
-                        par = new DbParameterCollection();
-                        par.Add("@package_id", typeof(Int64)).Value = trackId;
-                        par.Add("@source", typeof(String)).Value = "deploy";
-                        par.Add("@text", typeof(String)).Value ="Package generated";
+                        db.AddPackageTrack(trackId, "deploy", "Package generated");
 
-                        db.ExecuteNonQuery("insert into st_package_track_history ([package_id] ,[source] ,[text]) values (@package_id ,@source ,@text)", System.Data.CommandType.Text, par, null);
 
 
                     }

@@ -345,6 +345,15 @@ namespace IAMWebServer._admin.content
 
                         html += "</div>";
 
+                        
+                        try
+                        {
+                            html += "<div class=\"ds1\" style=\"min-height: 10px;\"><div class=\"center\"><span class=\"small\">v. " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString() + "</span></div></div>";
+                        }
+                        catch { }
+
+                        
+
                     }
 
                     contentRet = new WebJsonResponse("#main aside", (eHtml != "" ? eHtml : html));
