@@ -2,6 +2,9 @@
 ##
 ## Based from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Setup
+Setup/*.exe
+
 # User-specific files
 *.suo
 *.user
