@@ -31,8 +31,12 @@ namespace IAM.Deploy
 
             try
             {
+                String sql = "select e.*, c.enterprise_id, rp.plugin_id, i.id identity_id, i.temp_locked, c.name context_name, e1.name enterprise_name, block_inheritance = case when exists (select 1 from identity_block_inheritance bi with(nolock) where bi.identity_id = i.id) then cast(1 as bit) else cast(0 as bit) end from entity e with(nolock) inner join context c with(nolock) on c.id = e.context_id inner join [identity] i with(nolock) on i.entity_id = e.id inner join resource_plugin rp with(nolock) on rp.id = i.resource_plugin_id inner join enterprise e1 with(nolock) on c.enterprise_id = e1.id where e.id = " + entityId + " and i.id = " + identityId;
 
-                DataTable dtEnt = db.Select("select e.*, c.enterprise_id, rp.plugin_id, i.id identity_id, i.temp_locked, c.name context_name, e1.name enterprise_name, block_inheritance = case when exists (select 1 from identity_block_inheritance bi with(nolock) where bi.identity_id = i.id) then cast(1 as bit) else cast(0 as bit) end from entity e with(nolock) inner join context c with(nolock) on c.id = e.context_id inner join [identity] i with(nolock) on i.entity_id = e.id inner join resource_plugin rp with(nolock) on rp.id = i.resource_plugin_id inner join enterprise e1 with(nolock) on c.enterprise_id = e1.id where e.id = " + entityId + " and i.id = " + identityId);
+                if (identityId == 0)
+                    sql = "select e.*, c.enterprise_id, rp.plugin_id, cast(0 as bigint) identity_id, cast(0 as bit) as temp_locked, c.name context_name, e1.name enterprise_name, cast(0 as bit) as block_inheritance from entity e with(nolock) inner join context c with(nolock) on c.id = e.context_id cross join resource_plugin rp with(nolock) inner join enterprise e1 with(nolock) on c.enterprise_id = e1.id where e.id = " + entityId;
+
+                DataTable dtEnt = db.Select(sql);
                 if ((dtEnt == null) || (dtEnt.Rows.Count == 0))
                     throw new Exception("Entity/Identity not found");
 

@@ -236,6 +236,26 @@ namespace IAM.Deploy
                     }
                     sql = null;
 
+
+                    if ((dtEnt.Rows.Count == 0) && ((Boolean)dr["deploy_all"]))
+                    {
+                        DebugLog(entityId, "SQL result is empty with all plugins, trying with only entity data");
+
+                        sql = "select e.id, e.last_login, e.change_password, cast(0 as bigint) identity_id from entity e with(nolock) inner join resource r with(nolock) on e.context_id = r.context_id cross join [resource_plugin] rp with(nolock) where e.deleted = 0 {0} and e.context_id = " + dr["context_id"] + (entityId > 0 ? " and e.id = " + entityId : "") + "  group by e.id, e.last_login, e.change_password";
+
+                        DebugLog(entityId, String.Format(sql, "and rp.enable_import = 1 and rp.permit_add_entity = 1"));
+
+                        //Lista todas as entidades e identidades para exportar
+                        dtEnt = db.Select(String.Format(sql, "and rp.enable_import = 1 and rp.permit_add_entity = 1"));
+                        if (dtEnt == null)
+                        {
+                            DebugLog(entityId, "SQL result is empty");
+                            db.AddUserLog(LogKey.Deploy, null, "Deploy", UserLogLevel.Error, (Int64)dr["proxy_id"], 0, 0, (Int64)dr["resource_id"], (Int64)dr["id"], 0, 0, "DB error: " + (((db.LastDBError != null) && (db.LastDBError != "")) ? db.LastDBError : ""));
+                            continue;
+                        }
+                    }
+                    sql = null;
+
                     DebugLog(entityId, "SQL result count " + dtEnt.Rows.Count);
 
                     if ((dtEnt.Rows.Count > 0) && (entityId == 0))
