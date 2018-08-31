@@ -4,6 +4,7 @@
 
 # Setup
 Setup/*.exe
+Setup/SetupPreReqs
 
 # User-specific files
 *.suo
