@@ -66,24 +66,13 @@ namespace InstallWizard
                         INSTEAD OF INSERT
                         AS
                         BEGIN
-	                        /*
-	                        DECLARE @id varchar(22)
-	                        SELECT @id = REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(varchar(23), GETDATE(),121),''-'',''''),'' '',''''),'':'',''''),''.'','''')
-
-	                        INSERT INTO log_seed select 1 where (select COUNT(*) from log_seed) = 0
-	                        */
-	
-	                        UPDATE log_seed SET seed = seed + 1
-	                        UPDATE log_seed SET seed = 1 where seed > 99999
-
-	                        /*SELECT @id = @id + CAST(seed as varchar) FROM log_seed*/
-
-                        DECLARE @seed varchar(5)
-                        SELECT @seed = seed FROM log_seed with(nolock)
+	                        
+                        DECLARE @epoch varchar(10)
+						SELECT @epoch = CONVERT(varchar(10), convert(bigint, datediff(ss,  '01-01-1970 00:00:00',GETDATE())))
 
                           DECLARE @tmpInserted table (
-		                        [id1] [varchar](17) NULL,
-		                        [id2] [varchar](5) NULL,
+		                        [id1] [varchar](15) NULL,
+		                        [id2] [varchar](10) NULL,
 		                        [id3] [varchar](25) NULL,
 		                        [date] [datetime] NOT NULL,
 		                        [source] [varchar](50) NOT NULL,
@@ -119,8 +108,8 @@ namespace InstallWizard
                                    ,[text]
                                    ,[additional_data]
                                    ,[executed_by_entity_id])
-                           SELECT	CONVERT(varchar(17),REPLACE(REPLACE(REPLACE(REPLACE(CONVERT(varchar(23), i.date,121),''-'',''''),'' '',''''),'':'',''''),''.'','''')),
-			                        @seed,
+                           SELECT	CONVERT(varchar(15),REPLACE(REPLACE(REPLACE(REPLACE(newid(),'-',''),' ',''),':',''),'.','')),
+			                        @epoch,
 			                        convert(varchar(25), CAST((ROW_NUMBER() OVER (ORDER BY i.date ASC)) AS VARCHAR)),
 			                        i.date, 
 			                        i.source,
