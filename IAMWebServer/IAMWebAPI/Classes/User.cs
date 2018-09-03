@@ -1221,7 +1221,7 @@ namespace IAM.WebAPI.Classes
             }
 
 
-
+            Int64 entityId = 0;
             DbParameterCollection par = new DbParameterCollection();
             par.Add("@enterprise_id", typeof(Int64)).Value = this._enterpriseId;
             par.Add("@user_id", typeof(Int64)).Value = userid;
@@ -1240,7 +1240,27 @@ namespace IAM.WebAPI.Classes
                 return false;
             }
 
+            try
+            {
+                entityId = Int64.Parse(dtUsers.Rows[0]["id"].ToString());
+            }
+            catch { }
+
+
+            if (entityId == 0)
+            {
+                Error(ErrorType.InvalidRequest, "User not found.", "", null);
+                return false;
+            }
+
+
             database.ExecuteNonQuery( "delete from [identity] where id = @identity_id", CommandType.Text, par);
+
+            DbParameterCollection par2 = new DbParameterCollection();
+            par2.Add("@entity_id", typeof(Int64)).Value = entityId;
+
+            database.ExecuteNonQuery("sp_rebuild_entity_keys2", CommandType.StoredProcedure, par2, null);
+
 
             return true;
 
