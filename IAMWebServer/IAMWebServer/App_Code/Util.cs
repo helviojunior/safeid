@@ -85,6 +85,23 @@ namespace Tools
         }
 
 
+        static public Boolean IsUsingHTTPS()
+        {
+            System.Web.HttpContext context = System.Web.HttpContext.Current;
+
+
+            String proto = context.Request.ServerVariables["HTTP_X_FORWARDED_PROTO"];
+
+            if (proto == "https")
+                return true;
+
+            if (!String.IsNullOrWhiteSpace(context.Request.ServerVariables["HTTPS"]) && context.Request.ServerVariables["HTTPS"].ToString().ToLower() == "on")
+                return true;
+
+            return false;
+
+        }
+
         static public String GetIPAddress()
         {
             System.Web.HttpContext context = System.Web.HttpContext.Current;
