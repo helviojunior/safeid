@@ -142,7 +142,7 @@ namespace IAMWebServer._admin.direct
                                 //Cria o arquivo de configuração do proxy
                                 String config = "";
                                 config += "server=" + Request.Url.Host + (Request.Url.Port != 80 && Request.Url.Port != 443 ? ":" + Request.Url.Port : "") + Environment.NewLine;
-                                config += "usehttps=" + (!String.IsNullOrWhiteSpace(Request.ServerVariables["HTTPS"]) && Request.ServerVariables["HTTPS"].ToString().ToLower() == "on" ? "1" : "0") + Environment.NewLine;
+                                config += "usehttps=" + (Tools.Tool.IsUsingHTTPS() ? "1" : "0") + Environment.NewLine;
                                 config += "hostname=" + retProxy.result.info.name + Environment.NewLine;
 
                                 //Resgata os dados de certificado
