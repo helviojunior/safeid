@@ -68,27 +68,27 @@ namespace InstallWizard
                         BEGIN
 	                        
                         DECLARE @epoch varchar(10)
-						SELECT @epoch = CONVERT(varchar(10), convert(bigint, datediff(ss,  '01-01-1970 00:00:00',GETDATE())))
+						SELECT @epoch = CONVERT(varchar(10), convert(bigint, datediff(ss,  ''01-01-1970 00:00:00'',GETDATE())))
 
                           DECLARE @tmpInserted table (
-		                        [id1] [varchar](15) NULL,
-		                        [id2] [varchar](10) NULL,
-		                        [id3] [varchar](25) NULL,
-		                        [date] [datetime] NOT NULL,
-		                        [source] [varchar](50) NOT NULL,
-		                        [level] [int] NOT NULL,
-		                        [proxy_id] [bigint] NULL  default(0),
-		                        [enterprise_id] [bigint] NULL  default(0),
-		                        [context_id] [bigint] NULL default(0),
-		                        [resource_id] [bigint] NULL default(0),
-		                        [plugin_id] [bigint] NULL default(0),
-		                        [entity_id] [bigint] NULL default(0),
-		                        [identity_id] [bigint] NULL default(0),
-		                        [text] [varchar](max) NOT NULL,
-		                        [additional_data] [varchar](max) NULL,
-		                        [key] [int] NULL,
-		                        [executed_by_entity_id] [bigint] NOT NULL
-	                        )
+                                [id1] [varchar](15) NULL,
+                                [id2] [varchar](10) NULL,
+                                [id3] [varchar](25) NULL,
+                                [date] [datetime] NOT NULL,
+                                [source] [varchar](50) NOT NULL,
+                                [level] [int] NOT NULL,
+                                [proxy_id] [bigint] NULL  default(0),
+                                [enterprise_id] [bigint] NULL  default(0),
+                                [context_id] [bigint] NULL default(0),
+                                [resource_id] [bigint] NULL default(0),
+                                [plugin_id] [bigint] NULL default(0),
+                                [entity_id] [bigint] NULL default(0),
+                                [identity_id] [bigint] NULL default(0),
+                                [text] [varchar](max) NOT NULL,
+                                [additional_data] [varchar](max) NULL,
+                                [key] [int] NULL,
+                                [executed_by_entity_id] [bigint] NOT NULL
+                            )
   
                           INSERT INTO @tmpInserted
                                    ([id1]
@@ -108,57 +108,57 @@ namespace InstallWizard
                                    ,[text]
                                    ,[additional_data]
                                    ,[executed_by_entity_id])
-                           SELECT	CONVERT(varchar(15),REPLACE(REPLACE(REPLACE(REPLACE(newid(),'-',''),' ',''),':',''),'.','')),
-			                        @epoch,
-			                        convert(varchar(25), CAST((ROW_NUMBER() OVER (ORDER BY i.date ASC)) AS VARCHAR)),
-			                        i.date, 
-			                        i.source,
-			                        i.[key],
-			                        i.level,
-			                        proxy_id = CASE
-				                         WHEN i.proxy_id is null THEN 0 
-				                         ELSE i.proxy_id
-			                        END,
-			                        enterprise_id = CASE
-				                        WHEN (i.enterprise_id is null OR i.enterprise_id = 0) AND i.context_id > 0 
-					                        THEN (SELECT top 1 c.enterprise_id 
-							                        FROM context c with(nolock)
-							                        WHERE c.id = i.context_id)
-				                         WHEN (i.enterprise_id is null OR i.enterprise_id = 0) AND i.resource_id > 0 
-					                        THEN (SELECT top 1 c.enterprise_id 
-							                        FROM resource r  with(nolock)
-								                        inner join context c on r.context_id = c.id
-							                        WHERE r.id = i.resource_id)
-				                        WHEN (i.enterprise_id is null OR i.enterprise_id = 0) AND i.entity_id > 0 
-					                        THEN (SELECT top 1 c.enterprise_id 
-							                        FROM entity e with(nolock)
-								                        inner join context c on e.context_id = c.id
-							                        WHERE e.id = i.entity_id)
-				                         ELSE i.enterprise_id
-			                        END,
-			                        context_id = CASE
-				                         WHEN (i.context_id is null OR i.context_id = 0) AND i.resource_id > 0 
-					                        THEN (SELECT top 1 r.context_id 
-							                        FROM resource r  with(nolock)
-							                        WHERE r.id = i.resource_id)
-				                        WHEN (i.context_id is null OR i.context_id = 0) AND i.entity_id > 0 
-					                        THEN (SELECT top 1 e.context_id 
-							                        FROM entity e with(nolock)
-							                        WHERE e.id = i.entity_id)
-				                         ELSE i.context_id
-			                        END,
-			                        i.resource_id,
-			                        i.plugin_id,
-			                        i.entity_id,
-			                        i.identity_id,
-			                        i.text,
-			                        i.additional_data,
-			                        i.executed_by_entity_id
+                           SELECT   CONVERT(varchar(15),REPLACE(REPLACE(REPLACE(REPLACE(newid(),''-'',''''),'' '',''''),'':'',''''),''.'','''')),
+                                    @epoch,
+                                    convert(varchar(25), CAST((ROW_NUMBER() OVER (ORDER BY i.date ASC)) AS VARCHAR)),
+                                    i.date, 
+                                    i.source,
+                                    i.[key],
+                                    i.level,
+                                    proxy_id = CASE
+                                         WHEN i.proxy_id is null THEN 0 
+                                         ELSE i.proxy_id
+                                    END,
+                                    enterprise_id = CASE
+                                        WHEN (i.enterprise_id is null OR i.enterprise_id = 0) AND i.context_id > 0 
+                                            THEN (SELECT top 1 c.enterprise_id 
+                                                    FROM context c with(nolock)
+                                                    WHERE c.id = i.context_id)
+                                         WHEN (i.enterprise_id is null OR i.enterprise_id = 0) AND i.resource_id > 0 
+                                            THEN (SELECT top 1 c.enterprise_id 
+                                                    FROM resource r  with(nolock)
+                                                        inner join context c on r.context_id = c.id
+                                                    WHERE r.id = i.resource_id)
+                                        WHEN (i.enterprise_id is null OR i.enterprise_id = 0) AND i.entity_id > 0 
+                                            THEN (SELECT top 1 c.enterprise_id 
+                                                    FROM entity e with(nolock)
+                                                        inner join context c on e.context_id = c.id
+                                                    WHERE e.id = i.entity_id)
+                                         ELSE i.enterprise_id
+                                    END,
+                                    context_id = CASE
+                                         WHEN (i.context_id is null OR i.context_id = 0) AND i.resource_id > 0 
+                                            THEN (SELECT top 1 r.context_id 
+                                                    FROM resource r  with(nolock)
+                                                    WHERE r.id = i.resource_id)
+                                        WHEN (i.context_id is null OR i.context_id = 0) AND i.entity_id > 0 
+                                            THEN (SELECT top 1 e.context_id 
+                                                    FROM entity e with(nolock)
+                                                    WHERE e.id = i.entity_id)
+                                         ELSE i.context_id
+                                    END,
+                                    i.resource_id,
+                                    i.plugin_id,
+                                    i.entity_id,
+                                    i.identity_id,
+                                    i.text,
+                                    i.additional_data,
+                                    i.executed_by_entity_id
                            FROM inserted i
 
 
-	                        --INSERT ON REAL TABLE
-	                        INSERT INTO logs
+                            --INSERT ON REAL TABLE
+                            INSERT INTO logs
                                    ([id]
                                    ,[date]
                                    ,[source]
@@ -174,7 +174,7 @@ namespace InstallWizard
                                    ,[text]
                                    ,[additional_data]
                                    ,[executed_by_entity_id])
-	                        SELECT min([id1] + [id2]+ [id3])
+                            SELECT min([id1] + [id2]+ [id3])
                                    ,[date]
                                    ,[source]
                                    ,[key]
@@ -189,9 +189,9 @@ namespace InstallWizard
                                    ,[text]
                                    ,[additional_data]
                                    ,[executed_by_entity_id]
-                            FROM	@tmpInserted
+                            FROM    @tmpInserted
                             GROUP BY
-			                        [date]
+                                    [date]
                                    ,[source]
                                    ,[key]
                                    ,[level]
@@ -206,8 +206,8 @@ namespace InstallWizard
                                    ,[additional_data]
                                    ,[executed_by_entity_id]
 
-	                        --INSERT ON ENTITY TIMELINE TOO
-	                        INSERT INTO entity_timeline
+                            --INSERT ON ENTITY TIMELINE TOO
+                            INSERT INTO entity_timeline
                                    ([log_id]
                                    ,[date]
                                    ,[key]
@@ -215,22 +215,22 @@ namespace InstallWizard
                                    ,[identity_id]          
                                    ,[title]
                                    ,[text])
-                             SELECT	min([id1] + [id2]+ [id3]),
-			                        i.date, 
-			                        i.[key],
-			                        i.entity_id,
-			                        i.identity_id,
-			                        i.text,
-			                        i.additional_data
+                             SELECT min([id1] + [id2]+ [id3]),
+                                    i.date, 
+                                    i.[key],
+                                    i.entity_id,
+                                    i.identity_id,
+                                    i.text,
+                                    i.additional_data
                                FROM @tmpInserted i
-	                        WHERE	[key] IN (1002, 1003, 1004, 1007, 1008, 1011, 1012, 1016, 1017, 1018, 1021, 1022, 1023, 1024, 1027)
-	                        GROUP BY
-			                        i.date, 
-			                        i.[key],
-			                        i.entity_id,
-			                        i.identity_id,
-			                        i.text,
-			                        i.additional_data
+                            WHERE   [key] IN (1002, 1003, 1004, 1007, 1008, 1011, 1012, 1016, 1017, 1018, 1021, 1022, 1023, 1024, 1027)
+                            GROUP BY
+                                    i.date, 
+                                    i.[key],
+                                    i.entity_id,
+                                    i.identity_id,
+                                    i.text,
+                                    i.additional_data
                         END;')
 
                     END
